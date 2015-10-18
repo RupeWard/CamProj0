@@ -144,22 +144,38 @@ public class SingletonSceneLifetime<GameObjectType> : MonoBehaviour
     {
         get
         {
+
             if (SingletonHelper<GameObjectType>.ShouldAssignInstance(ref instance, ref blockInstanceFetch))
             {
-				string instanceName = "The"+typeof(GameObjectType).ToString();
-				GameObject gameObj = GameObject.Find(instanceName) as GameObject;
+                string instanceName = "The" + typeof(GameObjectType).ToString();
+                GameObject gameObj = GameObject.Find(instanceName) as GameObject;
 
                 if (gameObj != null)
                 {
                     instance = gameObj.GetComponent<GameObjectType>();
 #if DEBUG_SINGLETONS
-                    Debug.LogError("Found and assigned scene singleton instance of type " + typeof(GameObjectType).ToString());
+                    Debug.Log("Found and assigned scene singleton instance of type " + typeof(GameObjectType).ToString());
 #endif //DEBUG_SINGLETONS
                 }
                 else
                 {
-                    Debug.LogError("Unable to find game object named "+ instanceName+" of type " + typeof(GameObjectType).ToString() + " in current scene");
+                    Debug.Log("Unable to find game object named "+instanceName+" of type " + typeof(GameObjectType).ToString() + " in current scene");
+                    GameObjectType got = FindObjectOfType(typeof(GameObjectType)) as GameObjectType;
+                    if (got != null)
+                    {
+                        instance = got;
+                        got.gameObject.name = instanceName;
+                        DontDestroyOnLoad(got.gameObject);
+#if DEBUG_SINGLETONS
+                        Debug.Log("Found, assigned, and renamed lifetime instance of type " + typeof(GameObjectType).ToString());
+#endif //DEBUG_SINGLETONS
+                    }
+                    else
+                    {
+                        Debug.LogError("Unable to find game object of type " + typeof(GameObjectType).ToString() + " in current scene");
+                    }
                 }
+
             }
 
             return instance;
