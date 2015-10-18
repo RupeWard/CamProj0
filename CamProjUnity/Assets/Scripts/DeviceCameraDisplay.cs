@@ -12,6 +12,13 @@ public class DeviceCameraDisplay : MonoBehaviour
 
 	void Start ()
     {
+        WebCamDevice[] devices = WebCamTexture.devices;
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.Append("DCD Start: " + devices.Length + " devices");
+        for (int i= 0; i < devices.Length; i++)
+        {
+            sb.Append("\n "+i+" "+devices[i].name+" "+devices[i].isFrontFacing);
+        }
         webCamTexture_ = new WebCamTexture();
         myRectTransform_ = GetComponent<RectTransform>();        
 	}
@@ -34,7 +41,10 @@ public class DeviceCameraDisplay : MonoBehaviour
                 +"\nScreen = "+Screen.width+" x "+Screen.height
                 +"\nOrientation = "+Input.deviceOrientation
                 +"\n";
-            Debug.Log(msg);
+            if (DEBUG_LOCAL)
+            {
+                Debug.Log(msg);
+            }
             LogPanel.Instance.Append(msg);
         }
         webCamTexture_.Play();
@@ -43,11 +53,13 @@ public class DeviceCameraDisplay : MonoBehaviour
 
     void PauseCamera()
     {
+        string msg = "DCD: " + (count++) + " PAUSE\n\n";
+        webCamTexture_.Pause();
         if (DEBUG_LOCAL)
         {
-            Debug.Log("DCD: PAUSE");
+            Debug.Log(msg);
         }
-        webCamTexture_.Pause();
+        LogPanel.Instance.Append(msg);
     }
 
     public void HandlePlayPause()
@@ -59,6 +71,14 @@ public class DeviceCameraDisplay : MonoBehaviour
         else
         {
             PlayCamera();
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (webCamTexture_ != null && webCamTexture_.isPlaying)
+        {
+            webCamTexture_.Stop();
         }
     }
 }

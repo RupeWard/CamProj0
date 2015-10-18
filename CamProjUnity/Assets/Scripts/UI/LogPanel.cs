@@ -11,7 +11,7 @@ public class LogPanel : SingletonSceneLifetime< LogPanel >
 
     protected override void PostAwake()
     {
-        Append("Log started" + System.DateTime.Now);
+        Append("Log started" + System.DateTime.Now+"\n\n");
     }
 
     void Start ()
