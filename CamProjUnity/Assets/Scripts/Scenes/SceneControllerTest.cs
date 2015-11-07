@@ -21,21 +21,15 @@ public class SceneControllerTest : MonoBehaviour
 
 	public void Start()
     {
-		InstantiateToTopLayer( deviceCameraDisplayLayerPrefab );
-		InstantiateToTopLayer( logPanelLayerPrefab );
-		InstantiateToTopLayer( buttonsLayerPrefab );
+		winLayerManager.InstantiateToLayer( deviceCameraDisplayLayerPrefab );
+		winLayerManager.InstantiateToLayer( logPanelLayerPrefab );
+		winLayerManager.InstantiateToTopLayer( buttonsLayerPrefab );
 	}
 
 	#endregion MonoBehaviour
 
 	#region SetUp
 
-	private void InstantiateToTopLayer( GameObject prefab )
-	{
-		GameObject go = Instantiate( prefab ) as GameObject;
-		RW.Win.WinLayerWin win = go.GetComponent<RW.Win.WinLayerWin>( );
-		winLayerManager.AddToTopLayer( win );
-	}
 
 	#endregion SetUp
 

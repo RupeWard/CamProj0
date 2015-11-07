@@ -16,48 +16,48 @@ namespace RW.Win
             get { return winLayerDefns_.Count;  }
         }
 
-		public void AddToTopLayer( WinLayerWin win )
+		public void InstantiateToLayer( GameObject prefab )
 		{
-			WinLayerDefn layerToPutIn = null;
-			for (int i = 0; i < NumLayers && layerToPutIn==null; i++)
-			{
-				if (winLayerDefns_[i].IsEmpty)
-				{
-					layerToPutIn = winLayerDefns_[i];
-					if (DEBUG_LOCAL)
-					{
-						Debug.Log( "WLM: Found layer " + i + " of " + NumLayers + " for " + win.gameObject.name );
-					}
-				}
-			}
-			if (layerToPutIn == null)
-			{
-				if (DEBUG_LOCAL)
-				{
-					Debug.Log( "WLM: No empty layer in " + NumLayers + " for " + win.gameObject.name +", creating");
-				}
-				layerToPutIn = AddLayer( );
-			}
-			win.AddToWinLayer( layerToPutIn );
+			GameObject go = Instantiate( prefab ) as GameObject;
+			RW.Win.WinLayerWin win = go.GetComponent<RW.Win.WinLayerWin>( );
+			Add( win );
 		}
 
-        #endregion Interface
+		public void InstantiateToTopLayer( GameObject prefab )
+		{
+			GameObject go = Instantiate( prefab ) as GameObject;
+			RW.Win.WinLayerWin win = go.GetComponent<RW.Win.WinLayerWin>( );
+			AddToTopLayer( win );
+		}
 
-        #region settings
+		public void InstantiateToOverlaysLayer( GameObject prefab )
+		{
+			GameObject go = Instantiate( prefab ) as GameObject;
+			RW.Win.WinLayerWin win = go.GetComponent<RW.Win.WinLayerWin>( );
+			AddToOverlaysLayer( win );
+		}
 
-        #region settings
+		#endregion Interface
 
-        public int numStartingLayers = 0;
+		#region settings
+
+		#region settings
+
+		public int numStartingLayers = 0;
 
         #endregion inspector hooks
 
         public GameObject winLayerPrefab;
+		public RectTransform winLayersContainer;
+		public RectTransform topLayerContainer;
+		public RectTransform controlsLayerContainer;
+		public RectTransform overlaysLayerContainer;
 
-        #endregion inspector hooks
+		#endregion inspector hooks
 
-        #region cached hooks
+		#region cached hooks
 
-        private RectTransform rectTransform_;
+		private RectTransform rectTransform_;
         public RectTransform RectTransform
         {
             get { return rectTransform_; }
@@ -68,13 +68,15 @@ namespace RW.Win
         #region private data
 
         private List<WinLayerDefn> winLayerDefns_ = new List<WinLayerDefn>();
+		private WinLayerDefn topLayer_ = null;
+		private WinLayerDefn overlaysLayer_ = null;
 
-        #endregion private data
+		#endregion private data
 
 
-        #region MonoBehaviour
+		#region MonoBehaviour
 
-        private void Awake()
+		private void Awake()
         {
             rectTransform_ = GetComponent<RectTransform>();
 
@@ -89,6 +91,9 @@ namespace RW.Win
                     AddLayer();
                 }
             }
+			CreateTopLayer( );
+//			CreateControlsLayer( );
+			CreateOverlaysLayer( );
         }
 
         #endregion MonoBehaviour
@@ -99,7 +104,7 @@ namespace RW.Win
         {
             GameObject go = Instantiate(winLayerPrefab) as GameObject;
             WinLayerDefn wld = go.GetComponent<WinLayerDefn>();
-            wld.Init(this);
+            wld.Init(this, winLayersContainer);
             winLayerDefns_.Add(wld);
 
             if (DEBUG_LOCAL)
@@ -109,8 +114,91 @@ namespace RW.Win
             return wld;
         }
 
-        #endregion Setup
-    }
+		private WinLayerDefn CreateTopLayer( )
+		{
+			GameObject go = Instantiate( winLayerPrefab ) as GameObject;
+			WinLayerDefn wld = go.GetComponent<WinLayerDefn>( );
+			wld.Init( "TopLayer", this, topLayerContainer );
+			topLayer_ = wld;
+
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WLM: Created top layer ");
+			}
+			return wld;
+		}
+
+		private WinLayerDefn CreateOverlaysLayer( )
+		{
+			GameObject go = Instantiate( winLayerPrefab ) as GameObject;
+			WinLayerDefn wld = go.GetComponent<WinLayerDefn>( );
+			wld.Init( "OverlaysLayer", this, overlaysLayerContainer );
+			overlaysLayer_ = wld;
+
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WLM: Created overlays layer " );
+			}
+			return wld;
+		}
+
+		private WinLayerDefn CreateControlsLayer( )
+		{
+			GameObject go = Instantiate( winLayerPrefab ) as GameObject;
+			WinLayerDefn wld = go.GetComponent<WinLayerDefn>( );
+			wld.Init( "ControlsLayer", this, controlsLayerContainer );
+			overlaysLayer_ = wld;
+
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WLM: Created controls layer " );
+			}
+			return wld;
+		}
+
+		#endregion Setup
+
+		#region Helpers
+		private void Add( WinLayerWin win )
+		{
+			WinLayerDefn layerToPutIn = null;
+			for (int i = 0; i < NumLayers && layerToPutIn == null; i++)
+			{
+				if (winLayerDefns_[i].IsEmpty)
+				{
+					layerToPutIn = winLayerDefns_[i];
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "WLM: Found layer " + i + " of " + NumLayers + " for " + win.gameObject.name );
+					}
+				}
+			}
+			if (layerToPutIn == null)
+			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "WLM: No empty layer in " + NumLayers + " for " + win.gameObject.name + ", creating" );
+				}
+				layerToPutIn = AddLayer( );
+			}
+			win.AddToWinLayer( layerToPutIn );
+		}
+
+		private void AddToTopLayer( WinLayerWin win )
+		{
+			WinLayerDefn layerToPutIn = topLayer_;
+			win.AddToWinLayer( layerToPutIn );
+		}
+
+		private void AddToOverlaysLayer( WinLayerWin win )
+		{
+			WinLayerDefn layerToPutIn = overlaysLayer_;
+			win.AddToWinLayer( layerToPutIn );
+		}
+		#endregion Helpers
+
+
+	}
 
 }
 

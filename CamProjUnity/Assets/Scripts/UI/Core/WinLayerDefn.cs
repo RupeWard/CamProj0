@@ -52,14 +52,14 @@ namespace RW.Win
 
         #region Setup
 
-        public void Init(WinLayerManager wlm)
+        public void Init(WinLayerManager wlm, RectTransform parent)
         {
             winLayerManager_ = wlm;
 			currentContent_ = null;
 
             layerNum_ = wlm.NumLayers;
             gameObject.name = "Layer_" + layerNum_.ToString("00");
-            rectTransform_.SetParent(winLayerManager_.RectTransform);
+            rectTransform_.SetParent(parent);
 			rectTransform_.offsetMin = Vector2.zero;
 			rectTransform_.offsetMax = Vector2.zero;
 //            rectTransform_.anchoredPosition = Vector2.zero;
@@ -70,6 +70,26 @@ namespace RW.Win
                 Debug.Log("WLD: Init " + layerNum_ + " " + gameObject.name);
             }
         }
+
+		public void Init( string name, WinLayerManager wlm, RectTransform parent )
+		{
+			winLayerManager_ = wlm;
+			currentContent_ = null;
+
+			layerNum_ = -1;
+			gameObject.name = name;
+			rectTransform_.SetParent( parent );
+			rectTransform_.offsetMin = Vector2.zero;
+			rectTransform_.offsetMax = Vector2.zero;
+			//            rectTransform_.anchoredPosition = Vector2.zero;
+			rectTransform_.localScale = Vector3.one;
+
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WLD: Init " + gameObject.name );
+			}
+		}
+
 
 		#endregion Setup
 
