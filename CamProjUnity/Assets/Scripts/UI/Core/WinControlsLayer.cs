@@ -26,6 +26,8 @@ public class WinControlsLayer : MonoBehaviour
 			}
 			currentControls_ = c;
 			currentControls_.SetParent( transform );
+			currentControls_.anchoredPosition = Vector2.zero;
+			currentControls_.localScale = Vector3.one;
 		}
 	}
 
