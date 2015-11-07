@@ -13,12 +13,14 @@ public class WinWin < TWinType> : MonoBehaviour
 	private RectTransform rectTransform_;
 
 	private WinControlPanel< TWinType> controlPanel_ = null;
+	Vector2 parentDims;
 
 	public WinLayerWin winLayerWin;
 
 	protected virtual void Awake()
 	{
 		rectTransform_ = GetComponent<RectTransform>( );
+		parentDims = new Vector2( Screen.width, Screen.height );
 	}
 
 	public void HandleLossOfFocus( )
@@ -48,10 +50,68 @@ public class WinWin < TWinType> : MonoBehaviour
 		if (isMoving_)
 		{
 			Vector2 newScreenPosition = Input.mousePosition;
-			Vector2 diff = lastScreenPosition - newScreenPosition;
+			Vector2 diff = newScreenPosition - lastScreenPosition;
 			if (diff.magnitude > 0.1f) //FIXME
 			{
-				rectTransform_.anchoredPosition = rectTransform_.anchoredPosition - diff;
+				Vector2 currentSize = new Vector2( rectTransform_.localScale.x * rectTransform_.GetWidth( ), rectTransform_.localScale.y * rectTransform_.GetHeight( ) );
+
+				{
+					float signXMovement = diff.x / Mathf.Abs( diff.x );
+					float distFromXEdge = 0f;
+					if (signXMovement != 0f)
+					{
+						if (signXMovement > 0f)
+						{
+							distFromXEdge = 0.5f * parentDims.x - (0.5f * currentSize.x + rectTransform_.anchoredPosition.x);
+						}
+						else if (signXMovement < 0f)
+						{
+							distFromXEdge = (rectTransform_.anchoredPosition.x - 0.5f * currentSize.x) + 0.5f * parentDims.x;
+						}
+						if (DEBUG_LOCAL)
+						{
+							Debug.Log( "ParentDims = " + parentDims + " diff = " + diff + " pos = " + rectTransform_.anchoredPosition + " currentDims = " + currentSize + " distFromXEdge=" + distFromXEdge + " (" + signXMovement + ")" );
+						}
+					}
+					if (Mathf.Abs( diff.x ) > distFromXEdge)
+					{
+						diff.x = signXMovement * distFromXEdge;
+						if (DEBUG_LOCAL)
+						{
+							Debug.Log( "Clamped x diff to " + diff.x );
+						}
+					}
+				}
+
+				{
+					float signYMovement = diff.y / Mathf.Abs( diff.y );
+					float distFromYEdge = 0f;
+					if (signYMovement != 0f)
+					{
+						if (signYMovement > 0f)
+						{
+							distFromYEdge = 0.5f * parentDims.y - (0.5f * currentSize.y + rectTransform_.anchoredPosition.y);
+						}
+						else if (signYMovement < 0f)
+						{
+							distFromYEdge = (rectTransform_.anchoredPosition.y - 0.5f * currentSize.y) + 0.5f * parentDims.y;
+						}
+						if (DEBUG_LOCAL)
+						{
+							Debug.Log( "ParentDims = " + parentDims + " diff = " + diff + " pos = " + rectTransform_.anchoredPosition + " currentDims = " + currentSize + " distFromYEdge=" + distFromYEdge + " (" + signYMovement + ")" );
+						}
+					}
+					if (Mathf.Abs( diff.y ) > distFromYEdge)
+					{
+						diff.y = signYMovement * distFromYEdge;
+						if (DEBUG_LOCAL)
+						{
+							Debug.Log( "Clamped y diff to " + diff.y );
+						}
+					}
+				}
+
+				rectTransform_.anchoredPosition = rectTransform_.anchoredPosition + diff;
 				lastScreenPosition = newScreenPosition;
 			}
 
