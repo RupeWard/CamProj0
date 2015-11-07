@@ -1,27 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-    [RequireComponent (typeof(RectTransform))]
-    public class WinLayerDefn : MonoBehaviour, IDebugDescribable
+ [RequireComponent (typeof(RectTransform))]
+ public class WinLayerDefn : MonoBehaviour, IDebugDescribable
+ {
+	static private readonly bool DEBUG_LOCAL = true;
+
+    #region Interface
+
+    public int LayerNum
     {
-        static private readonly bool DEBUG_LOCAL = true;
+		get { return layerNum_; }
+	}
 
-        #region Interface
+	public bool IsEmpty
+	{
+		get { return currentContent_ == null;  }
+	}
 
-        public int LayerNum
-        {
-            get { return layerNum_; }
-        }
+	public WinLayerWin Content
+	{
+		get { return currentContent_;  }
+	}
 
-		public bool IsEmpty
-		{
-			get { return currentContent_ == null;  }
-		}
-
-		public void SetContent( WinLayerWin win )
-		{
-			currentContent_ = win;
-		}
+	public void SetContent( WinLayerWin win )
+	{
+		currentContent_ = win;
+	}
 
 	public void ClearContent( )
 	{

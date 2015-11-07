@@ -18,6 +18,8 @@ public class DeviceCameraDisplay : MonoBehaviour
 
 	void Start ()
     {
+		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
+
         WebCamDevice[] devices = WebCamTexture.devices;
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         sb.Append("DCD Start: " + devices.Length + " devices");
@@ -104,45 +106,35 @@ public class DeviceCameraDisplay : MonoBehaviour
         }
     }
 
-	float lastClick_ = 0f;
-	float clickInterval_ = 1f;
+	public void HandleLossOfFocus( )
+	{
+		if (controlPanel_ != null)
+		{
+			controlPanel_.OnCloseButtonPressed( );
+		}
+	}
 
 	public void HandleClick( )
 	{
-		if (DEBUG_LOCAL)
-		{
-			Debug.Log( "CLICK" );
-		}
-		if (Time.time - lastClick_ < clickInterval_)
+		if (winLayerWin.MovetoTop( ))
 		{
 			if (DEBUG_LOCAL)
 			{
-				Debug.Log( "DCD: Click after " + (Time.time - lastClick_));
+				Debug.Log( "DCD: HandleClik() moved to top" );
 			}
 		}
 		else
 		{
-			lastClick_ = Time.time;
-			if (winLayerWin.MovetoTop( ))
+			if (controlPanel_ == null)
 			{
-				if (DEBUG_LOCAL)
-				{
-					Debug.Log( "DCD: HandleClik() moved to top" );
-				}
+				GameObject go = Instantiate( controlPanelPrefab ) as GameObject;
+				controlPanel_ = go.GetComponent<DeviceCameraControlPanel>( );
 			}
-			else
+			winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
+			controlPanel_.Init( this );
+			if (DEBUG_LOCAL)
 			{
-				if (controlPanel_ == null)
-				{
-					GameObject go = Instantiate( controlPanelPrefab ) as GameObject;
-					controlPanel_ = go.GetComponent<DeviceCameraControlPanel>( );
-				}
-				winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
-				controlPanel_.Init( this );
-				if (DEBUG_LOCAL)
-				{
-					Debug.Log( "DCD: HandleClik() opened controls" );
-				}
+				Debug.Log( "DCD: HandleClik() opened controls" );
 			}
 		}
 	}

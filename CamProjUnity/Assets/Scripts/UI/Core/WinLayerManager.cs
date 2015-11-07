@@ -49,6 +49,7 @@ using System.Collections.Generic;
 			{
 				Debug.Log( "WLM: moving contents of layer " + layerNum + " to top " + winLayerDefns_[layerNum].DebugDescribe( ) );
 			}
+
 			WinLayerWin newTopContents = winLayerDefns_[layerNum].ReleaseContents( );
 			newTopContents.currentLayer = null;
 			for (int i = layerNum; i < (NumLayers - 1); i++)
