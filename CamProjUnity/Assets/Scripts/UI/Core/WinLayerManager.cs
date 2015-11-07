@@ -39,13 +39,65 @@ using System.Collections.Generic;
 		{
 			winControlsLayer.SetControls( r );
 		}
+
+	public bool MoveContentsToTop( int layerNum )
+	{
+		bool bMoved = false;
+		if (layerNum != (NumLayers-1))
+		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WLM: moving contents of layer " + layerNum + " to top " + winLayerDefns_[layerNum].DebugDescribe( ) );
+			}
+			WinLayerWin newTopContents = winLayerDefns_[layerNum].ReleaseContents( );
+			newTopContents.currentLayer = null;
+			for (int i = layerNum; i < (NumLayers - 1); i++)
+			{
+				WinLayerWin content = winLayerDefns_[layerNum + 1].ReleaseContents( );
+				if (content != null)
+				{
+					content.AddToWinLayer( winLayerDefns_[layerNum] );
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( content.gameObject.name + " moved to layer " + winLayerDefns_[layerNum].DebugDescribe( ) );
+					}
+				}
+				else
+				{
+					Debug.LogWarning( "WLM: empty layer "+winLayerDefns_[layerNum+1].DebugDescribe() );
+				}
+
+			}
+			if (newTopContents)
+			{
+				newTopContents.AddToWinLayer( winLayerDefns_[NumLayers - 1] );
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( newTopContents.gameObject.name + " moved to top layer " + winLayerDefns_[NumLayers-1].DebugDescribe( ) );
+				}
+			}
+			else
+			{
+				Debug.LogWarning( "WLM: no newTopContents" );
+			}
+			bMoved = true;
+		}
+		else
+		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WLM: layer " + layerNum + " is on top " );
+			}
+		}
+		return bMoved;
+	}
 		#endregion Interface
 
-		#region settings
+	#region settings
 
-		#region settings
+	#region settings
 
-		public int numStartingLayers = 0;
+	public int numStartingLayers = 0;
 
         #endregion inspector hooks
 

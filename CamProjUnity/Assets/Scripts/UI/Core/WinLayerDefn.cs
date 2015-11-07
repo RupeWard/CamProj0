@@ -23,97 +23,115 @@ using System.Collections;
 			currentContent_ = win;
 		}
 
-		public WinLayerManager WinLayerManager
-		{
-			get { return winLayerManager_;  }
-		}
+	public void ClearContent( )
+	{
+		currentContent_ = null;
+	}
 
-        #endregion Interface
+	public WinLayerManager WinLayerManager
+	{
+		get { return winLayerManager_;  }
+	}
 
-        #region cached hooks
+	public bool IsOnTop
+	{
+		get { return (layerNum_ == winLayerManager_.NumLayers - 1);  }
+	}
 
-        private RectTransform rectTransform_;
+	public bool MoveContentsToTop( )
+	{
+		return winLayerManager_.MoveContentsToTop( layerNum_ );
+	}
 
-        #endregion cached hooks
+	public WinLayerWin ReleaseContents( )
+	{
+		WinLayerWin wlw = currentContent_;
+		ClearContent( );
+		return wlw;
+	}
+    #endregion Interface
 
-        #region private data
+    #region cached hooks
+    private RectTransform rectTransform_;
 
-        private WinLayerManager winLayerManager_;
-        private int layerNum_;
-		private WinLayerWin currentContent_ = null;
+    #endregion cached hooks
 
-        #endregion private data
+    #region private data
 
-        #region MonoBehaviour
+	private WinLayerManager winLayerManager_;
+    private int layerNum_;
+	private WinLayerWin currentContent_ = null;
 
-        private void Awake()
-        {
-            rectTransform_ = GetComponent< RectTransform >();
-        }
+    #endregion private data
 
-        #endregion MonoBehaviour
+    #region MonoBehaviour
 
-        #region Setup
+    private void Awake()
+    {
+		rectTransform_ = GetComponent< RectTransform >();
+	}
 
-        public void Init(WinLayerManager wlm, RectTransform parent)
-        {
-            winLayerManager_ = wlm;
-			currentContent_ = null;
+    #endregion MonoBehaviour
 
-            layerNum_ = wlm.NumLayers;
-            gameObject.name = "Layer_" + layerNum_.ToString("00");
-            rectTransform_.SetParent(parent);
-			rectTransform_.offsetMin = Vector2.zero;
-			rectTransform_.offsetMax = Vector2.zero;
+    #region Setup
+
+    public void Init(WinLayerManager wlm, RectTransform parent)
+    {
+		winLayerManager_ = wlm;
+		currentContent_ = null;
+
+		layerNum_ = wlm.NumLayers;
+        gameObject.name = "Layer_" + layerNum_.ToString("00");
+        rectTransform_.SetParent(parent);
+		rectTransform_.offsetMin = Vector2.zero;
+		rectTransform_.offsetMax = Vector2.zero;
 //            rectTransform_.anchoredPosition = Vector2.zero;
-            rectTransform_.localScale = Vector3.one;
+        rectTransform_.localScale = Vector3.one;
 
-            if (DEBUG_LOCAL)
-            {
-                Debug.Log("WLD: Init " + layerNum_ + " " + gameObject.name);
-            }
+        if (DEBUG_LOCAL)
+        {
+			Debug.Log("WLD: Init " + layerNum_ + " " + gameObject.name);
         }
+	}
 
-		public void Init( string name, WinLayerManager wlm, RectTransform parent )
+	public void Init( string name, WinLayerManager wlm, RectTransform parent )
+	{
+		winLayerManager_ = wlm;
+		currentContent_ = null;
+
+		layerNum_ = -1;
+		gameObject.name = name;
+		rectTransform_.SetParent( parent );
+		rectTransform_.offsetMin = Vector2.zero;
+		rectTransform_.offsetMax = Vector2.zero;
+		//            rectTransform_.anchoredPosition = Vector2.zero;
+		rectTransform_.localScale = Vector3.one;
+
+		if (DEBUG_LOCAL)
 		{
-			winLayerManager_ = wlm;
-			currentContent_ = null;
-
-			layerNum_ = -1;
-			gameObject.name = name;
-			rectTransform_.SetParent( parent );
-			rectTransform_.offsetMin = Vector2.zero;
-			rectTransform_.offsetMax = Vector2.zero;
-			//            rectTransform_.anchoredPosition = Vector2.zero;
-			rectTransform_.localScale = Vector3.one;
-
-			if (DEBUG_LOCAL)
-			{
-				Debug.Log( "WLD: Init " + gameObject.name );
-			}
+			Debug.Log( "WLD: Init " + gameObject.name );
 		}
+	}
 
 
-		#endregion Setup
+	#endregion Setup
 
-		#region IDebugDescribable
+	#region IDebugDescribable
 
-		public void DebugDescribe( System.Text.StringBuilder sb)
+	public void DebugDescribe( System.Text.StringBuilder sb)
+	{
+		sb.Append( "[WLD: " ).Append( layerNum_ ).Append( " " ).Append( gameObject.name ).Append(" ");
+		if (currentContent_ == null)
 		{
-			sb.Append( "[WLD: " ).Append( layerNum_ ).Append( " " ).Append( gameObject.name );
-			if (currentContent_ == null)
-			{
-				sb.Append( " EMPTY" );
-			}
-			else
-			{
-				sb.Append( currentContent_.gameObject.name );
-			}
-			sb.Append( "]" );
-			
-		
+			sb.Append( "EMPTY" );
 		}
-		#endregion IDebugDescribable
+		else
+		{
+			sb.Append( currentContent_.gameObject.name );
+		}
+		sb.Append( "]" );
+	}
+	#endregion IDebugDescribable
 	
 }
 

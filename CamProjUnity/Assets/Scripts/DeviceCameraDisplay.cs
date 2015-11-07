@@ -104,18 +104,46 @@ public class DeviceCameraDisplay : MonoBehaviour
         }
     }
 
+	float lastClick_ = 0f;
+	float clickInterval_ = 1f;
+
 	public void HandleClick( )
 	{
 		if (DEBUG_LOCAL)
 		{
-			Debug.Log("DCD: HandleClik()" );
+			Debug.Log( "CLICK" );
 		}
-		if (controlPanel_ == null)
+		if (Time.time - lastClick_ < clickInterval_)
 		{
-			GameObject go = Instantiate( controlPanelPrefab ) as GameObject;
-			controlPanel_ = go.GetComponent<DeviceCameraControlPanel>( );
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "DCD: Click after " + (Time.time - lastClick_));
+			}
 		}
-		winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
-		controlPanel_.Init( this );
+		else
+		{
+			lastClick_ = Time.time;
+			if (winLayerWin.MovetoTop( ))
+			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "DCD: HandleClik() moved to top" );
+				}
+			}
+			else
+			{
+				if (controlPanel_ == null)
+				{
+					GameObject go = Instantiate( controlPanelPrefab ) as GameObject;
+					controlPanel_ = go.GetComponent<DeviceCameraControlPanel>( );
+				}
+				winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
+				controlPanel_.Init( this );
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "DCD: HandleClik() opened controls" );
+				}
+			}
+		}
 	}
 }
