@@ -72,13 +72,10 @@ public class WinLayerWin : MonoBehaviour
 						Debug.Log( "WLW: " + gameObject.name + "  clearing content of layer " + currentLayer.DebugDescribe( ) );
 					}
 					currentLayer.ClearContent( );
-					if (currentLayer.IsOnTop)
-					{
-						if (lossOfFocusAction != null)
-						{
-							lossOfFocusAction( );
-						}
-					}
+				}
+				if (lossOfFocusAction != null)
+				{
+					lossOfFocusAction( );
 				}
 				rectTransform_.SetParent( wld.transform );
 				rectTransform_.offsetMin = Vector2.zero;

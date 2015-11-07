@@ -120,11 +120,30 @@ public class DeviceCameraDisplay : MonoBehaviour
 		{
 			Debug.Log( "DCD: MoveToBack" );
 		}
-		if (winLayerWin.currentLayer.LayerNum > 0 && winLayerWin.currentLayer.WinLayerManager.NumLayers > 1 )
+		if (winLayerWin.currentLayer.WinLayerManager.NumLayers < 2)
+		{
+			Debug.Log( "DCD: No move as only one layer" );
+		}
+		else if (winLayerWin.currentLayer.LayerNum == 0)
+		{
+			Debug.Log( "DCD: No move as already at back "+ winLayerWin.currentLayer.DebugDescribe() );
+		}
+		else
 		{
 			if (winLayerWin.currentLayer.IsOnTop)
 			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "DCD: Calling HandleLossOfFocus as on top "+winLayerWin.currentLayer.DebugDescribe() );
+				}
 				HandleLossOfFocus( );
+			}
+			else
+			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "DCD: Not Calling HandleLossOfFocus " + winLayerWin.currentLayer.DebugDescribe( ) );
+				}
 			}
 			winLayerWin.MoveToBack( );
 		}

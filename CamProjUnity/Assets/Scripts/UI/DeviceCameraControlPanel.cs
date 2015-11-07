@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DeviceCameraControlPanel : MonoBehaviour
+public class DeviceCameraControlPanel : WinControlPanel
 {
 	#region inspector hooks
 
@@ -19,9 +19,9 @@ public class DeviceCameraControlPanel : MonoBehaviour
 
 	public void Init( DeviceCameraDisplay dcd)
 	{
+		Init( dcd.winLayerWin );
 		deviceCameraDisplay_ = dcd;
 		SetPlayButtonText( );
-		gameObject.SetActive( true );
 	}
 
 	private void SetPlayButtonText()
@@ -43,17 +43,6 @@ public class DeviceCameraControlPanel : MonoBehaviour
 	{
 		deviceCameraDisplay_.Clear( );
 	}
-
-	public void OnBackButtonPressed()
-	{
-		deviceCameraDisplay_.MoveToBack( );
-	}
-
-	public void OnCloseButtonPressed( )
-	{
-		transform.parent.GetComponent<WinControlsLayer>( ).CloseControls( );
-	}
-
 
 	#endregion Button handlers
 
