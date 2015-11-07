@@ -85,7 +85,7 @@ public class SingletonSceneLifetime<GameObjectType> : MonoBehaviour
             if (instance.Equals(this))
             {
 #if DEBUG_SINGLETONS
-                Debug.LogError("Destroying scene singleton of type " + typeof(GameObjectType).ToString());
+                Debug.Log("Destroying scene singleton of type " + typeof(GameObjectType).ToString());
 #endif //DEBUG_SINGLETONS
                 SingletonHelper<GameObjectType>.HandleOnDestroy(ref instance, ref blockInstanceFetch);
                 PostOnDestroy();
@@ -93,7 +93,7 @@ public class SingletonSceneLifetime<GameObjectType> : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Destroying an object when the instance of the singleton is null, this should not happen (unless you change scripts at runtime in the editor)!\n Type is " + typeof(GameObjectType).ToString());
+            Debug.LogWarning("Destroying an object when the instance of the singleton is null, this should not happen (unless you change scripts at runtime in the editor)!\n Type is " + typeof(GameObjectType).ToString());
         }
     }
 
@@ -237,7 +237,7 @@ public class SingletonApplicationLifetime<GameObjectType> : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Destroying an object when the instance of the singleton is null, this should not happen (unless you change scripts at runtime in the editor)!\n Type is " + typeof(GameObjectType).ToString());
+            Debug.LogWarning("Destroying an object when the instance of the singleton is null, this should not happen (unless you change scripts at runtime in the editor)!\n Type is " + typeof(GameObjectType).ToString());
         }
     }
 
@@ -389,7 +389,7 @@ public class SingletonApplicationLifetimeLazy<GameObjectType> : MonoBehaviour
             if (instance.Equals(this))
             {
 #if DEBUG_SINGLETONS
-                Debug.LogError("Destroying an object. Type is " + typeof(GameObjectType).ToString());
+                Debug.Log("Destroying a SingletonApplicationLifetimeLazy. Type is " + typeof(GameObjectType).ToString());
 #endif //DEBUG_SINGLETONS
                 SingletonHelper<GameObjectType>.HandleOnDestroy(ref instance, ref blockInstanceFetch);
                 PostOnDestroy();
@@ -397,7 +397,7 @@ public class SingletonApplicationLifetimeLazy<GameObjectType> : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Destroying an object when the instance of the singleton is null, this should not happen (unless you change scripts at runtime in the editor)!\n Type is " + typeof(GameObjectType).ToString());
+            Debug.LogWarning("Destroying a SingletonApplicationLifetimeLazy when the instance of the singleton is null, this should not happen (unless you change scripts at runtime in the editor)!\n Type is " + typeof(GameObjectType).ToString());
             PostOnDestroy();
         }
     }
@@ -446,7 +446,9 @@ public class SingletonApplicationLifetimeLazy<GameObjectType> : MonoBehaviour
                 GameObject foundObj = GameObject.Find(typeof(GameObjectType).ToString());
                 if (foundObj != null)
                 {
-                    Debug.LogError("Found an existing game object of type " + typeof(GameObjectType).ToString() + " in the scene, this singleton autocreates the game object and adds to the scene. There will now be 2 of the same game object in the scene!");
+#if DEBUG_SINGLETONS
+                    Debug.Log("Found an existing game object of type " + typeof(GameObjectType).ToString() + " in the scene, this singleton autocreates the game object and adds to the scene. There will now be 2 of the same game object in the scene!");
+#endif
                 }
 
                 GameObject gameObj = new GameObject(typeof(GameObjectType).ToString());
@@ -455,7 +457,7 @@ public class SingletonApplicationLifetimeLazy<GameObjectType> : MonoBehaviour
                 {
                     instance = gameObj.AddComponent<GameObjectType>();
 #if DEBUG_SINGLETONS
-                    Debug.LogError("Created a singleton with an application lifetime of type " + typeof(GameObjectType).ToString());
+                    Debug.Log("Created a singleton with an application lifetime of type " + typeof(GameObjectType).ToString());
 #endif //DEBUG_SINGLETONS
                     DontDestroyOnLoad(gameObj);
                 }
