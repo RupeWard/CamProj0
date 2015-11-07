@@ -1,15 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent ( typeof(RectTransform))]
 public class WinWin < TWinType> : MonoBehaviour 
 {
 	private static readonly bool DEBUG_LOCAL = true;
 
 	public GameObject controlPanelPrefab;
 
-	private WinControlPanel<TWinType> controlPanel_ = null;
+	public Transform overlaysContainer;
+
+	private RectTransform rectTransform_;
+
+	private WinControlPanel< TWinType> controlPanel_ = null;
 
 	public WinLayerWin winLayerWin;
+
+	protected virtual void Awake()
+	{
+		rectTransform_ = GetComponent<RectTransform>( );
+	}
 
 	public void HandleLossOfFocus( )
 	{
@@ -17,79 +27,121 @@ public class WinWin < TWinType> : MonoBehaviour
 		{
 			controlPanel_.OnCloseButtonPressed( );
 		}
+		if (isMoving_)
+		{
+			StopMoving( );
+		}
 	}
 
-	public void HandleClick( )
+	Vector2 lastScreenPosition;
+
+	public void HandlePointerDown()
 	{
-		if (winLayerWin.MovetoTop( ))
+		if (isMoving_)
 		{
-			if (DEBUG_LOCAL)
+			lastScreenPosition = Input.mousePosition;
+		}
+	}
+
+	public void HandlePointerDrag()
+	{
+		if (isMoving_)
+		{
+			Vector2 newScreenPosition = Input.mousePosition;
+			Vector2 diff = lastScreenPosition - newScreenPosition;
+			if (diff.magnitude > 0.1f) //FIXME
 			{
-				Debug.Log( "WW: "+gameObject.name+".HandleClick() moved to top" );
+				rectTransform_.anchoredPosition = rectTransform_.anchoredPosition - diff;
+				lastScreenPosition = newScreenPosition;
 			}
+
+		}
+	}
+
+	public void HandlePointerUp( )
+	{
+		if (isMoving_)
+		{
+			StopMoving( );
 		}
 		else
 		{
-			if (controlPanel_ == null)
+			if (winLayerWin.MovetoTop( ))
 			{
-				GameObject go = Instantiate( controlPanelPrefab ) as GameObject;
-				controlPanel_ = go.GetComponent< WinControlPanel<TWinType>  >( );
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "WW: " + gameObject.name + ".HandleClick() moved to top" );
+				}
+			}
+			else
+			{
 				if (controlPanel_ == null)
 				{
-					Debug.LogError( "WW: Failed to make control panel" );
+					GameObject go = Instantiate( controlPanelPrefab ) as GameObject;
+					controlPanel_ = go.GetComponent<WinControlPanel<TWinType>>( );
+					if (controlPanel_ == null)
+					{
+						Debug.LogError( "WW: Failed to make control panel" );
+					}
+					else
+					{
+						winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
+						controlPanel_.Init( winLayerWin, this );
+						if (DEBUG_LOCAL)
+						{
+							Debug.Log( "WW: HandleClik() opened controls" );
+						}
+					}
 				}
 				else
 				{
-					winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
-					controlPanel_.Init( winLayerWin );
-					if (DEBUG_LOCAL)
-					{
-						Debug.Log( "WW: HandleClik() opened controls" );
-					}
+					winLayerWin.WinLayerManager.CloseControls( );
 				}
-			}
-			else
-			{
-				winLayerWin.WinLayerManager.CloseControls( );
 			}
 		}
 	}
 
-	public void MoveToBack( )
+	private bool isMoving_ = false;
+	private RectTransform currentOverlay_;
+
+	private void StopMoving()
 	{
-		if (DEBUG_LOCAL)
+		if (currentOverlay_ != null)
 		{
-			Debug.Log( "WW: MoveToBack" );
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WW: destroying overlay " + currentOverlay_.gameObject.name );
+			}
+			GameObject.Destroy( currentOverlay_.gameObject );
+			currentOverlay_ = null;
 		}
-		if (winLayerWin.currentLayer.WinLayerManager.NumLayers < 2)
+		isMoving_ = false;
+	}
+
+	public void MoveWindow()
+	{
+		if (isMoving_)
 		{
-			Debug.Log( "WW: No move as only one layer" );
-		}
-		else if (winLayerWin.currentLayer.LayerNum == 0)
-		{
-			Debug.Log( "WW: No move as already at back " + winLayerWin.currentLayer.DebugDescribe( ) );
+			StopMoving( );
 		}
 		else
 		{
-			if (winLayerWin.currentLayer.IsOnTop)
+			string prefabName = "Prefabs/UI/WinMoveOverlay";
+            GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
+			if (go == null)
 			{
-				if (DEBUG_LOCAL)
-				{
-					Debug.Log( "WW: Calling HandleLossOfFocus as on top " + winLayerWin.currentLayer.DebugDescribe( ) );
-				}
-				HandleLossOfFocus( );
+				Debug.LogError( "No prefab " + prefabName );
 			}
 			else
 			{
-				if (DEBUG_LOCAL)
-				{
-					Debug.Log( "WW: Not Calling HandleLossOfFocus " + winLayerWin.currentLayer.DebugDescribe( ) );
-				}
+				currentOverlay_ = (Instantiate<GameObject>( go ) as GameObject).GetComponent<RectTransform>( );
+				currentOverlay_.SetParent( overlaysContainer );
+				currentOverlay_.offsetMin = 20f * Vector2.one;
+				currentOverlay_.offsetMax = -20f * Vector2.one;
+				currentOverlay_.localScale = Vector3.one;
+				isMoving_ = true;
 			}
-			winLayerWin.MoveToBack( );
 		}
 	}
-
-
 
 }

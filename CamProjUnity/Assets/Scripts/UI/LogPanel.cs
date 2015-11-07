@@ -17,13 +17,14 @@ public class LogPanel : WinWin< LogPanel>
 		get { return instance_; }
 	}
 
-	public void Awake()
+	protected  override void Awake()
     {
 		if (instance_ != null)
 		{
 			Debug.LogError( "Second LogPanel!");
 		}
 		instance_ = this;
+		base.Awake( );
 	}
 
 	public void OnDestroy()
