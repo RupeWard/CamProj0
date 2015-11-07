@@ -40,6 +40,12 @@ using System.Collections.Generic;
 			winControlsLayer.SetControls( r );
 		}
 
+	public void CloseControls( )
+	{
+		winControlsLayer.CloseControls(  );
+	}
+
+
 	public bool MoveContentsToTop( int layerNum )
 	{
 		bool bMoved = false;

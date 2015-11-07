@@ -34,19 +34,23 @@ public class WinWin < TWinType> : MonoBehaviour
 			{
 				GameObject go = Instantiate( controlPanelPrefab ) as GameObject;
 				controlPanel_ = go.GetComponent< WinControlPanel<TWinType>  >( );
-			}
-			if (controlPanel_ == null)
-			{
-				Debug.LogError( "WW: Failed to make control panel" );
+				if (controlPanel_ == null)
+				{
+					Debug.LogError( "WW: Failed to make control panel" );
+				}
+				else
+				{
+					winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
+					controlPanel_.Init( winLayerWin );
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "WW: HandleClik() opened controls" );
+					}
+				}
 			}
 			else
 			{
-				winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
-				controlPanel_.Init( winLayerWin );
-				if (DEBUG_LOCAL)
-				{
-					Debug.Log( "WW: HandleClik() opened controls" );
-				}
+				winLayerWin.WinLayerManager.CloseControls( );
 			}
 		}
 	}
