@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace RW.Win
-{
     [RequireComponent (typeof(RectTransform))]
     public class WinLayerManager : MonoBehaviour
     {
@@ -19,24 +17,28 @@ namespace RW.Win
 		public void InstantiateToLayer( GameObject prefab )
 		{
 			GameObject go = Instantiate( prefab ) as GameObject;
-			RW.Win.WinLayerWin win = go.GetComponent<RW.Win.WinLayerWin>( );
+			WinLayerWin win = go.GetComponent<WinLayerWin>( );
 			Add( win );
 		}
 
 		public void InstantiateToTopLayer( GameObject prefab )
 		{
 			GameObject go = Instantiate( prefab ) as GameObject;
-			RW.Win.WinLayerWin win = go.GetComponent<RW.Win.WinLayerWin>( );
+			WinLayerWin win = go.GetComponent<WinLayerWin>( );
 			AddToTopLayer( win );
 		}
 
 		public void InstantiateToOverlaysLayer( GameObject prefab )
 		{
 			GameObject go = Instantiate( prefab ) as GameObject;
-			RW.Win.WinLayerWin win = go.GetComponent<RW.Win.WinLayerWin>( );
+			WinLayerWin win = go.GetComponent<WinLayerWin>( );
 			AddToOverlaysLayer( win );
 		}
 
+		public void SetControls( RectTransform r )
+		{
+			winControlsLayer.SetControls( r );
+		}
 		#endregion Interface
 
 		#region settings
@@ -52,6 +54,8 @@ namespace RW.Win
 		public RectTransform topLayerContainer;
 		public RectTransform controlsLayerContainer;
 		public RectTransform overlaysLayerContainer;
+
+		public WinControlsLayer winControlsLayer;
 
 		#endregion inspector hooks
 
@@ -181,6 +185,10 @@ namespace RW.Win
 				}
 				layerToPutIn = AddLayer( );
 			}
+			if (layerToPutIn == null)
+			{
+				Debug.LogError( "Failed to get layer!" );
+			}
 			win.AddToWinLayer( layerToPutIn );
 		}
 
@@ -198,7 +206,6 @@ namespace RW.Win
 		#endregion Helpers
 
 
-	}
 
 }
 

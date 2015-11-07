@@ -6,9 +6,14 @@ public class DeviceCameraDisplay : MonoBehaviour
     private static readonly bool DEBUG_LOCAL = true;
 
     public UnityEngine.UI.RawImage rawImage;
+	public GameObject controlPanelPrefab;
 
     private WebCamTexture webCamTexture_ = null;
     private RectTransform myRectTransform_;
+
+	private DeviceCameraControlPanel controlPanel_ = null;
+
+	public WinLayerWin winLayerWin;
 
 	void Start ()
     {
@@ -34,7 +39,12 @@ public class DeviceCameraDisplay : MonoBehaviour
         }
     }
 
-    int count = 0;
+	public bool IsPlaying
+	{
+		get { return (webCamTexture_ != null && webCamTexture_.isPlaying);  }
+	}
+
+	int count = 0;
 
     void PlayCamera()
     {
@@ -84,4 +94,19 @@ public class DeviceCameraDisplay : MonoBehaviour
             webCamTexture_.Stop();
         }
     }
+
+	public void HandleClick( )
+	{
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log("DCD: HandleClik()" );
+		}
+		if (controlPanel_ == null)
+		{
+			GameObject go = Instantiate( controlPanelPrefab ) as GameObject;
+			controlPanel_ = go.GetComponent<DeviceCameraControlPanel>( );
+		}
+		winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
+		controlPanel_.Init( this );
+	}
 }

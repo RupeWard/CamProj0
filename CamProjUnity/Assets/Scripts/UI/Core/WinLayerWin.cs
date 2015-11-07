@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace RW.Win
-{
 	[RequireComponent (typeof(RectTransform))]
 	public class WinLayerWin : MonoBehaviour
 	{
 		#region Interface
+
+		public WinLayerManager WinLayerManager
+		{
+			get
+			{
+				return (currentLayer == null) ?( null):(currentLayer.WinLayerManager);
+			}
+		}
 
 		public RectTransform RectTransform
 		{
@@ -22,6 +28,7 @@ namespace RW.Win
 				rectTransform_.offsetMax = Vector2.zero;
 				rectTransform_.localScale = Vector3.one;
 				wld.SetContent( this );
+				currentLayer = wld;
 			}
 			else
 			{
@@ -35,7 +42,7 @@ namespace RW.Win
 
 		private RectTransform rectTransform_;
 
-		private WinLayerDefn currentLayer_;
+		public WinLayerDefn currentLayer;
 
 		#endregion cached hooks
 
@@ -45,5 +52,4 @@ namespace RW.Win
 		}
 
 	}
-}
 

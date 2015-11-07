@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace RW.Win
-{
     [RequireComponent (typeof(RectTransform))]
     public class WinLayerDefn : MonoBehaviour, IDebugDescribable
     {
@@ -23,6 +21,11 @@ namespace RW.Win
 		public void SetContent( WinLayerWin win )
 		{
 			currentContent_ = win;
+		}
+
+		public WinLayerManager WinLayerManager
+		{
+			get { return winLayerManager_;  }
 		}
 
         #endregion Interface
@@ -111,7 +114,6 @@ namespace RW.Win
 		
 		}
 		#endregion IDebugDescribable
-
-	}
+	
 }
 

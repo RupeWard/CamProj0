@@ -13,7 +13,7 @@ public class SceneControllerTest : MonoBehaviour
 
 	#region Inspector hooks
 
-	public RW.Win.WinLayerManager winLayerManager;
+	public WinLayerManager winLayerManager;
 
 	#endregion Inspector hooks
 
@@ -21,8 +21,8 @@ public class SceneControllerTest : MonoBehaviour
 
 	public void Start()
     {
-		winLayerManager.InstantiateToLayer( deviceCameraDisplayLayerPrefab );
 		winLayerManager.InstantiateToLayer( logPanelLayerPrefab );
+		winLayerManager.InstantiateToLayer( deviceCameraDisplayLayerPrefab );
 		winLayerManager.InstantiateToTopLayer( buttonsLayerPrefab );
 	}
 
