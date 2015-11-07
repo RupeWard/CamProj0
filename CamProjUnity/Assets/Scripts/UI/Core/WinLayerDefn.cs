@@ -43,10 +43,22 @@ using System.Collections;
 		get { return (layerNum_ == winLayerManager_.NumLayers - 1);  }
 	}
 
+	public bool IsAtBack
+	{
+		get { return (layerNum_ == 0); }
+	}
+
+
 	public bool MoveContentsToTop( )
 	{
 		return winLayerManager_.MoveContentsToTop( layerNum_ );
 	}
+
+	public bool MoveContentsToBack( )
+	{
+		return winLayerManager_.MoveContentsToBack( layerNum_ );
+	}
+
 
 	public WinLayerWin ReleaseContents( )
 	{

@@ -114,6 +114,22 @@ public class DeviceCameraDisplay : MonoBehaviour
 		}
 	}
 
+	public void MoveToBack()
+	{
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log( "DCD: MoveToBack" );
+		}
+		if (winLayerWin.currentLayer.LayerNum > 0 && winLayerWin.currentLayer.WinLayerManager.NumLayers > 1 )
+		{
+			if (winLayerWin.currentLayer.IsOnTop)
+			{
+				HandleLossOfFocus( );
+			}
+			winLayerWin.MoveToBack( );
+		}
+	}
+
 	public void HandleClick( )
 	{
 		if (winLayerWin.MovetoTop( ))

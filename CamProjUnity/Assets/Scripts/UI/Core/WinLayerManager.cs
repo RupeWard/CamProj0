@@ -92,7 +92,61 @@ using System.Collections.Generic;
 		}
 		return bMoved;
 	}
-		#endregion Interface
+
+	public bool MoveContentsToBack( int layerNum )
+	{
+		bool bMoved = false;
+		if (layerNum != 0)
+		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WLM: moving contents of layer " + layerNum + " to back" );
+			}
+
+			WinLayerWin newBackContents = winLayerDefns_[layerNum].ReleaseContents( );
+			newBackContents.currentLayer = null;
+			for (int i = layerNum; i >0; i--)
+			{
+				WinLayerWin content = winLayerDefns_[i-1].ReleaseContents( );
+				if (content != null)
+				{
+					content.AddToWinLayer( winLayerDefns_[i] );
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( content.gameObject.name + " moved to layer " + winLayerDefns_[layerNum].DebugDescribe( ) );
+					}
+				}
+				else
+				{
+					Debug.LogWarning( "WLM: empty layer " + winLayerDefns_[i].DebugDescribe( ) );
+				}
+
+			}
+			if (newBackContents)
+			{
+				newBackContents.AddToWinLayer( winLayerDefns_[0] );
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( newBackContents.gameObject.name + " moved to backlayer " + winLayerDefns_[0].DebugDescribe( ) );
+				}
+			}
+			else
+			{
+				Debug.LogWarning( "WLM: no newBackContents" );
+			}
+			bMoved = true;
+		}
+		else
+		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WLM: layer " + layerNum + " is at back" );
+			}
+		}
+		return bMoved;
+	}
+
+	#endregion Interface
 
 	#region settings
 

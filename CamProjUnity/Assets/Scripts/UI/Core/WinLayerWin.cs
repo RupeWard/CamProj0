@@ -35,6 +35,22 @@ public class WinLayerWin : MonoBehaviour
 		return bMoved;
 	}
 
+	public bool MoveToBack( )
+	{
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log( "WLW: MoveToBack" );
+		}
+
+		bool bMoved = false;
+		if (!currentLayer.IsAtBack)
+		{
+			bMoved = currentLayer.MoveContentsToBack( );
+		}
+		return bMoved;
+	}
+
+
 	public void AddToWinLayer( WinLayerDefn wld )
 	{
 		if (wld == currentLayer)

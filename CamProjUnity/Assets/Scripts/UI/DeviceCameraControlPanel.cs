@@ -44,6 +44,11 @@ public class DeviceCameraControlPanel : MonoBehaviour
 		deviceCameraDisplay_.Clear( );
 	}
 
+	public void OnBackButtonPressed()
+	{
+		deviceCameraDisplay_.MoveToBack( );
+	}
+
 	public void OnCloseButtonPressed( )
 	{
 		transform.parent.GetComponent<WinControlsLayer>( ).CloseControls( );
