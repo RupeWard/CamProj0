@@ -27,7 +27,10 @@ public class DeviceCameraDisplay : MonoBehaviour
     {
         if (rawImage != null)
         {
-            rawImage.texture = webCamTexture_;
+            if (webCamTexture_.isPlaying)
+            {
+                rawImage.texture = webCamTexture_;
+            }
         }
     }
 
