@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DeviceCameraControlPanel : WinControlPanel
+public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 {
 	#region inspector hooks
 
@@ -17,9 +17,12 @@ public class DeviceCameraControlPanel : WinControlPanel
 
 	#region SetUp
 
-	public void Init( DeviceCameraDisplay dcd)
+	public override void PostInit( DeviceCameraDisplay dcd)
 	{
-		Init( dcd.winLayerWin );
+		if (dcd == null)
+		{
+			Debug.LogError( "NULL DCD" );
+		}
 		deviceCameraDisplay_ = dcd;
 		SetPlayButtonText( );
 	}

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LogControlPanel : WinControlPanel
+public class LogControlPanel : WinControlPanel < LogPanel>
 {
 	#region inspector hooks
 
@@ -15,11 +15,14 @@ public class LogControlPanel : WinControlPanel
 	#endregion private data
 
 	#region SetUp
-
-	public void Init( LogPanel lp)
+	
+	public override void PostInit( LogPanel lp)
 	{
+		if (lp== null)
+		{
+			Debug.LogError( "NULL LP" );
+		}
 		logPanel_ = lp;
-		base.Init( logPanel_.winLayerWin );
 	}
 
 	#endregion SetUp

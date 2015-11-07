@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-abstract public class WinControlPanel : MonoBehaviour
+abstract public class WinControlPanel < TControlleeType >: MonoBehaviour  
 {
 	#region inspector hooks
 
@@ -11,15 +11,33 @@ abstract public class WinControlPanel : MonoBehaviour
 
 	WinLayerWin win_;
 
+	TControlleeType controllee_;
+
 	#endregion private data
 
 	#region SetUp
 
-	protected void Init( WinLayerWin wlw )
+	public void Init( WinLayerWin wlw)
 	{
 		win_ = wlw;
 		gameObject.SetActive( true );
+		controllee_ = wlw.GetComponent<TControlleeType>( );
+		if (controllee_ == null)
+		{
+			controllee_ = wlw.transform.GetComponentInChildren<TControlleeType>( );
+		}
+		if (controllee_ == null)
+		{
+			Debug.LogError( "WCP: "+gameObject.name+" Failed to find controllee" );
+		}
+		else
+		{
+			PostInit( controllee_ );
+		}
+
 	}
+
+public abstract void PostInit ( TControlleeType controllee);
 
 	#endregion SetUp
 
