@@ -16,6 +16,31 @@ namespace RW.Win
             get { return winLayerDefns_.Count;  }
         }
 
+		public void AddToTopLayer( WinLayerWin win )
+		{
+			WinLayerDefn layerToPutIn = null;
+			for (int i = 0; i < NumLayers && layerToPutIn==null; i++)
+			{
+				if (winLayerDefns_[i].IsEmpty)
+				{
+					layerToPutIn = winLayerDefns_[i];
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "WLM: Found layer " + i + " of " + NumLayers + " for " + win.gameObject.name );
+					}
+				}
+			}
+			if (layerToPutIn == null)
+			{
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( "WLM: No empty layer in " + NumLayers + " for " + win.gameObject.name +", creating");
+				}
+				layerToPutIn = AddLayer( );
+			}
+			win.AddToWinLayer( layerToPutIn );
+		}
+
         #endregion Interface
 
         #region settings

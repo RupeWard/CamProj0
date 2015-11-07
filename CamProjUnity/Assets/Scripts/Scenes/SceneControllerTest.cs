@@ -3,25 +3,41 @@ using System.Collections;
 
 public class SceneControllerTest : MonoBehaviour
 {
-    public Transform logPanelFront;
-    public Transform logPanelBack;
+	#region Prefabs
 
-    public RectTransform logPanelRT;
+	public GameObject deviceCameraDisplayLayerPrefab;
+	public GameObject logPanelLayerPrefab;
+	public GameObject buttonsLayerPrefab;
 
-    public void Start()
+	#endregion Prefabs
+
+	#region Inspector hooks
+
+	public RW.Win.WinLayerManager winLayerManager;
+
+	#endregion Inspector hooks
+
+	#region MonoBehaviour
+
+	public void Start()
     {
-        logPanelRT.SetParent(logPanelBack);
-    }
+		InstantiateToTopLayer( deviceCameraDisplayLayerPrefab );
+		InstantiateToTopLayer( logPanelLayerPrefab );
+		InstantiateToTopLayer( buttonsLayerPrefab );
+	}
 
-    public void OnLogPanelToggle()
-    {
-        if (logPanelRT.parent == logPanelBack)
-        {
-            logPanelRT.SetParent(logPanelFront);
-        }
-        else
-        {
-            logPanelRT.SetParent(logPanelBack);
-        }
-    }
+	#endregion MonoBehaviour
+
+	#region SetUp
+
+	private void InstantiateToTopLayer( GameObject prefab )
+	{
+		GameObject go = Instantiate( prefab ) as GameObject;
+		RW.Win.WinLayerWin win = go.GetComponent<RW.Win.WinLayerWin>( );
+		winLayerManager.AddToTopLayer( win );
+	}
+
+	#endregion SetUp
+
+
 }
