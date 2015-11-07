@@ -31,4 +31,10 @@ public class WinControlsLayer : MonoBehaviour
 		}
 	}
 
+	public void CloseControls()
+	{
+		GameObject.Destroy( currentControls_.gameObject );
+		currentControls_ = null;
+	}
+
 }

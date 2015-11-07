@@ -41,8 +41,14 @@ public class DeviceCameraControlPanel : MonoBehaviour
 
 	public void OnClearButtonPressed()
 	{
-
+		deviceCameraDisplay_.Clear( );
 	}
+
+	public void OnCloseButtonPressed( )
+	{
+		transform.parent.GetComponent<WinControlsLayer>( ).CloseControls( );
+	}
+
 
 	#endregion Button handlers
 

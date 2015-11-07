@@ -7,6 +7,7 @@ public class DeviceCameraDisplay : MonoBehaviour
 
     public UnityEngine.UI.RawImage rawImage;
 	public GameObject controlPanelPrefab;
+	public Texture2D clearTexture;
 
     private WebCamTexture webCamTexture_ = null;
     private RectTransform myRectTransform_;
@@ -42,6 +43,14 @@ public class DeviceCameraDisplay : MonoBehaviour
 	public bool IsPlaying
 	{
 		get { return (webCamTexture_ != null && webCamTexture_.isPlaying);  }
+	}
+
+	public void Clear( )
+	{
+		if (!IsPlaying)
+		{
+			rawImage.texture = clearTexture;
+		}
 	}
 
 	int count = 0;
