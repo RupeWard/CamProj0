@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 {
@@ -14,6 +15,11 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 	DeviceCameraDisplay deviceCameraDisplay_;
 
 	#endregion private data
+
+	public override string title( )
+	{
+		return "Camera";
+	}
 
 	#region SetUp
 

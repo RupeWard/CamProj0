@@ -2,7 +2,7 @@
 using System.Collections;
 
 [RequireComponent ( typeof(RectTransform))]
-public class WinWin < TWinType> : MonoBehaviour 
+public abstract class WinWin < TWinType> : MonoBehaviour 
 {
 	private static readonly bool DEBUG_LOCAL = true;
 
@@ -17,7 +17,7 @@ public class WinWin < TWinType> : MonoBehaviour
 
 	public WinLayerWin winLayerWin;
 
-	protected virtual void Awake()
+    protected virtual void Awake()
 	{
 		rectTransform_ = GetComponent<RectTransform>( );
 		parentDims = new Vector2( Screen.width, Screen.height );

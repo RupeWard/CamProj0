@@ -5,6 +5,9 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 {
 	#region inspector hooks
 
+	public UnityEngine.UI.Text titleText;
+	public RectTransform buttonsContainer;
+
 	#endregion inspector hooks
 
 	#region private data
@@ -16,12 +19,16 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	#endregion private data
 
+	abstract public string title( );
+
 	#region SetUp
 
 	public void Init( WinLayerWin wlw, WinWin<TControlleeType> ww)
 	{
 		win_ = wlw;
 		winWin_ = ww;
+
+		titleText.text = title();
 
 		gameObject.SetActive( true );
 		controllee_ = wlw.GetComponent<TControlleeType>( );
@@ -40,7 +47,7 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	}
 
-public abstract void PostInit ( TControlleeType controllee);
+	public abstract void PostInit ( TControlleeType controllee);
 
 	#endregion SetUp
 

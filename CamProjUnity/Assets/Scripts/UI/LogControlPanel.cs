@@ -14,8 +14,13 @@ public class LogControlPanel : WinControlPanel < LogPanel>
 
 	#endregion private data
 
+	public override string title( )
+	{
+		return "Logger";
+	}
+
 	#region SetUp
-	
+
 	public override void PostInit( LogPanel lp)
 	{
 		if (lp== null)
