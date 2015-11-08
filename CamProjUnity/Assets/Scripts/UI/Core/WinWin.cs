@@ -33,11 +33,16 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		{
 			StopMoving( );
 		}
+		if (isScaling_)
+		{
+			StopScaling( );
+		}
 	}
 
 	private Vector2 lastScreenPosition_;
 	private float startingDistFromCentre_;
 
+	private Vector3 startingSize_;
 	private Vector3 startingScale_;
 
 	public RectTransform scaleableRT;
@@ -48,17 +53,22 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		if (isSizing_)
 		{
 			startingDistFromCentre_ = (lastScreenPosition_ - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
-			startingScale_ = rectTransform_.localScale;
+			startingSize_ = rectTransform_.localScale;
 		}
 		else if (isScaling_)
 		{
-
-		} 
+			if (scaleableRT == null)
+			{
+				Debug.LogError( "No scaleableRT" );
+			}
+			startingDistFromCentre_ = (lastScreenPosition_ - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
+			startingScale_ = scaleableRT.localScale;
+		}
 	}
 
 	public void HandlePointerDrag()
 	{
-		if (isSizing_)
+		if (isScaling_)
 		{
 			Vector2 newScreenPosition = Input.mousePosition;
 			float currentDistFromCentre_ = (newScreenPosition - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
@@ -67,6 +77,69 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			{
 				float factor = currentDistFromCentre_ / startingDistFromCentre_;
 				Vector3 newScale = startingScale_ * factor;
+				bool newScaleOk = true;
+				if (newScale.x < 0.1f || newScale.x > 5.0f || newScale.y < 0.1f || newScale.y > 5.0f)
+				{
+					newScaleOk= false;
+					Debug.Log( "Scaling stopped by limits" );
+				}
+				if (newScaleOk)
+				{
+					scaleableRT.localScale = newScale;
+				}
+				/*
+				Vector2 newSize = new Vector2( newScale.x * rectTransform_.GetWidth( ), newScale.y * rectTransform_.GetHeight( ) );
+
+				bool newSizeOk = true;
+				if (newSize.x < 100f || newSize.y < 100f)
+				{
+					newSizeOk = false;
+					Debug.Log( "Scaling stopped by min" );
+				}
+				if (newSizeOk && factor > 1f)
+				{
+					Rect newRect = new Rect(
+						rectTransform_.anchoredPosition.x - 0.5f * newSize.x,
+						rectTransform_.anchoredPosition.y - 0.5f * newSize.y,
+						newSize.x,
+						newSize.y
+						);
+					if (newRect.xMin < -0.5f * parentDims.x
+						|| newRect.xMax > 0.5f * parentDims.x
+						|| newRect.yMin < -0.5f * parentDims.y
+						|| newRect.yMax > 0.5f * parentDims.y
+						)
+					{
+						newSizeOk = false;
+						Debug.Log( "Scaling stopped by edge" );
+					}
+				}
+				if (newSizeOk)
+				{
+					if (scaleableRT != null)
+					{
+						Vector2 relativeScale = new Vector2( newScale.x / rectTransform_.localScale.x, newScale.y / rectTransform_.localScale.y );
+						Vector2 newScaleableRTScale = scaleableRT.localScale;
+						newScaleableRTScale.x /= relativeScale.x;
+						newScaleableRTScale.y /= relativeScale.y;
+						scaleableRT.localScale = newScaleableRTScale;
+					}
+					rectTransform_.localScale = newScale;
+				}
+				*/
+
+				lastScreenPosition_ = newScreenPosition;
+			}
+		}
+		else if (isSizing_)
+		{
+			Vector2 newScreenPosition = Input.mousePosition;
+			float currentDistFromCentre_ = (newScreenPosition - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
+			Vector2 diff = newScreenPosition - lastScreenPosition_;
+			if (diff.magnitude > 0.1f) //FIXME
+			{
+				float factor = currentDistFromCentre_ / startingDistFromCentre_;
+				Vector3 newScale = startingSize_ * factor;
 				Vector2 newSize = new Vector2( newScale.x * rectTransform_.GetWidth( ), newScale.y * rectTransform_.GetHeight( ) );
 
 				bool newSizeOk = true;
@@ -181,7 +254,11 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 
 	public void HandlePointerUp( )
 	{
-		if (isSizing_)
+		if (isScaling_)
+		{
+			StopScaling( );
+		}
+		else if (isSizing_)
 		{
 			StopSizing( );
 		}
@@ -311,7 +388,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 				currentOverlay_.localScale = Vector3.one;
 				WinScaleOverlay wsO = currentOverlay_.GetComponent<WinScaleOverlay>( );
 				wsO.Init( rectTransform_ );
-				isSizing_ = true;
+				isScaling_ = true;
 			}
 		}
 	}

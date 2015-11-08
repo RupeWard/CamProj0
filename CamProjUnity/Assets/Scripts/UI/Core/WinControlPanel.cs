@@ -78,7 +78,7 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	public void OnScaleButtonPressed( )
 	{
-//		winWin_.SizeWindow( );
+		winWin_.ScaleWindow( );
 	}
 
 	public void OnSizeButtonPressed( )
