@@ -81,52 +81,16 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 				if (newScale.x < 0.1f || newScale.x > 5.0f || newScale.y < 0.1f || newScale.y > 5.0f)
 				{
 					newScaleOk= false;
-					Debug.Log( "Scaling stopped by limits" );
+					if (DEBUG_SCALING)
+					{
+						Debug.Log( "Scaling stopped by limits" );
+					}
 				}
 				if (newScaleOk)
 				{
 					scaleableRT.localScale = newScale;
 				}
-				/*
 				Vector2 newSize = new Vector2( newScale.x * rectTransform_.GetWidth( ), newScale.y * rectTransform_.GetHeight( ) );
-
-				bool newSizeOk = true;
-				if (newSize.x < 100f || newSize.y < 100f)
-				{
-					newSizeOk = false;
-					Debug.Log( "Scaling stopped by min" );
-				}
-				if (newSizeOk && factor > 1f)
-				{
-					Rect newRect = new Rect(
-						rectTransform_.anchoredPosition.x - 0.5f * newSize.x,
-						rectTransform_.anchoredPosition.y - 0.5f * newSize.y,
-						newSize.x,
-						newSize.y
-						);
-					if (newRect.xMin < -0.5f * parentDims.x
-						|| newRect.xMax > 0.5f * parentDims.x
-						|| newRect.yMin < -0.5f * parentDims.y
-						|| newRect.yMax > 0.5f * parentDims.y
-						)
-					{
-						newSizeOk = false;
-						Debug.Log( "Scaling stopped by edge" );
-					}
-				}
-				if (newSizeOk)
-				{
-					if (scaleableRT != null)
-					{
-						Vector2 relativeScale = new Vector2( newScale.x / rectTransform_.localScale.x, newScale.y / rectTransform_.localScale.y );
-						Vector2 newScaleableRTScale = scaleableRT.localScale;
-						newScaleableRTScale.x /= relativeScale.x;
-						newScaleableRTScale.y /= relativeScale.y;
-						scaleableRT.localScale = newScaleableRTScale;
-					}
-					rectTransform_.localScale = newScale;
-				}
-				*/
 
 				lastScreenPosition_ = newScreenPosition;
 			}
@@ -146,7 +110,10 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 				if (newSize.x < 100f || newSize.y < 100f)
 				{
 					newSizeOk = false;
-					Debug.Log( "Scaling stopped by min" );
+					if (DEBUG_SCALING)
+					{
+						Debug.Log( "Scaling stopped by min" );
+					}
 				}
 				if (newSizeOk && factor > 1f)
 				{
@@ -163,7 +130,10 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 						)
 					{
 						newSizeOk = false;
-						Debug.Log( "Scaling stopped by edge" );
+						if (DEBUG_SCALING)
+						{
+							Debug.Log( "Scaling stopped by edge" );
+						}
 					}
 				}
 				if (newSizeOk)
@@ -202,7 +172,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 						{
 							distFromXEdge = (rectTransform_.anchoredPosition.x - 0.5f * currentSize.x) + 0.5f * parentDims.x;
 						}
-						if (DEBUG_LOCAL)
+						if (DEBUG_MOVING)
 						{
 							Debug.Log( "ParentDims = " + parentDims + " diff = " + diff + " pos = " + rectTransform_.anchoredPosition + " currentDims = " + currentSize + " distFromXEdge=" + distFromXEdge + " (" + signXMovement + ")" );
 						}
@@ -210,7 +180,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 					if (Mathf.Abs( diff.x ) > distFromXEdge)
 					{
 						diff.x = signXMovement * distFromXEdge;
-						if (DEBUG_LOCAL)
+						if (DEBUG_MOVING)
 						{
 							Debug.Log( "Clamped x diff to " + diff.x );
 						}
@@ -230,7 +200,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 						{
 							distFromYEdge = (rectTransform_.anchoredPosition.y - 0.5f * currentSize.y) + 0.5f * parentDims.y;
 						}
-						if (DEBUG_LOCAL)
+						if (DEBUG_MOVING)
 						{
 							Debug.Log( "ParentDims = " + parentDims + " diff = " + diff + " pos = " + rectTransform_.anchoredPosition + " currentDims = " + currentSize + " distFromYEdge=" + distFromYEdge + " (" + signYMovement + ")" );
 						}
@@ -238,7 +208,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 					if (Mathf.Abs( diff.y ) > distFromYEdge)
 					{
 						diff.y = signYMovement * distFromYEdge;
-						if (DEBUG_LOCAL)
+						if (DEBUG_MOVING)
 						{
 							Debug.Log( "Clamped y diff to " + diff.y );
 						}
@@ -307,6 +277,8 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		}
 	}
 
+	private static readonly bool DEBUG_MOVING = false;
+
 	private bool isMoving_ = false;
 	private RectTransform currentOverlay_;
 
@@ -357,6 +329,8 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			}
 		}
 	}
+
+	private static readonly bool DEBUG_SCALING = false;
 
 	private bool isScaling_ = false;
 	private void StopScaling( )
@@ -409,6 +383,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		}
 	}
 
+	private static readonly bool DEBUG_SIZING = false;
 
 	private bool isSizing_= false;
 
