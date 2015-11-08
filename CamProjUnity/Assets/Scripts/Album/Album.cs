@@ -4,7 +4,11 @@ using System.Collections.Generic;
 
 public class Album: IDebugDescribable
 {
-	private List<AlbumTexture> textures_ = new List<AlbumTexture>( );
+	private List<AlbumTexture> albumTextures_ = new List<AlbumTexture>( );
+	public List<AlbumTexture> AlbumTextures
+	{
+		get { return albumTextures_;  }
+	}
 
 	public System.Action OnAlbumChanged;
 	private void HandleAlbumChanged()
@@ -18,14 +22,14 @@ public class Album: IDebugDescribable
 	public void AddTexture( AlbumTexture tex)
 	{
 		tex.imageName = findNextImagename( tex.imageName );
-		textures_.Add( tex );
+		albumTextures_.Add( tex );
 		HandleAlbumChanged( );
 	}
 
 	private bool imagenameExists(string s)
 	{
 		bool result = false;
-		foreach( AlbumTexture at in textures_ )
+		foreach( AlbumTexture at in albumTextures_ )
 		{
 			if (at.imageName == s)
 			{
@@ -70,17 +74,18 @@ public class Album: IDebugDescribable
 
 	public int NumTextures
 	{
-		get { return textures_.Count;  }
+		get { return albumTextures_.Count;  }
 	}
+
 
 	private Album( ) { }
 
 	public void DebugDescribe(System.Text.StringBuilder sb)
 	{
-		sb.Append( "[Album: " ).Append( albumName_ ).Append( " " ).Append( textures_.Count );
-		for (int i=0; i<textures_.Count; i++)
+		sb.Append( "[Album: " ).Append( albumName_ ).Append( " " ).Append( albumTextures_.Count );
+		for (int i=0; i<albumTextures_.Count; i++)
 		{
-			sb.Append( " " ).Append( textures_[i].imageName );
+			sb.Append( " " ).Append( albumTextures_[i].imageName );
 		}
 		sb.Append( "]" );
 	}
