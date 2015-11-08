@@ -21,6 +21,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 	{
 		rectTransform_ = GetComponent<RectTransform>( );
 		parentDims = new Vector2( Screen.width, Screen.height );
+		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
 	}
 
 	public void HandleLossOfFocus( )
@@ -288,7 +289,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 						{
 							Debug.LogError( "NULL RT" );
 						}
-						winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
+						WinLayerManager.Instance.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
 						controlPanel_.Init( winLayerWin, this );
 						if (DEBUG_LOCAL)
 						{
@@ -298,7 +299,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 				}
 				else
 				{
-					winLayerWin.WinLayerManager.CloseControls( );
+					WinLayerManager.Instance.CloseControls( );
 				}
 			}
 		}

@@ -33,14 +33,9 @@ using System.Collections;
 		currentContent_ = null;
 	}
 
-	public WinLayerManager WinLayerManager
-	{
-		get { return winLayerManager_;  }
-	}
-
 	public bool IsOnTop
 	{
-		get { return (layerNum_ == winLayerManager_.NumLayers - 1);  }
+		get { return (layerNum_ == WinLayerManager.Instance.NumLayers - 1);  }
 	}
 
 	public bool IsAtBack
@@ -51,12 +46,12 @@ using System.Collections;
 
 	public bool MoveContentsToTop( )
 	{
-		return winLayerManager_.MoveContentsToTop( layerNum_ );
+		return WinLayerManager.Instance.MoveContentsToTop( layerNum_ );
 	}
 
 	public bool MoveContentsToBack( )
 	{
-		return winLayerManager_.MoveContentsToBack( layerNum_ );
+		return WinLayerManager.Instance.MoveContentsToBack( layerNum_ );
 	}
 
 
@@ -75,7 +70,6 @@ using System.Collections;
 
     #region private data
 
-	private WinLayerManager winLayerManager_;
     private int layerNum_;
 	private WinLayerWin currentContent_ = null;
 
@@ -92,12 +86,11 @@ using System.Collections;
 
     #region Setup
 
-    public void Init(WinLayerManager wlm, RectTransform parent)
+    public void Init(RectTransform parent)
     {
-		winLayerManager_ = wlm;
 		currentContent_ = null;
 
-		layerNum_ = wlm.NumLayers;
+		layerNum_ = WinLayerManager.Instance.NumLayers;
         gameObject.name = "Layer_" + layerNum_.ToString("00");
         rectTransform_.SetParent(parent);
 		rectTransform_.offsetMin = Vector2.zero;
@@ -111,9 +104,8 @@ using System.Collections;
         }
 	}
 
-	public void Init( string name, WinLayerManager wlm, RectTransform parent )
+	public void Init( string name, RectTransform parent )
 	{
-		winLayerManager_ = wlm;
 		currentContent_ = null;
 
 		layerNum_ = -1;

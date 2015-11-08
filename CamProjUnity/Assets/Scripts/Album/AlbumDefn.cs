@@ -10,5 +10,10 @@ public class AlbumDefn
 		get { return albumName_;  }
 	}
 
+	public AlbumDefn(string n)
+	{
+		albumName_ = n;
+	}
+
 	
 }

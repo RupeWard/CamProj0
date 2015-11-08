@@ -13,7 +13,7 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
 
 	void Start ()
     {
-		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
+//		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
 
         WebCamDevice[] devices = WebCamTexture.devices;
         System.Text.StringBuilder sb = new System.Text.StringBuilder();

@@ -2,40 +2,43 @@
 using System.Collections;
 using System.Collections.Generic;
 
-    [RequireComponent (typeof(RectTransform))]
-    public class WinLayerManager : MonoBehaviour
+[RequireComponent (typeof(RectTransform))]
+public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
+{
+	private static readonly bool DEBUG_LOCAL = true;
+
+    #region Interface
+
+    public int NumLayers
     {
-        private static readonly bool DEBUG_LOCAL = true;
+		get { return winLayerDefns_.Count;  }
+	}
 
-        #region Interface
+	public WinLayerWin InstantiateToLayer( GameObject prefab )
+	{
+		GameObject go = Instantiate( prefab ) as GameObject;
+		WinLayerWin win = go.GetComponent<WinLayerWin>( );
+		Add( win );
+		return win;
+	}
 
-        public int NumLayers
-        {
-            get { return winLayerDefns_.Count;  }
-        }
+	public WinLayerWin InstantiateToTopLayer( GameObject prefab )
+	{
+		GameObject go = Instantiate( prefab ) as GameObject;
+		WinLayerWin win = go.GetComponent<WinLayerWin>( );
+		AddToTopLayer( win );
+		return win;
+	}
 
-		public void InstantiateToLayer( GameObject prefab )
-		{
-			GameObject go = Instantiate( prefab ) as GameObject;
-			WinLayerWin win = go.GetComponent<WinLayerWin>( );
-			Add( win );
-		}
+	public WinLayerWin InstantiateToOverlaysLayer( GameObject prefab )
+	{
+		GameObject go = Instantiate( prefab ) as GameObject;
+		WinLayerWin win = go.GetComponent<WinLayerWin>( );
+		AddToOverlaysLayer( win );
+		return win;
+	}
 
-		public void InstantiateToTopLayer( GameObject prefab )
-		{
-			GameObject go = Instantiate( prefab ) as GameObject;
-			WinLayerWin win = go.GetComponent<WinLayerWin>( );
-			AddToTopLayer( win );
-		}
-
-		public void InstantiateToOverlaysLayer( GameObject prefab )
-		{
-			GameObject go = Instantiate( prefab ) as GameObject;
-			WinLayerWin win = go.GetComponent<WinLayerWin>( );
-			AddToOverlaysLayer( win );
-		}
-
-		public void SetControls( RectTransform r )
+	public void SetControls( RectTransform r )
 		{
 			winControlsLayer.SetControls( r );
 		}
@@ -193,7 +196,7 @@ using System.Collections.Generic;
 
 		#region MonoBehaviour
 
-		private void Awake()
+		protected override void PostAwake()
         {
             rectTransform_ = GetComponent<RectTransform>();
 
@@ -221,7 +224,7 @@ using System.Collections.Generic;
         {
             GameObject go = Instantiate(winLayerPrefab) as GameObject;
             WinLayerDefn wld = go.GetComponent<WinLayerDefn>();
-            wld.Init(this, winLayersContainer);
+            wld.Init(winLayersContainer);
             winLayerDefns_.Add(wld);
 
             if (DEBUG_LOCAL)
@@ -235,7 +238,7 @@ using System.Collections.Generic;
 		{
 			GameObject go = Instantiate( winLayerPrefab ) as GameObject;
 			WinLayerDefn wld = go.GetComponent<WinLayerDefn>( );
-			wld.Init( "TopLayer", this, topLayerContainer );
+			wld.Init( "TopLayer", topLayerContainer );
 			topLayer_ = wld;
 
 			if (DEBUG_LOCAL)
@@ -249,7 +252,7 @@ using System.Collections.Generic;
 		{
 			GameObject go = Instantiate( winLayerPrefab ) as GameObject;
 			WinLayerDefn wld = go.GetComponent<WinLayerDefn>( );
-			wld.Init( "OverlaysLayer", this, overlaysLayerContainer );
+			wld.Init( "OverlaysLayer", overlaysLayerContainer );
 			overlaysLayer_ = wld;
 
 			if (DEBUG_LOCAL)
@@ -263,7 +266,7 @@ using System.Collections.Generic;
 		{
 			GameObject go = Instantiate( winLayerPrefab ) as GameObject;
 			WinLayerDefn wld = go.GetComponent<WinLayerDefn>( );
-			wld.Init( "ControlsLayer", this, controlsLayerContainer );
+			wld.Init( "ControlsLayer", controlsLayerContainer );
 			overlaysLayer_ = wld;
 
 			if (DEBUG_LOCAL)

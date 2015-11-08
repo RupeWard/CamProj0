@@ -42,7 +42,7 @@ public class LogPanel : WinWin< LogPanel>
 	void Start ()
     {
 		Append( "Log started" + System.DateTime.Now + "\n\n" );
-		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
+//		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
 	}
 
 	void Update ()

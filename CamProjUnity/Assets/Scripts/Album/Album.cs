@@ -6,10 +6,20 @@ public class Album: IDebugDescribable
 {
 	private List<AlbumTexture> textures_ = new List<AlbumTexture>( );
 
+	public System.Action OnAlbumChanged;
+	private void HandleAlbumChanged()
+	{
+		if (OnAlbumChanged != null)
+		{
+			OnAlbumChanged( );
+		}
+	}
+
 	public void AddTexture( AlbumTexture tex)
 	{
 		tex.imageName = findNextImagename( tex.imageName );
 		textures_.Add( tex );
+		HandleAlbumChanged( );
 	}
 
 	private bool imagenameExists(string s)
@@ -48,10 +58,19 @@ public class Album: IDebugDescribable
 	}
 
 	private string albumName_;
+	public string AlbumName
+	{
+		get { return albumName_;  }
+	}
 
 	public Album(string n)
 	{
 		albumName_ = n;
+	}
+
+	public int NumTextures
+	{
+		get { return textures_.Count;  }
 	}
 
 	private Album( ) { }

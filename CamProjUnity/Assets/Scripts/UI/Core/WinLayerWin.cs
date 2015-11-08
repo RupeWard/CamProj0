@@ -12,14 +12,6 @@ public class WinLayerWin : MonoBehaviour
 
 	#region Interface
 
-	public WinLayerManager WinLayerManager
-	{
-		get
-		{
-			return (currentLayer == null) ?( null):(currentLayer.WinLayerManager);
-		}
-	}
-
 	public RectTransform RectTransform
 	{
 		get { return rectTransform_;  }
