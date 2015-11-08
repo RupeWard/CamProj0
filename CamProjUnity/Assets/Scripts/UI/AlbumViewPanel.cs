@@ -10,6 +10,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	public UnityEngine.UI.Text titleText;
 	public ImageButton[] imageButtons = new ImageButton[0];
+	public UnityEngine.UI.RawImage rawImage;
 
 	protected override void Awake()
 	{
@@ -46,6 +47,8 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		SetButtons( );
 	}
 
+	private ImageButton selectedButton_ = null;
+
 	public void HandleImageButtonClicked( ImageButton b )
 	{
 		if (b.AlbumTexture == null)
@@ -55,6 +58,35 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		else
 		{
 			Debug.Log( "IB Clicked: "+b.AlbumTexture.imageName );
+			switch (b.State)
+			{
+				case ImageButton.EState.Empty:
+					{
+						if (selectedButton_ != null)
+						{
+							selectedButton_.DeSelect( );
+							selectedButton_ = null;
+							rawImage.texture = null;
+						}
+						break;
+					}
+				case ImageButton.EState.Full:
+					{
+						if (selectedButton_ != null)
+						{
+							selectedButton_.DeSelect( );
+							selectedButton_ = null;
+						}
+						b.Select( );
+						selectedButton_ = b;
+						break;
+					}
+				case ImageButton.EState.Selected:
+					{
+						rawImage.texture = b.AlbumTexture.texture;
+						break;
+					}
+			}
 		}
 	}
 
