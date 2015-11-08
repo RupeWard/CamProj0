@@ -4,23 +4,38 @@ using System.Collections;
 public class ButtonsPanel : MonoBehaviour
 {
 	public GameObject outButton;
+	public GameObject inButton;
 
 	private Vector3 outPosition_;
 	private Vector3 inPosition_;
 
 	private RectTransform rectTransform_;
 
+	private Vector2 targetPosition_;
+
 	public void OnOutButtonClicked()
 	{
-		rectTransform_.anchoredPosition = outPosition_;
+		targetPosition_ = outPosition_;
 		outButton.gameObject.SetActive( false );
+		inButton.gameObject.SetActive( true );
 	}
 
 	public void OnInButtonClicked()
 	{
-		rectTransform_.anchoredPosition = inPosition_;
+		targetPosition_ = inPosition_;
 		outButton.gameObject.SetActive( true );
+		inButton.gameObject.SetActive( false);
 	}
+
+	private float tweenSpeed= 5f;
+
+
+	void Update( )
+	{
+		Vector2 newPosition = Vector2.Lerp( rectTransform_.anchoredPosition, targetPosition_, Time.deltaTime * tweenSpeed );
+		rectTransform_.anchoredPosition = newPosition;
+	}
+
 
 	public void OnQuitButtonClicked()
 	{
@@ -42,8 +57,10 @@ public class ButtonsPanel : MonoBehaviour
 	{
 		rectTransform_ = GetComponent<RectTransform>( );
 		outPosition_ = rectTransform_.anchoredPosition;
+		targetPosition_ = outPosition_;
 		inPosition_ = outPosition_;
 		inPosition_.x = inPosition_.x + GetComponent<RectTransform>( ).GetWidth( );
 		outButton.gameObject.SetActive( false );
+		inButton.gameObject.SetActive( true );
 	}
 }
