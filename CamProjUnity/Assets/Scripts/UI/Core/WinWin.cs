@@ -35,22 +35,69 @@ public class WinWin < TWinType> : MonoBehaviour
 		}
 	}
 
-	Vector2 lastScreenPosition;
+	private Vector2 lastScreenPosition_;
+	private float startingDistFromCentre_;
 
+	private Vector3 startingScale_;
+	
 	public void HandlePointerDown()
 	{
-		if (isMoving_)
+		lastScreenPosition_ = Input.mousePosition;
+		if (isScaling_)
 		{
-			lastScreenPosition = Input.mousePosition;
+			startingDistFromCentre_ = (lastScreenPosition_ - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
+			startingScale_ = rectTransform_.localScale;
 		}
 	}
 
 	public void HandlePointerDrag()
 	{
-		if (isMoving_)
+		if (isScaling_)
 		{
 			Vector2 newScreenPosition = Input.mousePosition;
-			Vector2 diff = newScreenPosition - lastScreenPosition;
+			float currentDistFromCentre_ = (newScreenPosition - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
+			Vector2 diff = newScreenPosition - lastScreenPosition_;
+			if (diff.magnitude > 0.1f) //FIXME
+			{
+				float factor = currentDistFromCentre_ / startingDistFromCentre_;
+				Vector3 newScale = startingScale_ * factor;
+				Vector2 newSize = new Vector2( newScale.x * rectTransform_.GetWidth( ), newScale.y * rectTransform_.GetHeight( ) );
+
+				bool newSizeOk = true;
+				if (newSize.x < 100f || newSize.y < 100f)
+				{
+					newSizeOk = false;
+					Debug.Log( "Scaling stopped by min" );
+				}
+				if (newSizeOk && factor > 1f)
+				{
+					Rect newRect = new Rect( 
+						rectTransform_.anchoredPosition.x - 0.5f * newSize.x,
+						rectTransform_.anchoredPosition.y - 0.5f * newSize.y,
+						newSize.x,
+						newSize.y
+                        );
+					if (newRect.xMin < -0.5f * parentDims.x
+						|| newRect.xMax > 0.5f * parentDims.x
+						|| newRect.yMin < -0.5f *parentDims.y
+						|| newRect.yMax > 0.5f *parentDims.y
+						)
+					{
+						newSizeOk = false;
+						Debug.Log( "Scaling stopped by edge" );
+					}
+				}
+				if (newSizeOk)
+				{
+					rectTransform_.localScale = newScale; 
+				}
+				lastScreenPosition_ = newScreenPosition;
+			}
+		}
+		else if (isMoving_)
+		{
+			Vector2 newScreenPosition = Input.mousePosition;
+			Vector2 diff = newScreenPosition - lastScreenPosition_;
 			if (diff.magnitude > 0.1f) //FIXME
 			{
 				Vector2 currentSize = new Vector2( rectTransform_.localScale.x * rectTransform_.GetWidth( ), rectTransform_.localScale.y * rectTransform_.GetHeight( ) );
@@ -112,7 +159,7 @@ public class WinWin < TWinType> : MonoBehaviour
 				}
 
 				rectTransform_.anchoredPosition = rectTransform_.anchoredPosition + diff;
-				lastScreenPosition = newScreenPosition;
+				lastScreenPosition_ = newScreenPosition;
 			}
 
 		}
@@ -120,7 +167,11 @@ public class WinWin < TWinType> : MonoBehaviour
 
 	public void HandlePointerUp( )
 	{
-		if (isMoving_)
+		if (isScaling_)
+		{
+			StopScaling( );
+		}
+		else if (isMoving_)
 		{
 			StopMoving( );
 		}
@@ -247,7 +298,7 @@ public class WinWin < TWinType> : MonoBehaviour
 				currentOverlay_.localScale = Vector3.one;
 				WinScaleOverlay wsO = currentOverlay_.GetComponent<WinScaleOverlay>( );
 				wsO.Init( rectTransform_ );
-				isMoving_ = true;
+				isScaling_ = true;
 			}
 		}
 	}

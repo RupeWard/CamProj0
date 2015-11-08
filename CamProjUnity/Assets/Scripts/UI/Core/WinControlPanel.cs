@@ -62,6 +62,12 @@ public abstract void PostInit ( TControlleeType controllee);
 	{
 		winWin_.MoveWindow( );
 	}
+
+	public void OnScaleButtonPressed( )
+	{
+		winWin_.ScaleWindow( );
+	}
+
 	#endregion Button handlers
 
 
