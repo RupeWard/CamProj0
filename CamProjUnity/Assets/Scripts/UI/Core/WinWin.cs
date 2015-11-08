@@ -332,6 +332,14 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		}
 		else
 		{
+			if (isScaling_)
+			{
+				StopScaling( );
+			}
+			if (isSizing_)
+			{
+				StopSizing( );
+			}
 			string prefabName = "Prefabs/UI/WinMoveOverlay";
             GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
 			if (go == null)
@@ -373,6 +381,14 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		}
 		else
 		{
+			if (isMoving_)
+			{
+				StopMoving( );
+			}
+			if (isSizing_)
+			{
+				StopSizing( );
+			}
 			string prefabName = "Prefabs/UI/WinScaleOverlay";
 			GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
 			if (go == null)
@@ -418,6 +434,14 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		}
 		else
 		{
+			if (isScaling_)
+			{
+				StopScaling( );
+			}
+			if (isMoving_)
+			{
+				StopMoving( );
+			}
 			string prefabName = "Prefabs/UI/WinSizeOverlay";
 			GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
 			if (go == null)
