@@ -47,21 +47,48 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 
 	public RectTransform scaleableRT;
 
-	public void HandlePointerDown()
+	private float CanvasReferenceHeight
+	{
+		get { return 600f; }
+	}
+
+	private float CanvasReferenceWidth
+	{
+		get { return Screen.width * CanvasReferenceHeight / Screen.height; }
+	}
+
+
+	private Vector2 centreOfWinInScreenCoords_;
+
+    public void HandlePointerDown()
 	{
 		lastScreenPosition_ = Input.mousePosition;
+
+		centreOfWinInScreenCoords_ =
+			new Vector2(
+				0.5f * CanvasReferenceWidth + rectTransform_.anchoredPosition.x,
+				0.5f * CanvasReferenceHeight + rectTransform_.anchoredPosition.y );
+
 		if (isSizing_)
 		{
-			startingDistFromCentre_ = (lastScreenPosition_ - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
+			if (DEBUG_SIZING)
+			{
+				Debug.Log( "Centre in screenCoords = " + centreOfWinInScreenCoords_ );
+			}
+			startingDistFromCentre_ = (lastScreenPosition_ - centreOfWinInScreenCoords_).magnitude;
 			startingSize_ = rectTransform_.localScale;
 		}
 		else if (isScaling_)
 		{
+			if (DEBUG_SCALING)
+			{
+				Debug.Log( "Centre in screenCoords = " + centreOfWinInScreenCoords_ );
+			}
 			if (scaleableRT == null)
 			{
 				Debug.LogError( "No scaleableRT" );
 			}
-			startingDistFromCentre_ = (lastScreenPosition_ - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
+			startingDistFromCentre_ = (lastScreenPosition_ - centreOfWinInScreenCoords_).magnitude;
 			startingScale_ = scaleableRT.localScale;
 		}
 	}
@@ -71,7 +98,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		if (isScaling_)
 		{
 			Vector2 newScreenPosition = Input.mousePosition;
-			float currentDistFromCentre_ = (newScreenPosition - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
+			float currentDistFromCentre_ = (newScreenPosition - centreOfWinInScreenCoords_).magnitude;
 			Vector2 diff = newScreenPosition - lastScreenPosition_;
 			if (diff.magnitude > 0.1f) //FIXME
 			{
@@ -98,7 +125,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		else if (isSizing_)
 		{
 			Vector2 newScreenPosition = Input.mousePosition;
-			float currentDistFromCentre_ = (newScreenPosition - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
+			float currentDistFromCentre_ = (newScreenPosition -centreOfWinInScreenCoords_).magnitude;
 			Vector2 diff = newScreenPosition - lastScreenPosition_;
 			if (diff.magnitude > 0.1f) //FIXME
 			{
@@ -112,7 +139,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 					newSizeOk = false;
 					if (DEBUG_SCALING)
 					{
-						Debug.Log( "Scaling stopped by min" );
+						Debug.Log( "Sizing stopped by min" );
 					}
 				}
 				if (newSizeOk && factor > 1f)
@@ -132,7 +159,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 						newSizeOk = false;
 						if (DEBUG_SCALING)
 						{
-							Debug.Log( "Scaling stopped by edge" );
+							Debug.Log( "Sizing stopped by edge" );
 						}
 					}
 				}
@@ -383,7 +410,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		}
 	}
 
-	private static readonly bool DEBUG_SIZING = false;
+	private static readonly bool DEBUG_SIZING = true;
 
 	private bool isSizing_= false;
 
