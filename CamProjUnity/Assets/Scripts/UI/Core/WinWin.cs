@@ -145,6 +145,10 @@ public class WinWin < TWinType> : MonoBehaviour
 					}
 					else
 					{
+						if (controlPanel_.GetComponent<RectTransform>() ==null)
+						{
+							Debug.LogError( "NULL RT" );
+						}
 						winLayerWin.WinLayerManager.SetControls( controlPanel_.GetComponent<RectTransform>( ) );
 						controlPanel_.Init( winLayerWin, this );
 						if (DEBUG_LOCAL)
@@ -199,6 +203,50 @@ public class WinWin < TWinType> : MonoBehaviour
 				currentOverlay_.offsetMin = 20f * Vector2.one;
 				currentOverlay_.offsetMax = -20f * Vector2.one;
 				currentOverlay_.localScale = Vector3.one;
+				isMoving_ = true;
+			}
+		}
+	}
+
+	private bool isScaling_= false;
+
+	private void StopScaling( )
+	{
+		if (currentOverlay_ != null)
+		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WW: destroying overlay " + currentOverlay_.gameObject.name );
+			}
+			GameObject.Destroy( currentOverlay_.gameObject );
+			currentOverlay_ = null;
+		}
+		isScaling_ = false;
+	}
+
+	public void ScaleWindow( )
+	{
+		if (isScaling_)
+		{
+			StopScaling( );
+		}
+		else
+		{
+			string prefabName = "Prefabs/UI/WinScaleOverlay";
+			GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
+			if (go == null)
+			{
+				Debug.LogError( "No prefab " + prefabName );
+			}
+			else
+			{
+				currentOverlay_ = (Instantiate<GameObject>( go ) as GameObject).GetComponent<RectTransform>( );
+				currentOverlay_.SetParent( overlaysContainer );
+				currentOverlay_.offsetMin = 20f * Vector2.one;
+				currentOverlay_.offsetMax = -20f * Vector2.one;
+				currentOverlay_.localScale = Vector3.one;
+				WinScaleOverlay wsO = currentOverlay_.GetComponent<WinScaleOverlay>( );
+				wsO.Init( rectTransform_ );
 				isMoving_ = true;
 			}
 		}
