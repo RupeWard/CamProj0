@@ -332,6 +332,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
 			Debug.LogError( "Failed to get layer!" );
 		}
 		win.AddToWinLayer( layerToPutIn );
+		win.MovetoTop( );
 	}
 
 	private void AddToTopLayer( WinLayerWin win )
