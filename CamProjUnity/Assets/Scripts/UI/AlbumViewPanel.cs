@@ -12,6 +12,9 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 	public ImageButton[] imageButtons = new ImageButton[0];
 	public UnityEngine.UI.RawImage rawImage;
 
+	public UnityEngine.UI.Text previewedImageText;
+	public UnityEngine.UI.Text selectedImageText;
+
 	protected override void Awake()
 	{
 		base.Awake( );
@@ -66,7 +69,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 						{
 							selectedButton_.DeSelect( );
 							selectedButton_ = null;
-							rawImage.texture = null;
+							HandleSelectedButtonChanged( );
 						}
 						break;
 					}
@@ -79,14 +82,28 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 						}
 						b.Select( );
 						selectedButton_ = b;
+						HandleSelectedButtonChanged( );
 						break;
 					}
 				case ImageButton.EState.Selected:
 					{
-						rawImage.texture = b.AlbumTexture.texture;
+						selectedButton_.DeSelect( );
+						selectedButton_ = null;
 						break;
 					}
 			}
+		}
+	}
+
+	private void HandleSelectedButtonChanged()
+	{
+		if (selectedButton_ == null || selectedButton_.AlbumTexture == null)
+		{
+			selectedImageText.text = "NONE";
+		}
+		else
+		{
+			selectedImageText.text = selectedButton_.AlbumTexture.TitleString;
 		}
 	}
 
@@ -136,4 +153,23 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 			album_.OnAlbumChanged -= HandleAlbumChanged;
 		}
     }
+
+	public void OnViewButtonPressed()
+	{
+		if (selectedButton_ != null && selectedButton_.AlbumTexture != null)
+		{
+			rawImage.texture = selectedButton_.AlbumTexture.texture;
+			previewedImageText.text = selectedButton_.AlbumTexture.imageName;
+		}
+		else
+		{
+			rawImage.texture = null;
+			previewedImageText.text = "NONE";
+		}
+	}
+
+	public void OnDeleteButtonPressed()
+	{
+		Debug.LogWarning( "XXX" );
+	}
 }
