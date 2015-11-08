@@ -61,6 +61,12 @@ using System.Collections;
 		ClearContent( );
 		return wlw;
 	}
+
+	public bool ContainsContents(WinLayerWin wlw)
+	{
+		return currentContent_ == wlw;
+	}
+
     #endregion Interface
 
     #region cached hooks

@@ -48,6 +48,23 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
 		winControlsLayer.CloseControls(  );
 	}
 
+	public bool RemoveContentsFromLayer(WinLayerWin wlw)
+	{
+		bool bRemoved = false;
+		for ( int i = 0; !bRemoved && i < winLayerDefns_.Count; i++)
+		{
+			if (winLayerDefns_[i].ContainsContents(wlw))
+			{
+				winLayerDefns_[i].ReleaseContents( );
+				bRemoved = true;
+			}
+		}
+		if (!bRemoved)
+		{
+			Debug.LogWarning( "Failed to remove WLW" );
+		}
+		return bRemoved;
+	}
 
 	public bool MoveContentsToTop( int layerNum )
 	{

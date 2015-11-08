@@ -61,7 +61,17 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		}
 		else
 		{
-			Debug.LogWarning( "Already exists: TODO = close" );
+			if (albumViewWLW_ != null)
+			{
+				WinLayerManager.Instance.RemoveContentsFromLayer( albumViewWLW_ );
+				GameObject.Destroy( albumViewWLW_.gameObject );
+				albumViewPanel_ = null;
+				albumViewWLW_ = null;
+			}
+			else
+			{
+				Debug.LogError( "No WLW" );
+			}
 		}
 	}
 }
