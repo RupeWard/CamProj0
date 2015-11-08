@@ -23,6 +23,12 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	#region SetUp
 
+	virtual protected void AddWindowButtons()
+	{
+		Debug.Log( "AddWindowButtons not implemented in " +gameObject.name);
+	}
+
+
 	public void Init( WinLayerWin wlw, WinWin<TControlleeType> ww)
 	{
 		win_ = wlw;
@@ -72,8 +78,14 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	public void OnScaleButtonPressed( )
 	{
-		winWin_.ScaleWindow( );
+//		winWin_.SizeWindow( );
 	}
+
+	public void OnSizeButtonPressed( )
+	{
+		winWin_.SizeWindow( );
+	}
+
 
 	#endregion Button handlers
 

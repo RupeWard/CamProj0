@@ -39,20 +39,26 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 	private float startingDistFromCentre_;
 
 	private Vector3 startingScale_;
-	
+
+	public RectTransform scaleableRT;
+
 	public void HandlePointerDown()
 	{
 		lastScreenPosition_ = Input.mousePosition;
-		if (isScaling_)
+		if (isSizing_)
 		{
 			startingDistFromCentre_ = (lastScreenPosition_ - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
 			startingScale_ = rectTransform_.localScale;
 		}
+		else if (isScaling_)
+		{
+
+		} 
 	}
 
 	public void HandlePointerDrag()
 	{
-		if (isScaling_)
+		if (isSizing_)
 		{
 			Vector2 newScreenPosition = Input.mousePosition;
 			float currentDistFromCentre_ = (newScreenPosition - new Vector2( 0.5f * Screen.width, 0.5f * Screen.height )).magnitude;
@@ -89,7 +95,15 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 				}
 				if (newSizeOk)
 				{
-					rectTransform_.localScale = newScale; 
+					if (scaleableRT != null)
+					{
+						Vector2 relativeScale = new Vector2(newScale.x / rectTransform_.localScale.x, newScale.y / rectTransform_.localScale.y);
+						Vector2 newScaleableRTScale = scaleableRT.localScale;
+						newScaleableRTScale.x /= relativeScale.x;
+						newScaleableRTScale.y /= relativeScale.y;
+						scaleableRT.localScale = newScaleableRTScale;
+					}
+					rectTransform_.localScale = newScale;
 				}
 				lastScreenPosition_ = newScreenPosition;
 			}
@@ -167,9 +181,9 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 
 	public void HandlePointerUp( )
 	{
-		if (isScaling_)
+		if (isSizing_)
 		{
-			StopScaling( );
+			StopSizing( );
 		}
 		else if (isMoving_)
 		{
@@ -259,8 +273,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		}
 	}
 
-	private bool isScaling_= false;
-
+	private bool isScaling_ = false;
 	private void StopScaling( )
 	{
 		if (currentOverlay_ != null)
@@ -298,7 +311,52 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 				currentOverlay_.localScale = Vector3.one;
 				WinScaleOverlay wsO = currentOverlay_.GetComponent<WinScaleOverlay>( );
 				wsO.Init( rectTransform_ );
-				isScaling_ = true;
+				isSizing_ = true;
+			}
+		}
+	}
+
+
+	private bool isSizing_= false;
+
+	private void StopSizing( )
+	{
+		if (currentOverlay_ != null)
+		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WW: destroying overlay " + currentOverlay_.gameObject.name );
+			}
+			GameObject.Destroy( currentOverlay_.gameObject );
+			currentOverlay_ = null;
+		}
+		isSizing_ = false;
+	}
+
+	public void SizeWindow( )
+	{
+		if (isSizing_)
+		{
+			StopSizing( );
+		}
+		else
+		{
+			string prefabName = "Prefabs/UI/WinSizeOverlay";
+			GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
+			if (go == null)
+			{
+				Debug.LogError( "No prefab " + prefabName );
+			}
+			else
+			{
+				currentOverlay_ = (Instantiate<GameObject>( go ) as GameObject).GetComponent<RectTransform>( );
+				currentOverlay_.SetParent( overlaysContainer );
+				currentOverlay_.offsetMin = 20f * Vector2.one;
+				currentOverlay_.offsetMax = -20f * Vector2.one;
+				currentOverlay_.localScale = Vector3.one;
+				WinSizeOverlay wsO = currentOverlay_.GetComponent<WinSizeOverlay>( );
+				wsO.Init( rectTransform_ );
+				isSizing_ = true;
 			}
 		}
 	}
