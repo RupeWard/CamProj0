@@ -53,6 +53,11 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 		deviceCameraDisplay_.Clear( );
 	}
 
+	public void OnSnapButtonPressed( )
+	{
+		deviceCameraDisplay_.Snap( );
+	}
+
 	#endregion Button handlers
 
 

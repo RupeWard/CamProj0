@@ -50,6 +50,29 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
 		}
 	}
 
+	public void Snap()
+	{
+		if (!IsPlaying)
+		{
+			Debug.LogWarning( "Can't snap when not playing" );
+		}
+		else
+		{
+			Texture2D snap = new Texture2D( webCamTexture_.width, webCamTexture_.height );
+			snap.SetPixels( webCamTexture_.GetPixels( ) );
+			snap.Apply( );
+
+			AlbumTexture at = new AlbumTexture( );
+			at.texture = snap;
+			at.imageName = "Snap";
+
+			AlbumManager.Instance.AddToCurrentAlbum( at );
+			
+//			byte[] bytes = snap.EncodeToPNG( );
+//			File.WriteAllBytes( fn, bytes );
+		}
+	}
+
 	int count = 0;
 
     void PlayCamera()
