@@ -170,6 +170,19 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	public void OnDeleteButtonPressed()
 	{
-		Debug.LogWarning( "XXX" );
+		if (selectedButton_ != null)
+		{
+			if (selectedButton_.AlbumTexture != null)
+			{
+				bool success = album_.Remove( selectedButton_.AlbumTexture );
+				if (success)
+				{
+					HandleAlbumChanged( );
+					selectedButton_ = null;
+					HandleSelectedButtonChanged( );
+				}
+
+			}
+		}
 	}
 }

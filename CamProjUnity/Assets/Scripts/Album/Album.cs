@@ -19,6 +19,18 @@ public class Album: IDebugDescribable
 		}
 	}
 
+	public bool Remove(AlbumTexture at)
+	{
+		bool result = false;
+		if (albumTextures_.Contains( at ))
+		{
+			albumTextures_.Remove( at );
+			result = true;
+			HandleAlbumChanged( );
+		}
+		return result;
+	}
+
 	public void AddTexture( AlbumTexture tex)
 	{
 		tex.imageName = findNextImagename( tex.imageName );
