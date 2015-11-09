@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Album: IDebugDescribable
 {
+	public bool locked = false;
+
 	private List<AlbumTexture> albumTextures_ = new List<AlbumTexture>( );
 	public List<AlbumTexture> AlbumTextures
 	{
@@ -22,20 +24,34 @@ public class Album: IDebugDescribable
 	public bool Remove(AlbumTexture at)
 	{
 		bool result = false;
-		if (albumTextures_.Contains( at ))
+		if (!locked)
 		{
-			albumTextures_.Remove( at );
-			result = true;
-			HandleAlbumChanged( );
+			if (albumTextures_.Contains( at ))
+			{
+				albumTextures_.Remove( at );
+				result = true;
+				HandleAlbumChanged( );
+			}
+		}
+		else
+		{
+			Debug.LogWarning( "Album is locked, can't remove" );
 		}
 		return result;
 	}
 
 	public void AddTexture( AlbumTexture tex)
 	{
-		tex.imageName = findNextImagename( tex.imageName );
-		albumTextures_.Add( tex );
-		HandleAlbumChanged( );
+		if (!locked)
+		{
+			tex.imageName = findNextImagename( tex.imageName );
+			albumTextures_.Add( tex );
+			HandleAlbumChanged( );
+		}
+		else
+		{
+			Debug.LogWarning( "Album is locked, can't add" );
+		}
 	}
 
 	private bool imagenameExists(string s)
@@ -101,4 +117,6 @@ public class Album: IDebugDescribable
 		}
 		sb.Append( "]" );
 	}
+
+
 }

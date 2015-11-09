@@ -14,6 +14,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	public UnityEngine.UI.Text previewedImageText;
 	public UnityEngine.UI.Text selectedImageText;
+	public UnityEngine.UI.Text saveTextureButtonText;
 
 	protected override void Awake()
 	{
@@ -185,4 +186,48 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 			}
 		}
 	}
+
+	public void OnSaveTexturePressed()
+	{
+		if (album_ != null)
+		{
+			if (selectedButton_ != null)
+			{
+				if (selectedButton_.AlbumTexture != null)
+				{
+					Debug.Log( "SaveTexture pressed " + album_.DebugDescribe( )+" "+selectedButton_.AlbumTexture.DebugDescribe() );
+					AlbumManager.Instance.SaveAlbumTexture( album_ , selectedButton_.AlbumTexture, HandleAlbumChanged);
+					HandleAlbumChanged( );
+				}
+				else
+				{
+					Debug.Log( "SaveTextureAlbum pressed when texture null" );
+				}
+			}
+			else
+			{
+				Debug.Log( "SaveTextureAlbum pressed when albumtexture null" );
+			}
+		}
+		else
+		{
+			Debug.Log( "SaveTextureAlbum pressed when Album null" );
+		}
+
+	}
+
+	public void OnSaveAlbumPressed()
+	{
+		if (album_ != null)
+		{
+			Debug.Log( "SaveAlbum pressed " + album_.DebugDescribe( ) );
+			AlbumManager.Instance.SaveAlbum( album_, HandleAlbumChanged);
+		}
+		else
+		{
+			Debug.Log( "SaveAlbum pressed when null" );
+		}
+	}
+
+
 }

@@ -119,6 +119,8 @@ public class ImageButton : MonoBehaviour
 	}
 
 
+	System.Text.StringBuilder sb = new System.Text.StringBuilder( );
+
 	private void SetText()
 	{
 		if (albumTexture_ == null)
@@ -127,7 +129,25 @@ public class ImageButton : MonoBehaviour
 		}
 		else
 		{
-			imageNameText.text = albumTexture_.imageName;
+			sb.Length = 0;
+			if (albumTexture_.IOState == AlbumTexture.EIOState.Modified)
+			{
+				sb.Append( "(" );
+			}
+			else if (albumTexture_.IOState == AlbumTexture.EIOState.Saved)
+			{
+				sb.Append( "[" );
+			}
+			sb.Append( albumTexture_.imageName );
+			if (albumTexture_.IOState == AlbumTexture.EIOState.Modified)
+			{
+				sb.Append( ")" );
+			}
+			else if (albumTexture_.IOState == AlbumTexture.EIOState.Saved)
+			{
+				sb.Append( "]" );
+			}
+			imageNameText.text = sb.ToString();
 		}
 	}
 
