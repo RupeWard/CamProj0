@@ -68,6 +68,7 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	public void OnCloseButtonPressed( )
 	{
+		winWin_.StopStuff( );
 		transform.parent.GetComponent<WinControlsLayer>( ).CloseControls( );
 	}
 

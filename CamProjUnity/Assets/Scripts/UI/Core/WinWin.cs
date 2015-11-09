@@ -360,6 +360,22 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 
 	private static readonly bool DEBUG_SCALING = false;
 
+	public void StopStuff()
+	{
+		if (isScaling_)
+		{
+			StopScaling( );
+		}
+		if (isMoving_)
+		{
+			StopMoving( );
+		}
+		if (isSizing_)
+		{
+			StopSizing( );
+		}
+	}
+
 	private bool isScaling_ = false;
 	private void StopScaling( )
 	{
