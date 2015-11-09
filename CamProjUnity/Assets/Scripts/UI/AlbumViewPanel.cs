@@ -173,16 +173,32 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 	{
 		if (selectedButton_ != null)
 		{
-			if (selectedButton_.AlbumTexture != null)
+			AlbumTexture atToRemove = selectedButton_.AlbumTexture;
+			if (atToRemove != null)
 			{
-				bool success = album_.Remove( selectedButton_.AlbumTexture );
-				if (success)
+				if (selectedButton_.AlbumTexture.IOState == AlbumTexture.EIOState.Modified)
 				{
-					HandleAlbumChanged( );
-					selectedButton_ = null;
-					HandleSelectedButtonChanged( );
+					Debug.LogWarning( "Can;t delete modified" );
 				}
+				else
+				{
+					bool success = album_.Remove( atToRemove );
+					if (success)
+					{
+						if (selectedButton_.AlbumTexture.IOState == AlbumTexture.EIOState.Unsaved)
+						{
+							Debug.Log( "Not saved so not deleting" );
+						}
+						else
+						{
+							Debug.Log( "Deleting file "+selectedButton_.AlbumTexture.DebugDescribe() );
+							AlbumManager.Instance.DeleteAlbumTexture( album_, atToRemove, HandleAlbumChanged );
+						}
+					}
 
+				}
+				selectedButton_ = null;
+				HandleSelectedButtonChanged( );
 			}
 		}
 	}

@@ -91,7 +91,27 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		return AlbumPath( a )+"/"+t.imageName+".png";
 	}
 
-	public void SaveAlbumTexture(Album a, AlbumTexture t, System.Action onCompleteAction )
+	public bool DeleteAlbumTexture( Album a, AlbumTexture t, System.Action onCompleteAction )
+	{
+		bool result = false;
+		string path = TexturePath( a, t );
+		if (System.IO.File.Exists(path))
+		{
+			System.IO.File.Delete( path );
+			result = true;
+		}
+		else
+		{
+			Debug.LogWarning( "Can't delete nonexistent '" + path + "'" );
+		}
+		if (onCompleteAction != null)
+		{
+			onCompleteAction( );
+		}
+		return result;
+	}
+
+    public void SaveAlbumTexture(Album a, AlbumTexture t, System.Action onCompleteAction )
 	{
 		string albumPath = AlbumPath( a );
 		if (!System.IO.Directory.Exists( AlbumsPath ))
