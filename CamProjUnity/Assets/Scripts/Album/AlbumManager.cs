@@ -24,6 +24,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 	protected override void PostAwake( )
 	{
 		basePath_ = Application.persistentDataPath;
+		LoadAlbum( "DefaultAlbum", HandleAlbumLoaded);
 	}
 
 	public void AddToCurrentAlbum(AlbumTexture at)
@@ -84,11 +85,21 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 	}
 	private string AlbumPath(Album a)
 	{
-		return AlbumsPath + "/" + a.AlbumName;
+		return AlbumPath(a.AlbumName);
 	}
+	private string AlbumPath( string s )
+	{
+		return AlbumsPath + "/" + s;
+	}
+
 	private string TexturePath(Album a, AlbumTexture t)
 	{
 		return AlbumPath( a )+"/"+t.imageName+".png";
+	}
+
+	private string TexturePath( Album a, string t)
+	{
+		return AlbumPath( a ) + "/" + t+ ".png";
 	}
 
 	public bool DeleteAlbumTexture( Album a, AlbumTexture t, System.Action onCompleteAction )
@@ -186,5 +197,75 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 				onCompleteAction( );
 			}
 		}
+	}
+
+	private void HandleAlbumLoaded(Album a)
+	{
+		if (a != null)
+		{
+			currentAlbum_ = a;	
+		}
+	}
+
+	public void LoadAlbum( string albumName, System.Action<Album> onCompleteAction )
+	{
+		StartCoroutine( loadAlbumCR(albumName, onCompleteAction ));
+	}
+
+    private IEnumerator loadAlbumCR( string albumName, System.Action<Album> onCompleteAction )
+	{
+		Album album = null;
+
+		string albumPath = AlbumPath(albumName);
+		album = new Album( albumName );
+		if (!System.IO.Directory.Exists(albumPath))
+		{
+			Debug.LogWarning( "No album '" + albumName + " to load" );
+		}
+		else
+		{
+			System.IO.DirectoryInfo albumFolder = new System.IO.DirectoryInfo( albumPath );
+			foreach (System.IO.FileInfo file in albumFolder.GetFiles("*.png"))
+			{
+				string imageName = file.Name.Replace(".png","");
+				Debug.Log( "Found file " + imageName );
+
+				string texturePath = TexturePath( album, imageName );
+
+				string dataPath = "file://" +file.FullName;
+
+				Debug.Log( "Attempting to load " + imageName +"( "+file.FullName+" )"+ " from " + dataPath );
+				yield return null;
+                WWW www = new WWW( dataPath );
+				yield return www;
+				if (string.IsNullOrEmpty(www.error))
+				{
+					Texture2D texture = www.texture;
+					if (texture == null)
+					{
+						Debug.LogWarning( "No texture in '" + file.FullName + "'" );
+					}
+					else
+					{
+						AlbumTexture at = new AlbumTexture( );
+						at.imageName = imageName;
+						at.texture = texture;
+						album.AddTexture( at );
+						Debug.Log( "Added texture " + at.DebugDescribe( ) +" to album");
+					}
+				}
+				else
+				{
+					Debug.LogError( "Error loading '" + file.FullName + "' with error "+ ((www.error== null)?("null"):(www.error)) );
+				}
+			}
+		}
+		Debug.Log( "Loaded album " + album.DebugDescribe( ) );
+
+		if (onCompleteAction != null)
+		{
+			onCompleteAction( album );
+		}
+		yield return null;
 	}
 }

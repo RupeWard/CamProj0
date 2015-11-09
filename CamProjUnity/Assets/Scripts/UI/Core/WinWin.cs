@@ -4,7 +4,7 @@ using System.Collections;
 [RequireComponent ( typeof(RectTransform))]
 public abstract class WinWin < TWinType> : MonoBehaviour 
 {
-	private static readonly bool DEBUG_LOCAL = true;
+	private static readonly bool DEBUG_LOCAL = false;
 
 	public GameObject controlPanelPrefab;
 

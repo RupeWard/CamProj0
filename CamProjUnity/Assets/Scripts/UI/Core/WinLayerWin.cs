@@ -6,7 +6,7 @@ using System.Collections;
 )]
 public class WinLayerWin : MonoBehaviour
 {
-	private static readonly bool DEBUG_LOCAL = true;
+	private static readonly bool DEBUG_LOCAL = false;
 
 	public System.Action lossOfFocusAction;
 

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class WinControlsLayer : MonoBehaviour
 {
-	static readonly private bool DEBUG_LOCAL = true;
+	static readonly private bool DEBUG_LOCAL = false;
 
 	RectTransform currentControls_ = null;
 

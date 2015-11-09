@@ -44,7 +44,12 @@ public class Album: IDebugDescribable
 	{
 		if (!locked)
 		{
-			tex.imageName = findNextImagename( tex.imageName );
+			if (imagenameExists(tex.imageName))
+			{
+				string nextImageName = findNextImagename( tex.imageName );
+				Debug.Log( "Image name " + tex.imageName + " exists so using " + nextImageName);
+				tex.imageName = nextImageName;
+			}
 			albumTextures_.Add( tex );
 			HandleAlbumChanged( );
 		}

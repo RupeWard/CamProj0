@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [RequireComponent (typeof(RectTransform))]
 public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
 {
-	private static readonly bool DEBUG_LOCAL = true;
+	private static readonly bool DEBUG_LOCAL = false;
 
     #region Interface
 

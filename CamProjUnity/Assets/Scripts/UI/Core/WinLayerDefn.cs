@@ -4,7 +4,7 @@ using System.Collections;
  [RequireComponent (typeof(RectTransform))]
  public class WinLayerDefn : MonoBehaviour, IDebugDescribable
  {
-	static private readonly bool DEBUG_LOCAL = true;
+	static private readonly bool DEBUG_LOCAL = false;
 
     #region Interface
 
