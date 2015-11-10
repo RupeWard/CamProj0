@@ -32,6 +32,11 @@ public class ButtonsPanel : MonoBehaviour
 		AlbumManager.Instance.ToggleAlbumView( );
 	}
 
+	public void OnAlbumManagerButtonClicked( )
+	{
+		AlbumManager.Instance.ToggleAlbumManager( );
+	}
+
 	private float tweenSpeed= 5f;
 
 

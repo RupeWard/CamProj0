@@ -40,6 +40,18 @@ public class Album: IDebugDescribable
 		return result;
 	}
 
+	static System.Text.StringBuilder sb_ = new System.Text.StringBuilder( );
+
+	public string TitleString
+	{
+		get
+		{
+			sb_.Length = 0;
+			sb_.Append( "'" ).Append( albumName_ ).Append( "' " ).Append( albumTextures_.Count ).Append( " pics" );
+			return sb_.ToString( );
+		}
+	}
+
 	public void AddTexture( AlbumTexture tex)
 	{
 		if (!locked)

@@ -7,6 +7,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 	private static readonly bool DEBUG_LOCAL = true;
 
 	public GameObject albumViewPrefab;
+	public GameObject albumManagerPanelPrefab;
 
 	private Album currentAlbum_ = null;
 	public Album CurrentAlbum
@@ -77,6 +78,45 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 			}
 		}
 	}
+
+	AlbumManagerPanel albumManagerPanel_ = null;
+	WinLayerWin albumManagerPanelWLW_ = null;
+
+	public void ToggleAlbumManager( )
+	{
+		if (albumManagerPanel_== null)
+		{
+			WinLayerWin wlw = WinLayerManager.Instance.InstantiateToLayer( albumManagerPanelPrefab);
+			if (wlw != null)
+			{
+				albumManagerPanel_= wlw.transform.GetComponentInChildren<AlbumManagerPanel>( );
+				if (albumManagerPanel_ == null)
+				{
+					Debug.LogError( "Couldn't find AMP in instantiated prefab" );
+				}
+				else
+				{
+					albumManagerPanelWLW_ = wlw;
+					albumManagerPanel_.Init( CurrentAlbum );
+				}
+			}
+		}
+		else
+		{
+			if (albumManagerPanelWLW_ != null)
+			{
+				WinLayerManager.Instance.RemoveContentsFromLayer( albumManagerPanelWLW_ );
+				GameObject.Destroy( albumManagerPanelWLW_.gameObject );
+				albumManagerPanel_ = null;
+				albumManagerPanelWLW_ = null;
+			}
+			else
+			{
+				Debug.LogError( "No WLW FOR AM" );
+			}
+		}
+	}
+
 
 	private string basePath_;
 	private string AlbumsPath
