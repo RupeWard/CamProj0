@@ -22,10 +22,34 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		}
 	}
 
+	private List<Album> albums_ = new List<Album>( );
+	public List<Album> Albums
+	{
+		get { return albums_;  }
+	}
+
+	public System.Action allAlbumsLoadedAction;
+
 	protected override void PostAwake( )
 	{
 		basePath_ = Application.persistentDataPath;
-		LoadAlbum( "DefaultAlbum", HandleAlbumLoaded);
+		allAlbumsLoadedAction = LoadDefaultAlbumCallback;
+		StartCoroutine( loadAlbumsCR() );
+	}
+
+	private void LoadDefaultAlbumCallback()
+	{
+		allAlbumsLoadedAction -= LoadDefaultAlbumCallback;
+		currentAlbum_ = null;
+		if (albums_ != null && albums_.Count > 0)
+		{
+			currentAlbum_ = albums_[0];
+			Debug.Log( "Set album to first = " + currentAlbum_.DebugDescribe( ) );
+		}
+		else
+		{
+			Debug.Log( "No Albums to choose default from" );
+		}
 	}
 
 	public void AddToCurrentAlbum(AlbumTexture at)
@@ -239,11 +263,61 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		}
 	}
 
+	private int numAlbumsToLoad = 0;
+
+	private IEnumerator loadAlbumsCR()
+	{
+		yield return new WaitForSeconds( 5f );
+		yield return null;
+		albums_ = new List<Album>( );
+
+		if (!System.IO.Directory.Exists( AlbumsPath ))
+		{
+			Debug.LogWarning( "No Albums folder = no albums" );
+		}
+		else
+		{
+			string[] albumDirs = System.IO.Directory.GetDirectories( AlbumsPath );
+			if (albumDirs.Length == 0)
+			{
+				Debug.LogWarning( "No Albums subfolders = no albums" );
+			}
+			else
+			{
+				numAlbumsToLoad += albumDirs.Length;
+				for (int i = 0; i< albumDirs.Length; i++)
+				{
+					int index = albumDirs[i].LastIndexOfAny( new char[] {'\\','/' } );
+					string albumDir = albumDirs[i].Substring( index+1 );
+					Debug.Log( "Loading album "+(i+1)+" of "+albumDirs.Length+" ("+numAlbumsToLoad+") Name ='"+albumDir+"' '"+albumDirs[i]+"'" );
+					yield return StartCoroutine( loadAlbumCR( albumDir, HandleAlbumLoaded) );
+				}
+			}
+		}
+		yield return null;
+	}
+
+	private void HandleNoAlbumsLeftToLoad()
+	{
+		Debug.Log( "All Albums loaded" );
+		if (allAlbumsLoadedAction != null)
+		{
+			allAlbumsLoadedAction( );
+		}
+		
+	}
+
 	private void HandleAlbumLoaded(Album a)
 	{
 		if (a != null)
 		{
-			currentAlbum_ = a;	
+			albums_.Add( a);
+			Debug.Log( "AM: Loaded album " + numAlbumsToLoad + ": " + a.DebugDescribe( ) );	
+		}
+		numAlbumsToLoad--;
+		if (numAlbumsToLoad == 0)
+		{
+			HandleNoAlbumsLeftToLoad( );
 		}
 	}
 
@@ -299,8 +373,8 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 					Debug.LogError( "Error loading '" + file.FullName + "' with error "+ ((www.error== null)?("null"):(www.error)) );
 				}
 			}
+			Debug.Log( "Loaded album " + album.DebugDescribe( ) );
 		}
-		Debug.Log( "Loaded album " + album.DebugDescribe( ) );
 
 		if (onCompleteAction != null)
 		{

@@ -23,14 +23,20 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		{
 			i.clickAction += HandleAlbumButtonClicked;
 		}
+		AlbumManager.Instance.allAlbumsLoadedAction += HandleAlbumsChanged;
+	}
+
+	protected void OnDestroy( )
+	{
+		AlbumManager.Instance.allAlbumsLoadedAction -= HandleAlbumsChanged;
 	}
 
 	public void Init(Album a)
 	{
 		album_ = a;
-		album_.OnAlbumChanged += HandleAlbumChanged;
+		album_.OnAlbumChanged += HandleAlbumsChanged;
 
-		HandleAlbumChanged( );
+		HandleAlbumsChanged( );
 	}
 
 	private void SetTitle()
@@ -38,8 +44,9 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		titleText.text = "AlbumManager: ";
 	}
 
-	private void HandleAlbumChanged()
+	private void HandleAlbumsChanged()
 	{
+		Debug.Log( "AMP: HandleAlbumsChanged" );
 		SetTitle( );
 		SetButtons( );
 	}
@@ -105,20 +112,15 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 	{
 		int numDone = 0;
 
-		/*
-		if (album_ != null)
+		List<Album> albums = AlbumManager.Instance.Albums;
+		if (albums != null)
 		{
-			List<AlbumTexture> albumTextures = album_.AlbumTextures;
-			for (int i = 0; i<albumTextures.Count && numDone < albumButtons.Length; i++)
+			for (int i = 0; i < albums.Count && numDone < albumButtons.Length; i++)
 			{
-				if (albumTextures[i] != null)
-				{
-					albumButtons[numDone].Init( albumTextures[i] );
-					numDone++;
-				}
+				albumButtons[numDone].Init( albums[i] );
+				numDone++;
 			}
 		}
-		*/
 		for (int i = numDone; i < albumButtons.Length; i++)
 		{
 			albumButtons[i].Init( null );
@@ -144,16 +146,6 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 			album_.OnAlbumChanged += HandleAlbumChanged;
 		}*/
 	}
-
-	public void OnDestroy()
-	{
-		/*
-		if (album_ != null)
-		{
-			album_.OnAlbumChanged -= HandleAlbumChanged;
-		}
-		*/
-    }
 
 	public void OnViewButtonPressed()
 	{
