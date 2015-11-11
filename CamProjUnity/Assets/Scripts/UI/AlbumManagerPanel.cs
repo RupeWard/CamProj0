@@ -33,9 +33,17 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 
 	public void Init(Album a)
 	{
+		SetAlbum( a );
+	}
+
+	public void SetAlbum( Album a )
+	{
+		if (album_ != null)
+		{
+			album_.OnAlbumChanged -= HandleAlbumsChanged;
+		}
 		album_ = a;
 		album_.OnAlbumChanged += HandleAlbumsChanged;
-
 		HandleAlbumsChanged( );
 	}
 
