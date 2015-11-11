@@ -174,6 +174,41 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		}
 	}
 
+	public void BringAlbumViewToFront( Album a)
+	{
+		currentAlbum_ = a;
+		if (albumViewPanel_ == null)
+		{
+			WinLayerWin wlw = WinLayerManager.Instance.InstantiateToLayer( albumViewPrefab );
+			if (wlw != null)
+			{
+				albumViewPanel_ = wlw.transform.GetComponentInChildren<AlbumViewPanel>( );
+				if (albumViewPanel_ == null)
+				{
+					Debug.LogError( "Couldn't find AVP in instantiated prefab" );
+				}
+				else
+				{
+					albumViewWLW_ = wlw;
+					albumViewPanel_.Init( CurrentAlbum );
+				}
+			}
+		}
+		else
+		{
+			if (albumViewWLW_ != null)
+			{
+				albumViewPanel_.SetAlbum( CurrentAlbum );
+				albumViewWLW_.MovetoTop( );
+			}
+			else
+			{
+				Debug.LogError( "No WLW FOR AV" );
+			}
+		}
+	}
+
+
 	private string basePath_;
 	private string AlbumsPath
 	{

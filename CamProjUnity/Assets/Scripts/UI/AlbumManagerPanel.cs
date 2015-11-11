@@ -157,17 +157,21 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 
 	public void OnViewButtonPressed()
 	{
-		/*
-		if (selectedButton_ != null && selectedButton_.AlbumTexture != null)
+		if (selectedButton_ != null && selectedButton_.Album != null)
 		{
-			rawImage.texture = selectedButton_.AlbumTexture.texture;
-			previewedImageText.text = selectedButton_.AlbumTexture.imageName;
+			AlbumManager.Instance.BringAlbumViewToFront( selectedButton_.Album );
 		}
 		else
 		{
-			rawImage.texture = null;
-			previewedImageText.text = "NONE";
-		}*/
+			if (selectedButton_ == null)
+			{
+				Debug.LogWarning( "No SB" ); 
+            }
+			else
+			{
+				Debug.LogWarning( "No Album" );
+			}
+		}
 	}
 
 	public void OnDeleteButtonPressed()
