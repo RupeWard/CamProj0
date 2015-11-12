@@ -31,13 +31,19 @@ public class AlbumViewControlPanel : WinControlPanel < AlbumViewPanel>
 	}
 
 	#endregion SetUp
-
+	/*
 	protected override void DoDestroy( )
 	{
 		SceneControllerTest.Instance.DestroyAlbumViewPanel( );
 	}
+	*/
 
 	#region Button handlers
+
+	override public void OnCloseButtonPressed( )
+	{
+		SceneControllerTest.Instance.ToggleAlbumView( );
+	}
 
 	#endregion Button handlers
 

@@ -33,6 +33,8 @@ public class WinControlsLayer : MonoBehaviour
 
 	public void CloseControls()
 	{
+		Debug.LogWarning( "WCL close controls");
+
 		GameObject.Destroy( currentControls_.gameObject );
 		currentControls_ = null;
 	}

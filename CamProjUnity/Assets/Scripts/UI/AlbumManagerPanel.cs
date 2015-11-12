@@ -137,6 +137,7 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 
 	public void OnDisable( )
 	{
+
 		/*
 		if (album_ != null)
 		{

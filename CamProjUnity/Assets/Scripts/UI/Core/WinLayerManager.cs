@@ -52,13 +52,14 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
 	{
 		bool bRemoved = false;
 		WinLayerDefn toRemove = null;
+		WinLayerWin removedWin = null;
 		for ( int i = 0; i < winLayerDefns_.Count; i++)
 		{
 			if (!bRemoved)
 			{
 				if (winLayerDefns_[i].ContainsContents( wlw ))
 				{
-					winLayerDefns_[i].ReleaseContents( );
+					removedWin = winLayerDefns_[i].ReleaseContents( );
 					toRemove = winLayerDefns_[i];
 					bRemoved = true;
 				}
@@ -70,6 +71,10 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
 		}
 		if (toRemove != null)
 		{
+			if (removedWin.lossOfFocusAction != null)
+			{
+				removedWin.lossOfFocusAction( );
+			}
 			GameObject.Destroy( toRemove.gameObject );
 			winLayerDefns_.Remove( toRemove );
 		}

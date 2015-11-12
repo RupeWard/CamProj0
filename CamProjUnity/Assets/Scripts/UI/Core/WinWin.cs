@@ -23,11 +23,23 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
 	}
 
+	private void OnDestroy()
+	{
+		Debug.LogWarning( "OnDestroy " + gameObject.name );
+		HandleLossOfFocus( );
+		if (controlPanel_ != null)
+		{
+			GameObject.Destroy( controlPanel_.gameObject );
+			controlPanel_ = null;
+		}
+	}
+
 	public void HandleLossOfFocus( )
 	{
 		if (controlPanel_ != null)
 		{
-			controlPanel_.OnCloseButtonPressed( );
+			Debug.LogWarning( "LOF CP " + gameObject.name );
+			controlPanel_.OnDoneButtonPressed( );
 		}
 		if (isMoving_)
 		{

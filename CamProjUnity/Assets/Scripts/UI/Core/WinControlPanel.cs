@@ -53,6 +53,7 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 		CreateButton( "Size", OnSizeButtonPressed, winButtonsContainer );
 		CreateButton( "Move", OnMoveButtonPressed, winButtonsContainer );
 		CreateButton( "Close", OnCloseButtonPressed, winButtonsContainer );
+		CreateButton( "Done", OnDoneButtonPressed, winButtonsContainer );
 
 		controllee_ = wlw.GetComponent<TControlleeType>( );
 		if (controllee_ == null)
@@ -83,20 +84,16 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 	{
 		win_.MoveToBack( );
 	}
-
+	
 	public void OnDoneButtonPressed( )
 	{
 		winWin_.StopStuff( );
 		transform.parent.GetComponent<WinControlsLayer>( ).CloseControls( );
 	}
 
-	public void OnCloseButtonPressed( )
-	{
-		winWin_.StopStuff( );
-		transform.parent.GetComponent<WinControlsLayer>( ).CloseControls( );
-	}
+	abstract public void OnCloseButtonPressed( );
 
-	abstract protected void DoDestroy( );
+//	abstract protected void DoDestroy( );
 
 	public void OnMoveButtonPressed()
 	{

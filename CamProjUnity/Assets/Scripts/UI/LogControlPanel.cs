@@ -32,12 +32,19 @@ public class LogControlPanel : WinControlPanel < LogPanel>
 
 	#endregion SetUp
 
+	/*
 	protected override void DoDestroy( )
 	{
 		SceneControllerTest.Instance.DestroyLogPanel( );
 	}
+	*/
 
 	#region Button handlers
+
+	override public void OnCloseButtonPressed( )
+	{
+		SceneControllerTest.Instance.ToggleLogPanel( );
+	}
 
 	#endregion Button handlers
 
