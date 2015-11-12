@@ -6,10 +6,13 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 	#region inspector hooks
 
 	public UnityEngine.UI.Text titleText;
-	public RectTransform buttonsContainer;
+
+	public ButtonSet winButtonsContainer;
+	public ButtonSet funcButtonsContainer;
+
+	public GameObject buttonSetButtonPrefab;
 
 	#endregion inspector hooks
-
 	#region private data
 
 	WinLayerWin win_;
@@ -37,6 +40,13 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 		titleText.text = title();
 
 		gameObject.SetActive( true );
+
+		CreateButton( "Back", OnBackButtonPressed, winButtonsContainer );
+		CreateButton( "Scale", OnScaleButtonPressed, winButtonsContainer );
+		CreateButton( "Size", OnSizeButtonPressed, winButtonsContainer );
+		CreateButton( "Move", OnMoveButtonPressed, winButtonsContainer );
+		CreateButton( "Close", OnCloseButtonPressed, winButtonsContainer );
+
 		controllee_ = wlw.GetComponent<TControlleeType>( );
 		if (controllee_ == null)
 		{
@@ -56,6 +66,7 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 	public abstract void PostInit ( TControlleeType controllee);
 
 	#endregion SetUp
+
 
 
 	#region Button handlers
@@ -90,5 +101,31 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	#endregion Button handlers
 
+	public ButtonSetButton CreateWinButton( string buttonText, System.Action onClickAction)
+	{
+		return CreateButton( buttonText, onClickAction, winButtonsContainer );
+	}
+
+	public ButtonSetButton CreateFuncButton( string buttonText, System.Action onClickAction )
+	{
+		return CreateButton( buttonText, onClickAction, funcButtonsContainer );
+	}
+
+	private ButtonSetButton CreateButton(string buttonText, System.Action onClickAction, ButtonSet buttonSet)
+	{
+		GameObject go = Instantiate( buttonSetButtonPrefab ) as GameObject;
+		ButtonSetButton bsb = go.GetComponent<ButtonSetButton>( );
+		if (bsb != null)
+		{
+			bsb.Init( buttonText, buttonSet );
+			bsb.onClickAction += onClickAction;
+		}
+		else
+		{
+			Debug.LogError( "No BSB" );
+
+		}
+		return bsb;
+	}
 
 }

@@ -7,7 +7,6 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 	private static readonly bool DEBUG_LOCAL = false;
 
 	public GameObject controlPanelPrefab;
-
 	public Transform overlaysContainer;
 
 	private RectTransform rectTransform_;

@@ -6,7 +6,8 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 {
 	#region inspector hooks
 
-	public UnityEngine.UI.Text playButtonText;
+	private ButtonSetButton playButton_;
+	private ButtonSetButton clearButton_;
 
 	#endregion inspector hooks
 
@@ -30,13 +31,18 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 			Debug.LogError( "NULL DCD" );
 		}
 		deviceCameraDisplay_ = dcd;
+
+		playButton_ = CreateFuncButton( "Play", OnPlayButtonPressed );
+		clearButton_ = CreateFuncButton( "Clear", OnClearButtonPressed );
+
 		SetPlayButtonText( );
 	}
 
 	private void SetPlayButtonText()
 	{
-		playButtonText.text = ((deviceCameraDisplay_.IsPlaying) ? ("STOP") : ("PLAY"));
+		playButton_.SetText( (deviceCameraDisplay_.IsPlaying) ? ("STOP") : ("PLAY"));
 	}
+
 	#endregion SetUp
 
 
