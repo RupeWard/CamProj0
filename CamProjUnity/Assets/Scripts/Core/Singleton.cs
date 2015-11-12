@@ -24,7 +24,7 @@
  * 
  */
 
-#define DEBUG_SINGLETONS
+//#define DEBUG_SINGLETONS
 
 using System;
 using UnityEngine;
@@ -159,9 +159,11 @@ public class SingletonSceneLifetime<GameObjectType> : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Unable to find game object named "+instanceName+" of type " + typeof(GameObjectType).ToString() + " in current scene");
-                    GameObjectType got = FindObjectOfType(typeof(GameObjectType)) as GameObjectType;
-                    if (got != null)
+#if DEBUG_SINGLETONS
+					Debug.Log("Unable to find game object named "+instanceName+" of type " + typeof(GameObjectType).ToString() + " in current scene");
+#endif
+					GameObjectType got = FindObjectOfType(typeof(GameObjectType)) as GameObjectType;
+					if (got != null)
                     {
                         instance = got;
                         got.gameObject.name = instanceName;

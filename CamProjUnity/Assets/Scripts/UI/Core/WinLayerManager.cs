@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [RequireComponent (typeof(RectTransform))]
 public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebugDescribable
 {
-	private static readonly bool DEBUG_LOCAL = true;
+	private static readonly bool DEBUG_LOCAL = false;
 
     #region Interface
 
@@ -110,7 +110,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 			if (DEBUG_LOCAL)
 			{
 				Debug.Log( "WLM: moving contents of layer " + layerNum + " to top " + winLayerDefns_[layerNum].DebugDescribe( ) );
-				Debug.Log(this.DebugDescribe( ));
+//				Debug.Log(this.DebugDescribe( ));
 			}
 
 			WinLayerWin newTopContents = winLayerDefns_[layerNum].ReleaseContents( );
@@ -118,8 +118,8 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 
 			if (DEBUG_LOCAL)
 			{
-				Debug.Log( "After " + layerNum + " removed" );
-				Debug.Log( this.DebugDescribe( ) );
+//				Debug.Log( "After " + layerNum + " removed" );
+//				Debug.Log( this.DebugDescribe( ) );
 			}
 
 			for (int i = layerNum; i < (NumLayers - 1); i++)
@@ -131,7 +131,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 					if (DEBUG_LOCAL)
 					{
 						Debug.Log( content.gameObject.name + " moved to layer " + winLayerDefns_[i].DebugDescribe( ) );
-						Debug.Log( this.DebugDescribe( ) );
+//						Debug.Log( this.DebugDescribe( ) );
 					}
 				}
 				else
@@ -142,8 +142,8 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 			}
 			if (DEBUG_LOCAL)
 			{
-				Debug.Log( "After moved" );
-				Debug.Log( this.DebugDescribe( ) );
+//				Debug.Log( "After moved" );
+//				Debug.Log( this.DebugDescribe( ) );
 			}
 			if (newTopContents)
 			{
@@ -151,7 +151,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 				if (DEBUG_LOCAL)
 				{
 					Debug.Log( newTopContents.gameObject.name + " moved to top layer " + winLayerDefns_[NumLayers-1].DebugDescribe( ) );
-					Debug.Log( this.DebugDescribe( ) );
+//					Debug.Log( this.DebugDescribe( ) );
 				}
 			}
 			else

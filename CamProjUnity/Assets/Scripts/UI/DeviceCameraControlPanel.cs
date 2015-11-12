@@ -7,6 +7,7 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 	#region inspector hooks
 
 	private ButtonSetButton playButton_;
+	private ButtonSetButton snapButton_;
 	private ButtonSetButton clearButton_;
 
 	#endregion inspector hooks
@@ -33,6 +34,7 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 		deviceCameraDisplay_ = dcd;
 
 		playButton_ = CreateFuncButton( "Play", OnPlayButtonPressed );
+		snapButton_ = CreateFuncButton( "Snap", OnSnapButtonPressed );
 		clearButton_ = CreateFuncButton( "Clear", OnClearButtonPressed );
 
 		SetPlayButtonText( );

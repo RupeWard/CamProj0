@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class LogManager : SingletonSceneLifetime<LogManager>
 {
-	private static bool DEBUG_LOCAL = true;
+	private static bool DEBUG_LOCAL = false;
 
 	public int maxLines = 20;
 	public bool showLineNumbers = true;
