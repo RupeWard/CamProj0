@@ -14,7 +14,7 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 
 //	public UnityEngine.UI.Text previewedImageText;
 	public UnityEngine.UI.Text selectedAlbumText;
-//	public UnityEngine.UI.Text saveTextureButtonText;
+	//	public UnityEngine.UI.Text saveTextureButtonText;
 
 	protected override void Awake()
 	{

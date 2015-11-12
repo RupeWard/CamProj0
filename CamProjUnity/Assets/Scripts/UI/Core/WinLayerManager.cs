@@ -3,11 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent (typeof(RectTransform))]
-public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
+public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebugDescribable
 {
-	private static readonly bool DEBUG_LOCAL = false;
+	private static readonly bool DEBUG_LOCAL = true;
 
     #region Interface
+
+	public void DebugDescribe( System.Text.StringBuilder sb)
+	{
+		sb.Append( "[WLM: " ).Append( NumLayers ).Append( " layers" );
+		for (int i =0; i < winLayerDefns_.Count; i++)
+		{
+			sb.Append( "\n" ).Append( i ).Append( " " );
+			if (winLayerDefns_[i]==null)
+			{
+				sb.Append( "null" );
+			}
+			else
+			{
+				winLayerDefns_[i].DebugDescribe( sb );
+			}
+		}
+	}
 
     public int NumLayers
     {
@@ -93,19 +110,28 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
 			if (DEBUG_LOCAL)
 			{
 				Debug.Log( "WLM: moving contents of layer " + layerNum + " to top " + winLayerDefns_[layerNum].DebugDescribe( ) );
+				Debug.Log(this.DebugDescribe( ));
 			}
 
 			WinLayerWin newTopContents = winLayerDefns_[layerNum].ReleaseContents( );
 			newTopContents.currentLayer = null;
+
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "After " + layerNum + " removed" );
+				Debug.Log( this.DebugDescribe( ) );
+			}
+
 			for (int i = layerNum; i < (NumLayers - 1); i++)
 			{
-				WinLayerWin content = winLayerDefns_[layerNum + 1].ReleaseContents( );
+				WinLayerWin content = winLayerDefns_[i + 1].ReleaseContents( );
 				if (content != null)
 				{
-					content.AddToWinLayer( winLayerDefns_[layerNum] );
+					content.AddToWinLayer( winLayerDefns_[i] );
 					if (DEBUG_LOCAL)
 					{
-						Debug.Log( content.gameObject.name + " moved to layer " + winLayerDefns_[layerNum].DebugDescribe( ) );
+						Debug.Log( content.gameObject.name + " moved to layer " + winLayerDefns_[i].DebugDescribe( ) );
+						Debug.Log( this.DebugDescribe( ) );
 					}
 				}
 				else
@@ -114,12 +140,18 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
 				}
 
 			}
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "After moved" );
+				Debug.Log( this.DebugDescribe( ) );
+			}
 			if (newTopContents)
 			{
 				newTopContents.AddToWinLayer( winLayerDefns_[NumLayers - 1] );
 				if (DEBUG_LOCAL)
 				{
 					Debug.Log( newTopContents.gameObject.name + " moved to top layer " + winLayerDefns_[NumLayers-1].DebugDescribe( ) );
+					Debug.Log( this.DebugDescribe( ) );
 				}
 			}
 			else

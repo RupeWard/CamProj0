@@ -31,6 +31,13 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		}
 	}
 
+	private bool ioInProgress_ = false;
+	public bool IOInProgress
+	{
+		get { return ioInProgress_; }
+	}
+
+
 	private List<Album> albums_ = new List<Album>( );
 	public List<Album> Albums
 	{
@@ -58,10 +65,12 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		{
 			currentAlbum_ = albums_[0];
 			Debug.Log( "Set album to first = " + currentAlbum_.DebugDescribe( ) );
+			LogManager.Instance.AddLine( "Set Default Album to first '" + currentAlbum_.AlbumName + "'" );
 		}
 		else
 		{
 			Debug.Log( "No Albums to choose default from" );
+			LogManager.Instance.AddLine( "No Albums to choose Default from" );
 		}
 	}
 
@@ -72,6 +81,8 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 			Debug.Log( "Added texture " + at.DebugDescribe( ) + " to " + CurrentAlbum.DebugDescribe( ) );
 		}
 		CurrentAlbum.AddTexture( at );
+		LogManager.Instance.AddLine( "Added '"+at.imageName+"' to '" + currentAlbum_.AlbumName + "'" );
+
 		if (DEBUG_LOCAL)
 		{
 			Debug.Log( "Album following add: " + CurrentAlbum.DebugDescribe( ) );
@@ -109,53 +120,79 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 	public bool DeleteAlbumTexture( Album a, AlbumTexture t, System.Action onCompleteAction )
 	{
 		bool result = false;
-		string path = TexturePath( a, t );
-		if (System.IO.File.Exists(path))
+		if (ioInProgress_)
 		{
-			System.IO.File.Delete( path );
-			result = true;
+			LogManager.Instance.AddLine( "Wait to delete" );
 		}
 		else
 		{
-			Debug.LogWarning( "Can't delete nonexistent '" + path + "'" );
-		}
-		if (onCompleteAction != null)
-		{
-			onCompleteAction( );
+			ioInProgress_ = true;
+			string path = TexturePath( a, t );
+			if (System.IO.File.Exists( path ))
+			{
+				System.IO.File.Delete( path );
+				result = true;
+			}
+			else
+			{
+				Debug.LogWarning( "Can't delete nonexistent '" + path + "'" );
+			}
+			if (onCompleteAction != null)
+			{
+				onCompleteAction( );
+			}
+			ioInProgress_ = false;
 		}
 		return result;
 	}
 
     public void SaveAlbumTexture(Album a, AlbumTexture t, System.Action onCompleteAction )
 	{
-		string albumPath = AlbumPath( a );
-		if (!System.IO.Directory.Exists( AlbumsPath ))
+		if (ioInProgress_)
 		{
-			Debug.Log( "Creating albums path " + AlbumsPath );
-			System.IO.Directory.CreateDirectory( AlbumsPath );
-
+			LogManager.Instance.AddLine( "Wait to save" );
 		}
-		if (! System.IO.Directory.Exists(albumPath))
+		else
 		{
-			Debug.Log( "Creating album path " + albumPath );
-			System.IO.Directory.CreateDirectory( albumPath );
-		}
-		string texturePath = TexturePath( a, t );
-		a.locked = true;
-		byte[] bytes = t.texture.EncodeToPNG();
+			ioInProgress_ = true;
+			string albumPath = AlbumPath( a );
+			if (!System.IO.Directory.Exists( AlbumsPath ))
+			{
+				Debug.Log( "Creating albums path " + AlbumsPath );
+				System.IO.Directory.CreateDirectory( AlbumsPath );
 
-		System.IO.File.WriteAllBytes( texturePath, bytes );
-		t.HandleSaved( );
-		a.locked = false;
-		if (onCompleteAction != null)
-		{
-			onCompleteAction( );
+			}
+			if (!System.IO.Directory.Exists( albumPath ))
+			{
+				Debug.Log( "Creating album path " + albumPath );
+				System.IO.Directory.CreateDirectory( albumPath );
+			}
+			string texturePath = TexturePath( a, t );
+			a.locked = true;
+			byte[] bytes = t.texture.EncodeToPNG( );
+
+			System.IO.File.WriteAllBytes( texturePath, bytes );
+			t.HandleSaved( );
+			a.locked = false;
+			if (onCompleteAction != null)
+			{
+				onCompleteAction( );
+			}
+			ioInProgress_ = false;
 		}
 	}
 
 	public void SaveAlbum(Album a, System.Action onCompleteAction)
 	{
-		StartCoroutine( SaveAlbumCR( a, onCompleteAction ) );
+		if (ioInProgress_)
+		{
+			LogManager.Instance.AddLine( "Wait to save album" );
+		}
+		else
+		{
+			ioInProgress_ = true;
+			StartCoroutine( SaveAlbumCR( a, onCompleteAction ) );
+		}
 	}
 
 	private IEnumerator SaveAlbumCR(Album a, System.Action onCompleteAction )
@@ -216,40 +253,50 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		{
 			LogManager.Instance.AddLine( "Saved Album '" + a.AlbumName +" ( N"+numUnsaved+" M"+numModified+" U"+numUnsaved+")");
 		}
+		ioInProgress_ = false;
 	}
 
 	private int numAlbumsToLoad = 0;
 
 	private IEnumerator loadAlbumsCR()
 	{
-		yield return new WaitForSeconds( 5f );
-		yield return null;
-		albums_ = new List<Album>( );
-
-		if (!System.IO.Directory.Exists( AlbumsPath ))
+		if (ioInProgress_)
 		{
-			Debug.LogWarning( "No Albums folder = no albums" );
+			Debug.LogError( "IO in progress" );
 		}
 		else
 		{
-			string[] albumDirs = System.IO.Directory.GetDirectories( AlbumsPath );
-			if (albumDirs.Length == 0)
+			ioInProgress_ = true;
+			yield return new WaitForSeconds( 5f );
+			yield return null;
+			albums_ = new List<Album>( );
+
+			if (!System.IO.Directory.Exists( AlbumsPath ))
 			{
-				Debug.LogWarning( "No Albums subfolders = no albums" );
+				Debug.LogWarning( "No Albums folder = no albums" );
 			}
 			else
 			{
-				numAlbumsToLoad += albumDirs.Length;
-				for (int i = 0; i< albumDirs.Length; i++)
+				string[] albumDirs = System.IO.Directory.GetDirectories( AlbumsPath );
+				if (albumDirs.Length == 0)
 				{
-					int index = albumDirs[i].LastIndexOfAny( new char[] {'\\','/' } );
-					string albumDir = albumDirs[i].Substring( index+1 );
-					Debug.Log( "Loading album "+(i+1)+" of "+albumDirs.Length+" ("+numAlbumsToLoad+") Name ='"+albumDir+"' '"+albumDirs[i]+"'" );
-					yield return StartCoroutine( loadAlbumCR( albumDir, HandleAlbumLoaded) );
+					Debug.LogWarning( "No Albums subfolders = no albums" );
+				}
+				else
+				{
+					numAlbumsToLoad += albumDirs.Length;
+					for (int i = 0; i < albumDirs.Length; i++)
+					{
+						int index = albumDirs[i].LastIndexOfAny( new char[] { '\\', '/' } );
+						string albumDir = albumDirs[i].Substring( index + 1 );
+						Debug.Log( "Loading album " + (i + 1) + " of " + albumDirs.Length + " (" + numAlbumsToLoad + ") Name ='" + albumDir + "' '" + albumDirs[i] + "'" );
+						yield return StartCoroutine( loadAlbumCR( albumDir, HandleAlbumLoaded ) );
+					}
 				}
 			}
 		}
 		yield return null;
+		ioInProgress_ = false;
 	}
 
 	private void HandleNoAlbumsLeftToLoad()
