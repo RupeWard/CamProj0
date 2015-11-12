@@ -29,12 +29,22 @@ public class ButtonsPanel : MonoBehaviour
 
 	public void OnAlbumButtonClicked()
 	{
-		AlbumManager.Instance.ToggleAlbumView( );
+		SceneControllerTest.Instance.ToggleAlbumView( );
 	}
 
 	public void OnAlbumManagerButtonClicked( )
 	{
-		AlbumManager.Instance.ToggleAlbumManager( );
+		SceneControllerTest.Instance.ToggleAlbumManager( );
+	}
+
+	public void OnDeviceCamerButtonClicked()
+	{
+		SceneControllerTest.Instance.ToggleDeviceCameraPanel( );
+	}
+
+	public void OnLogPanelButtonClicked()
+	{
+		SceneControllerTest.Instance.ToggleLogPanel( );
 	}
 
 	private float tweenSpeed= 5f;

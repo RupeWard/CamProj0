@@ -11,6 +11,11 @@ using System.Collections;
     public int LayerNum
     {
 		get { return layerNum_; }
+		set
+		{
+			layerNum_ = value;
+			gameObject.name = "Layer_" + layerNum_.ToString( "00" );
+		}
 	}
 
 	public bool IsEmpty

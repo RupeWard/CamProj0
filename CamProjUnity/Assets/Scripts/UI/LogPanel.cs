@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LogPanel : WinWin< LogPanel>
 {
@@ -25,6 +26,8 @@ public class LogPanel : WinWin< LogPanel>
 		}
 		instance_ = this;
 		base.Awake( );
+
+		LogManager.Instance.AddLine( "Log opened @ " + System.DateTime.Now );
 	}
 
 	public void OnDestroy()
@@ -37,12 +40,19 @@ public class LogPanel : WinWin< LogPanel>
 		{
 			Debug.LogError( "Destroying non-instance LogPanel" );
 		}
+		LogManager.Instance.lineAddedAction -= HandleLineAdded;
+		LogManager.Instance.linesDeletedAction -= HandleLinesDeleted;
+
 	}
 
 	void Start ()
     {
-		Append( "Log started" + System.DateTime.Now + "\n\n" );
-//		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
+		//		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
+		LogManager.Instance.lineAddedAction += HandleLineAdded;
+		LogManager.Instance.linesDeletedAction += HandleLinesDeleted;
+
+		DisplayAllLines( );
+
 	}
 
 	void Update ()
@@ -53,11 +63,31 @@ public class LogPanel : WinWin< LogPanel>
         }
 	}
 
-    public void Append(string s)
+    private void Append(string s)
     {
         logSB_.Append(s);
         isDirty_ = true;
     }
 
+	public void HandleLineAdded(string s)
+	{
+		logSB_.Append("\n").Append( s );
+		isDirty_ = true;
+	}
+
+	public void HandleLinesDeleted()
+	{
+		logSB_.Length = 0;
+		DisplayAllLines( );
+	}
+
+	public void DisplayAllLines( )
+	{
+		Queue<string> allLines = LogManager.Instance.AllLines;
+		foreach (string s in allLines)
+		{
+			HandleLineAdded( s );
+		}
+	}
 
 }

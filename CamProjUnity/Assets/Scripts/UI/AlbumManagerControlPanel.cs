@@ -32,6 +32,10 @@ public class AlbumManagerControlPanel : WinControlPanel <AlbumManagerPanel>
 
 	#endregion SetUp
 
+	protected override void DoDestroy()
+	{
+		SceneControllerTest.Instance.DestroyAlbumManagerPanel( );
+	}
 
 	#region Button handlers
 

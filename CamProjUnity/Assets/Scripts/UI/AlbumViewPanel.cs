@@ -256,7 +256,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	public void OnManagerButtonPressed()
 	{
-		AlbumManager.Instance.BringAlbumManagerToFront( );
+		SceneControllerTest.Instance.BringAlbumManagerToFront( );
 	}
 
 

@@ -6,9 +6,6 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 {
 	private static readonly bool DEBUG_LOCAL = true;
 
-	public GameObject albumViewPrefab;
-	public GameObject albumManagerPanelPrefab;
-
 	private Album currentAlbum_ = null;
 	public Album CurrentAlbum
 	{
@@ -19,6 +16,18 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 				currentAlbum_ = new Album( "DefaultAlbum" );
 			}
 			return currentAlbum_;
+		}
+
+		set
+		{
+			if (albums_.Contains( value ))
+			{
+				currentAlbum_ = value;
+			}
+			else
+			{
+				Debug.LogError( "ERROR" );
+			}
 		}
 	}
 
@@ -34,7 +43,11 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 	{
 		basePath_ = Application.persistentDataPath;
 		allAlbumsLoadedAction = LoadDefaultAlbumCallback;
-		StartCoroutine( loadAlbumsCR() );
+	}
+
+	public void Start()
+	{
+		StartCoroutine( loadAlbumsCR( ) );
 	}
 
 	private void LoadDefaultAlbumCallback()
@@ -65,149 +78,9 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		}
 	}
 
-	AlbumViewPanel albumViewPanel_ = null;
-	WinLayerWin albumViewWLW_ = null;
 
-	public void ToggleAlbumView()
-	{
-		if (albumViewPanel_ == null)
-		{
-			WinLayerWin wlw = WinLayerManager.Instance.InstantiateToLayer( albumViewPrefab );
-			if (wlw != null)
-			{
-				albumViewPanel_ = wlw.transform.GetComponentInChildren<AlbumViewPanel>( );
-				if (albumViewPanel_ == null)
-				{
-					Debug.LogError( "Couldn't find AVP in instantiated prefab" );
-				}
-				else
-				{
-					albumViewWLW_ = wlw;
-                    albumViewPanel_.Init( CurrentAlbum );
-				}
-			}
-		}
-		else
-		{
-			if (albumViewWLW_ != null)
-			{
-				WinLayerManager.Instance.RemoveContentsFromLayer( albumViewWLW_ );
-				GameObject.Destroy( albumViewWLW_.gameObject );
-				albumViewPanel_ = null;
-				albumViewWLW_ = null;
-			}
-			else
-			{
-				Debug.LogError( "No WLW" );
-			}
-		}
-	}
 
-	AlbumManagerPanel albumManagerPanel_ = null;
-	WinLayerWin albumManagerPanelWLW_ = null;
-
-	public void ToggleAlbumManager( )
-	{
-		if (albumManagerPanel_== null)
-		{
-			WinLayerWin wlw = WinLayerManager.Instance.InstantiateToLayer( albumManagerPanelPrefab);
-			if (wlw != null)
-			{
-				albumManagerPanel_= wlw.transform.GetComponentInChildren<AlbumManagerPanel>( );
-				if (albumManagerPanel_ == null)
-				{
-					Debug.LogError( "Couldn't find AMP in instantiated prefab" );
-				}
-				else
-				{
-					albumManagerPanelWLW_ = wlw;
-					albumManagerPanel_.Init( CurrentAlbum );
-				}
-			}
-		}
-		else
-		{
-			if (albumManagerPanelWLW_ != null)
-			{
-				WinLayerManager.Instance.RemoveContentsFromLayer( albumManagerPanelWLW_ );
-				GameObject.Destroy( albumManagerPanelWLW_.gameObject );
-				albumManagerPanel_ = null;
-				albumManagerPanelWLW_ = null;
-			}
-			else
-			{
-				Debug.LogError( "No WLW FOR AM" );
-			}
-		}
-	}
-
-	public void BringAlbumManagerToFront( )
-	{
-		if (albumManagerPanel_ == null)
-		{
-			WinLayerWin wlw = WinLayerManager.Instance.InstantiateToLayer( albumManagerPanelPrefab );
-			if (wlw != null)
-			{
-				albumManagerPanel_ = wlw.transform.GetComponentInChildren<AlbumManagerPanel>( );
-				if (albumManagerPanel_ == null)
-				{
-					Debug.LogError( "Couldn't find AMP in instantiated prefab" );
-				}
-				else
-				{
-					albumManagerPanelWLW_ = wlw;
-					albumManagerPanel_.Init( CurrentAlbum );
-				}
-			}
-		}
-		else
-		{
-			if (albumManagerPanelWLW_ != null)
-			{
-				albumManagerPanel_.SetAlbum(CurrentAlbum);
-				albumManagerPanelWLW_.MovetoTop();
-			}
-			else
-			{
-				Debug.LogError( "No WLW FOR AM" );
-			}
-		}
-	}
-
-	public void BringAlbumViewToFront( Album a)
-	{
-		currentAlbum_ = a;
-		if (albumViewPanel_ == null)
-		{
-			WinLayerWin wlw = WinLayerManager.Instance.InstantiateToLayer( albumViewPrefab );
-			if (wlw != null)
-			{
-				albumViewPanel_ = wlw.transform.GetComponentInChildren<AlbumViewPanel>( );
-				if (albumViewPanel_ == null)
-				{
-					Debug.LogError( "Couldn't find AVP in instantiated prefab" );
-				}
-				else
-				{
-					albumViewWLW_ = wlw;
-					albumViewPanel_.Init( CurrentAlbum );
-				}
-			}
-		}
-		else
-		{
-			if (albumViewWLW_ != null)
-			{
-				albumViewPanel_.SetAlbum( CurrentAlbum );
-				albumViewWLW_.MovetoTop( );
-			}
-			else
-			{
-				Debug.LogError( "No WLW FOR AV" );
-			}
-		}
-	}
-
+	#region IO
 
 	private string basePath_;
 	private string AlbumsPath
@@ -293,6 +166,10 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		sb.Append( "Saving Album " );
 		a.DebugDescribe( sb );
 
+		int numSaved = 0;
+		int numModified = 0;
+		int numUnsaved = 0;
+
 		List<AlbumTexture> textures = a.AlbumTextures;
 		foreach (AlbumTexture at in textures)
 		{
@@ -301,17 +178,20 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 			{
 				case AlbumTexture.EIOState.Saved:
 				{
+					numSaved++;
 					doSave = false;
 					sb.Append( "\n ALREADY SAVED: " ).Append( at.imageName );
 					break;
 				}
 				case AlbumTexture.EIOState.Modified:
 					{
+						numModified++;
 						sb.Append( "\n Changes SAVED: " ).Append( at.imageName );
 						break;
 					}
 				case AlbumTexture.EIOState.Unsaved:
 					{
+						numUnsaved++;
 						sb.Append( "\n Newly  SAVED: " ).Append( at.imageName );
 						break;
 					}
@@ -327,6 +207,14 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 			{
 				onCompleteAction( );
 			}
+		}
+		if (numUnsaved == 0 && numModified == 0)
+		{
+			LogManager.Instance.AddLine( "Nothing to save in Album '" + a.AlbumName );
+		}
+		else
+		{
+			LogManager.Instance.AddLine( "Saved Album '" + a.AlbumName +" ( N"+numUnsaved+" M"+numModified+" U"+numUnsaved+")");
 		}
 	}
 
@@ -441,6 +329,11 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 				}
 			}
 			Debug.Log( "Loaded album " + album.DebugDescribe( ) );
+			LogManager.Instance.AddLine( "Loaded Album '" + album.AlbumName + "' (" + album.NumTextures + " ics)" );
+			for (int i = 0; i < 400; i++)
+			{
+				LogManager.Instance.AddLine( "Loaded Album '" + album.AlbumName + "' (" + album.NumTextures + " ics)" );
+			}
 		}
 
 		if (onCompleteAction != null)
@@ -449,4 +342,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		}
 		yield return null;
 	}
+
+	#endregion IO
+
 }

@@ -51,13 +51,27 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >
 	public bool RemoveContentsFromLayer(WinLayerWin wlw)
 	{
 		bool bRemoved = false;
-		for ( int i = 0; !bRemoved && i < winLayerDefns_.Count; i++)
+		WinLayerDefn toRemove = null;
+		for ( int i = 0; i < winLayerDefns_.Count; i++)
 		{
-			if (winLayerDefns_[i].ContainsContents(wlw))
+			if (!bRemoved)
 			{
-				winLayerDefns_[i].ReleaseContents( );
-				bRemoved = true;
+				if (winLayerDefns_[i].ContainsContents( wlw ))
+				{
+					winLayerDefns_[i].ReleaseContents( );
+					toRemove = winLayerDefns_[i];
+					bRemoved = true;
+				}
 			}
+			else
+			{
+				winLayerDefns_[i].LayerNum = (i - 1);
+			}
+		}
+		if (toRemove != null)
+		{
+			GameObject.Destroy( toRemove.gameObject );
+			winLayerDefns_.Remove( toRemove );
 		}
 		if (!bRemoved)
 		{

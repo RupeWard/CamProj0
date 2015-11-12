@@ -64,6 +64,11 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 		deviceCameraDisplay_.Snap( );
 	}
 
+	protected override void DoDestroy( )
+	{
+		SceneControllerTest.Instance.DestroyDeviceCameraPanel( );
+	}
+
 	#endregion Button handlers
 
 

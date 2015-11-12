@@ -84,11 +84,19 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 		win_.MoveToBack( );
 	}
 
+	public void OnDoneButtonPressed( )
+	{
+		winWin_.StopStuff( );
+		transform.parent.GetComponent<WinControlsLayer>( ).CloseControls( );
+	}
+
 	public void OnCloseButtonPressed( )
 	{
 		winWin_.StopStuff( );
 		transform.parent.GetComponent<WinControlsLayer>( ).CloseControls( );
 	}
+
+	abstract protected void DoDestroy( );
 
 	public void OnMoveButtonPressed()
 	{

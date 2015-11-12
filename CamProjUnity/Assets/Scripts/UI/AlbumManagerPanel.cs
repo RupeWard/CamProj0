@@ -159,7 +159,7 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 	{
 		if (selectedButton_ != null && selectedButton_.Album != null)
 		{
-			AlbumManager.Instance.BringAlbumViewToFront( selectedButton_.Album );
+			SceneControllerTest.Instance.BringAlbumViewToFront( selectedButton_.Album );
 		}
 		else
 		{

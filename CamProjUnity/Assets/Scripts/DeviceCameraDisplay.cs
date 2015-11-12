@@ -13,8 +13,6 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
 
 	void Start ()
     {
-//		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
-
         WebCamDevice[] devices = WebCamTexture.devices;
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         sb.Append("DCD Start: " + devices.Length + " devices");
@@ -87,7 +85,7 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
             {
                 Debug.Log(msg);
             }
-            LogPanel.Instance.Append(msg);
+            LogManager.Instance.AddLine(msg);
         }
         webCamTexture_.Play();
 
@@ -101,7 +99,7 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
         {
             Debug.Log(msg);
         }
-        LogPanel.Instance.Append(msg);
+        LogManager.Instance.AddLine(msg);
     }
 
     public void HandlePlayPause()
