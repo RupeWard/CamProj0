@@ -24,6 +24,7 @@ public class ButtonSetButton : MonoBehaviour
 		defaultButtonText_ = s;
 		SetText( defaultButtonText_ );
 		SetButtonSet( bs );
+//		bs.AddButton( this );
 		gameObject.name = s + "_Button";
 	}
 
@@ -43,9 +44,14 @@ public class ButtonSetButton : MonoBehaviour
 
 	private void SetButtonSet(ButtonSet bs)
 	{
+		if (buttonSet_ != null)
+		{
+			Debug.LogError( "Non null BS" );
+		}
 		buttonSet_ = bs;
 		rectTransform_.SetParent( buttonSet_.transform );
 		rectTransform_.localScale = Vector3.one;
+		bs.AddButton( this );
 	}
 
 	public void HandleClick( )

@@ -12,6 +12,8 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	public GameObject buttonSetButtonPrefab;
 
+	private RectTransform rectTransform_;
+
 	#endregion inspector hooks
 	#region private data
 
@@ -25,6 +27,11 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 	abstract public string title( );
 
 	#region SetUp
+
+	private void Awake()
+	{
+		rectTransform_ = GetComponent<RectTransform>( );
+	}
 
 	virtual protected void AddWindowButtons()
 	{
@@ -125,6 +132,20 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 			Debug.LogError( "No BSB" );
 
 		}
+		float marginTotal = 
+			(winButtonsContainer.NumButtons+1) * winButtonsContainer.margin 
+			+ (funcButtonsContainer.NumButtons+1) * funcButtonsContainer.margin;
+		float buttonsHeightTotal = rectTransform_.GetHeight( ) - titleText.GetComponent<RectTransform>().GetHeight() - marginTotal;
+		int totalButtons = winButtonsContainer.NumButtons + funcButtonsContainer.NumButtons;
+		float buttonHeight = buttonsHeightTotal / totalButtons;
+
+        float winButtonsHeight = winButtonsContainer.NumButtons * buttonHeight;
+		float funcButtonsHeight = funcButtonsContainer.NumButtons * buttonHeight;
+
+		Debug.Log( "WCP: wbh = " + winButtonsHeight + ", fbh = " + funcButtonsHeight );
+
+		winButtonsContainer.GetComponent<RectTransform>( ).SetHeight( winButtonsHeight + (winButtonsContainer.NumButtons+1 ) * winButtonsContainer.margin);
+		funcButtonsContainer.GetComponent<RectTransform>( ).SetHeight( funcButtonsHeight + (funcButtonsContainer.NumButtons+1) * funcButtonsContainer.margin );
 		return bsb;
 	}
 
