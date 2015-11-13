@@ -21,6 +21,18 @@ public class Album: IDebugDescribable
 		}
 	}
 
+	public bool HasUnsavedChanges()
+	{
+		bool result = false;
+		for (int i = 0; !result && i<albumTextures_.Count; i++)
+		{
+			if (albumTextures_[i] != null && albumTextures_[i].IOState != AlbumTexture.EIOState.Saved)
+			{
+				result = true;
+			}
+		}
+		return result;
+	}
 	public bool Remove(AlbumTexture at)
 	{
 		bool result = false;

@@ -16,14 +16,17 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 	public UnityEngine.UI.Text selectedAlbumText;
 	//	public UnityEngine.UI.Text saveTextureButtonText;
 
-	protected override void Awake()
+	private void Start()
 	{
-		base.Awake( );
+		AlbumManager.Instance.allAlbumsLoadedAction += HandleAlbumsChanged;
 		foreach (AlbumButton i in albumButtons)
 		{
 			i.clickAction += HandleAlbumButtonClicked;
 		}
-		AlbumManager.Instance.allAlbumsLoadedAction += HandleAlbumsChanged;
+		newAlbumPanel.onNewAlbumCancel += OnNewAlbumCancelled;
+		newAlbumPanel.onNewAlbumConfirm += OnNewAlbumConfirmed;
+
+		newAlbumPanel.Close( );
 	}
 
 	protected void OnDestroy( )
@@ -211,49 +214,71 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		*/
 	}
 
-	public void OnSaveTexturePressed()
+	public void OnNewAlbumClicked()
 	{
-		/*
-		if (album_ != null)
+		if (AlbumManager.Instance.IOInProgress)
 		{
-			if (selectedButton_ != null)
+			LogManager.Instance.AddLine( "Wait for previous IO to finish" );
+		}
+		else
+		{
+			AlbumManager.Instance.IOInProgress = true;
+
+			bool allSaved = true;
+			if (AlbumManager.Instance.CurrentAlbum != null && AlbumManager.Instance.CurrentAlbum.HasUnsavedChanges())
 			{
-				if (selectedButton_.AlbumTexture != null)
-				{
-					Debug.Log( "SaveTexture pressed " + album_.DebugDescribe( )+" "+selectedButton_.AlbumTexture.DebugDescribe() );
-					AlbumManager.Instance.SaveAlbumTexture( album_ , selectedButton_.AlbumTexture, HandleAlbumChanged);
-					HandleAlbumChanged( );
-				}
-				else
-				{
-					Debug.Log( "SaveTextureAlbum pressed when texture null" );
-				}
+				allSaved = false;
+			}
+			if (!allSaved)
+			{
+				ConfirmPanel.Data data = new ConfirmPanel.Data( );
+				data.title = "Unsaved changes";
+				data.info = "Current Album '" + AlbumManager.Instance.CurrentAlbum.AlbumName + "' has unsaved changes."
+					+"\nAre you sure you want to create a new album?'";
+				data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OpenNewAlbumPanel);
+				data.noButtonDef = new ConfirmPanel.ButtonDef( "No", OnIOCancelled );
+
+				WinLayerManager.Instance.CreateConfirmPanel( data );
+
 			}
 			else
 			{
-				Debug.Log( "SaveTextureAlbum pressed when albumtexture null" );
+				OpenNewAlbumPanel( );
 			}
 		}
-		else
-		{
-			Debug.Log( "SaveTextureAlbum pressed when Album null" );
-		}
-		*/
+		// check for unsaved changes
+		// open confirm panel if unsaved changes otherwise straight to open panel
+
+
 	}
 
-	public void OnSaveAlbumPressed()
+	private void OnIOCancelled()
 	{
-		/*
-		if (album_ != null)
+		AlbumManager.Instance.IOInProgress = false;
+	}
+	public NewAlbumPanel newAlbumPanel;
+
+	private void OpenNewAlbumPanel()
+	{
+		newAlbumPanel.Open( );
+	}
+
+	private void OnNewAlbumConfirmed(string s)
+	{
+		if (s.Length == 0)
 		{
-			Debug.Log( "SaveAlbum pressed " + album_.DebugDescribe( ) );
-			AlbumManager.Instance.SaveAlbum( album_, HandleAlbumChanged);
+			Debug.LogError( "Empty album name" );
 		}
 		else
 		{
-			Debug.Log( "SaveAlbum pressed when null" );
-		}*/
+			AlbumManager.Instance.CreateNewCurrentAlbum( s );
+		}
+		AlbumManager.Instance.IOInProgress = false;
 	}
 
+	private void OnNewAlbumCancelled( )
+	{
+		AlbumManager.Instance.IOInProgress = false;
+	}
 
 }

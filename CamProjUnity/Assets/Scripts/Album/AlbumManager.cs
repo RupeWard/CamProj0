@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AlbumManager : SingletonSceneLifetime<AlbumManager>
+public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescribable
 {
 	private static readonly bool DEBUG_LOCAL = true;
 
@@ -32,6 +32,47 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		}
 	}
 
+	public void DebugDescribe(System.Text.StringBuilder sb)
+	{
+		sb.Append( "[AlbumManager :" );
+		if (albums_ == null)
+		{
+			sb.Append( "null albums" );
+		}
+		else
+		{
+			sb.Append( albums_.Count ).Append( " albums" );
+			if (albums_.Count > 0)
+			{
+				sb.Append( ":" );
+				for (int i = 0; i<albums_.Count; i++)
+				{
+					if (albums_[i]== null)
+					{
+						sb.Append( "\n" ).Append( i ).Append( " null" );
+					}
+					else
+					{
+						sb.Append( "\n" ).Append( i ).Append( " " ).Append( albums_[i].AlbumName );
+					}
+				}
+			}
+		}
+		
+	}
+
+	public Album CreateNewCurrentAlbum(string s)
+	{
+		Debug.Log( "CreateNewCurrentAlbum" );
+
+		Album a = new Album( s );
+		currentAlbum_ = a;
+		albums_.Add( a );
+		HandleNoAlbumsLeftToLoad( );
+		LogManager.Instance.AddLine( "Created new Album '" + currentAlbum_.AlbumName + "'" );
+		return a;
+	}
+
 	private bool ioInProgress_ = false;
 	public bool IOInProgress
 	{
@@ -51,6 +92,28 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 	public List<Album> Albums
 	{
 		get { return albums_;  }
+	}
+
+	public bool ContainsAlbum( string s )
+	{
+		bool result = false;
+		if (albums_ != null)
+		{
+			for (int i = 0; !result && i < albums_.Count; i++)
+			{
+				if (albums_[i] != null && albums_[i].AlbumName == s)
+				{
+					result = true;
+				}
+			}
+		}
+		{
+			System.Text.StringBuilder sb = new System.Text.StringBuilder( );
+			sb.Append( "ContainsAlbum( " ).Append( s ).Append( " )= " ).Append( result ).Append( "\n" );
+			this.DebugDescribe( sb );
+			Debug.Log( sb.ToString( ) );
+		}
+		return result;
 	}
 
 	public System.Action allAlbumsLoadedAction;
