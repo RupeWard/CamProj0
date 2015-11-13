@@ -3,6 +3,8 @@ using System.Collections;
 
 public class ConfirmPanel : MonoBehaviour 
 {
+	static private readonly bool DEBUG_LOCAL = false;
+
 	#region inspector hooks
 
 	public UnityEngine.UI.Text titleText;
@@ -201,7 +203,10 @@ public class ConfirmPanel : MonoBehaviour
 
         float buttonsHeight = buttonsContainer.NumButtons * buttonHeight;
 
-		Debug.Log( "WCP: bh = " + buttonsHeight );
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log( "WCP: bh = " + buttonsHeight );
+		}
 
 		buttonsContainer.GetComponent<RectTransform>( ).SetHeight( buttonsHeight + (buttonsContainer.NumButtons+1 ) * buttonsContainer.margin);
 		return bsb;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class AlbumViewPanel : WinWin<AlbumViewPanel>
 {
-	//	private static readonly bool DEBUG_LOCAL = true;
+	private static readonly bool DEBUG_LOCAL = true;
 
 	private Album album_;
 
@@ -70,11 +70,17 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 	{
 		if (b.AlbumTexture == null)
 		{
-			Debug.Log( "IB Clicked: NULL" );
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "IB Clicked: NULL" );
+			}
 		}
 		else
 		{
-			Debug.Log( "IB Clicked: "+b.AlbumTexture.imageName );
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "IB Clicked: "+b.AlbumTexture.imageName );
+			}
 			switch (b.State)
 			{
 				case ImageButton.EState.Empty:
