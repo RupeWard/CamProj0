@@ -201,25 +201,34 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	public void OnDeleteButtonPressed()
 	{
-		if (selectedButton_ != null)
+		if (AlbumManager.Instance.IOInProgress)
 		{
-			AlbumTexture atToRemove = selectedButton_.AlbumTexture;
-			if (atToRemove != null)
+			LogManager.Instance.AddLine( "Wait for previous IO to finish" );
+		}
+		else
+		{
+			if (selectedButton_ != null)
 			{
-				if (selectedButton_.AlbumTexture.IOState == AlbumTexture.EIOState.Modified)
+				AlbumTexture atToRemove = selectedButton_.AlbumTexture;
+				if (atToRemove != null)
 				{
-					Debug.LogWarning( "Can't delete modified" );
-					LogManager.Instance.AddLine( "Can't delete modified " + selectedButton_.AlbumTexture.imageName );
-				}
-				else
-				{
-					ConfirmPanel.Data data = new ConfirmPanel.Data( );
-					data.title = "Confirm delete '" + atToRemove.imageName + "'";
-					data.info = "Are you sure you want to delete '" + atToRemove.imageName + "'?";
-					data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnDeleteConfirm );
-					data.noButtonDef = new ConfirmPanel.ButtonDef( "No", null );
+					if (selectedButton_.AlbumTexture.IOState == AlbumTexture.EIOState.Modified)
+					{
+						Debug.LogWarning( "Can't delete modified" );
+						LogManager.Instance.AddLine( "Can't delete modified " + selectedButton_.AlbumTexture.imageName );
+					}
+					else
+					{
+						AlbumManager.Instance.IOInProgress = true;
 
-					WinLayerManager.Instance.CreateConfirmPanel( data );
+						ConfirmPanel.Data data = new ConfirmPanel.Data( );
+						data.title = "Confirm delete '" + atToRemove.imageName + "'";
+						data.info = "Are you sure you want to delete '" + atToRemove.imageName + "'?";
+						data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnDeleteConfirm );
+						data.noButtonDef = new ConfirmPanel.ButtonDef( "No", OnIOCancelled );
+
+						WinLayerManager.Instance.CreateConfirmPanel( data );
+					}
 				}
 			}
 		}
@@ -262,36 +271,48 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	public void OnSaveTexturePressed()
 	{
-		if (album_ != null)
+		if (AlbumManager.Instance.IOInProgress)
 		{
-			if (selectedButton_ != null)
+			LogManager.Instance.AddLine( "Wait for previous IO to finish" );
+		}
+		else
+		{
+			if (album_ != null)
 			{
-				AlbumTexture atToSave= selectedButton_.AlbumTexture;
-				if (atToSave != null)
+				if (selectedButton_ != null)
 				{
-					Debug.Log( "SaveTexture pressed " + album_.DebugDescribe( ) + " " + atToSave.DebugDescribe( ) );
-					ConfirmPanel.Data data = new ConfirmPanel.Data( );
-					data.title = "Confirm save '" + atToSave.imageName + "'";
-					data.info = "Are you sure you want to save '" + atToSave.imageName + "'?";
-					data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnSaveConfirmed );
-					data.noButtonDef = new ConfirmPanel.ButtonDef( "No", null );
+					AlbumTexture atToSave = selectedButton_.AlbumTexture;
+					if (atToSave != null)
+					{
+						AlbumManager.Instance.IOInProgress = true;
+
+						Debug.Log( "SaveTexture pressed " + album_.DebugDescribe( ) + " " + atToSave.DebugDescribe( ) );
+						ConfirmPanel.Data data = new ConfirmPanel.Data( );
+						data.title = "Confirm save '" + atToSave.imageName + "'";
+						data.info = "Are you sure you want to save '" + atToSave.imageName + "'?";
+						data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnSaveConfirmed );
+						data.noButtonDef = new ConfirmPanel.ButtonDef( "No", OnIOCancelled );
+
+						WinLayerManager.Instance.CreateConfirmPanel( data );
+					}
+					else
+					{
+						Debug.Log( "SaveTextureAlbum pressed when texture null" );
+						LogManager.Instance.AddLine( "Nothing to save" );
+					}
 				}
 				else
 				{
-					Debug.Log( "SaveTextureAlbum pressed when texture null" );
-					LogManager.Instance.AddLine( "Nothing to save");
+					Debug.Log( "SaveTextureAlbum pressed when albumtexture null" );
+					LogManager.Instance.AddLine( "Nothing to save" );
 				}
 			}
 			else
 			{
-				Debug.Log( "SaveTextureAlbum pressed when albumtexture null" );
+				Debug.Log( "SaveTextureAlbum pressed when Album null" );
 				LogManager.Instance.AddLine( "Nothing to save" );
 			}
-		}
-		else
-		{
-			Debug.Log( "SaveTextureAlbum pressed when Album null" );
-			LogManager.Instance.AddLine( "Nothing to save" );
+
 		}
 
 	}
@@ -316,16 +337,47 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	public void OnSaveAlbumPressed()
 	{
-		if (album_ != null)
+		if (AlbumManager.Instance.IOInProgress)
 		{
-			Debug.Log( "SaveAlbum pressed " + album_.DebugDescribe( ) );
-			LogManager.Instance.AddLine( "SaveAlbum pressed " + album_.DebugDescribe( ) );
-			AlbumManager.Instance.SaveAlbum( album_, HandleAlbumChanged);
+			LogManager.Instance.AddLine( "Wait for previous IO to finish" );
 		}
 		else
 		{
-			Debug.Log( "SaveAlbum pressed when null" );
-			LogManager.Instance.AddLine( "Nothing to save" );
+			if (album_ != null)
+			{
+				AlbumManager.Instance.IOInProgress = true;
+
+				Debug.Log( "SaveAlbum pressed " + album_.DebugDescribe( ) );
+
+				ConfirmPanel.Data data = new ConfirmPanel.Data( );
+				data.title = "Confirm save Album '" + album_.AlbumName + "'";
+				data.info = "Are you sure you want to save Album '" + album_.AlbumName + "'?";
+				data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnSaveAlbumConfirmed );
+				data.noButtonDef = new ConfirmPanel.ButtonDef( "No", OnIOCancelled);
+
+				WinLayerManager.Instance.CreateConfirmPanel( data );
+			}
+			else
+			{
+				Debug.Log( "SaveAlbum pressed when null" );
+				LogManager.Instance.AddLine( "Nothing to save" );
+			}
+		}
+	}
+
+	private void OnSaveAlbumConfirmed( )
+	{
+		if (album_ != null )
+		{
+			Album aToSave = album_;
+
+			AlbumManager.Instance.SaveAlbum( album_, HandleAlbumChanged);
+			LogManager.Instance.AddLine( "Saving Album " + album_.AlbumName );
+			HandleAlbumChanged( );
+		}
+		else
+		{
+			Debug.LogError( "NULL ALBUM" );
 		}
 	}
 
@@ -334,5 +386,8 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		SceneControllerTest.Instance.BringAlbumManagerToFront( );
 	}
 
-
+	public void OnIOCancelled()
+	{
+		AlbumManager.Instance.IOInProgress = false;
+	}
 }

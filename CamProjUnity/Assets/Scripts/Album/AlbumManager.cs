@@ -36,6 +36,14 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 	public bool IOInProgress
 	{
 		get { return ioInProgress_; }
+		set
+		{
+			if (ioInProgress_ == value)
+			{
+				Debug.LogError( "Shouldn't be setting IOinprogress when already "+value );
+			}
+			ioInProgress_ = value;
+		}
 	}
 
 
@@ -127,11 +135,6 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 	public bool DeleteAlbumTexture( Album a, AlbumTexture t, System.Action onCompleteAction )
 	{
 		bool result = false;
-		if (ioInProgress_)
-		{
-			LogManager.Instance.AddLine( "Wait to delete" );
-		}
-		else
 		{
 			ioInProgress_ = true;
 			string path = TexturePath( a, t );
@@ -157,11 +160,6 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 
     public void SaveAlbumTexture(Album a, AlbumTexture t, System.Action onCompleteAction )
 	{
-		if (ioInProgress_)
-		{
-			LogManager.Instance.AddLine( "Wait to save" );
-		}
-		else
 		{
 			ioInProgress_ = true;
 			string albumPath = AlbumPath( a );
@@ -193,11 +191,6 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 
 	public void SaveAlbum(Album a, System.Action onCompleteAction)
 	{
-		if (ioInProgress_)
-		{
-			LogManager.Instance.AddLine( "Wait to save album" );
-		}
-		else
 		{
 			ioInProgress_ = true;
 			StartCoroutine( SaveAlbumCR( a, onCompleteAction ) );
@@ -269,11 +262,6 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 
 	private IEnumerator loadAlbumsCR()
 	{
-		if (ioInProgress_)
-		{
-			Debug.LogError( "IO in progress" );
-		}
-		else
 		{
 			ioInProgress_ = true;
 			yield return new WaitForSeconds( 5f );
@@ -305,7 +293,6 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 			}
 		}
 		yield return null;
-		ioInProgress_ = false;
 	}
 
 	private void HandleNoAlbumsLeftToLoad()
@@ -329,6 +316,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		if (numAlbumsToLoad == 0)
 		{
 			HandleNoAlbumsLeftToLoad( );
+			ioInProgress_ = false;
 		}
 	}
 
