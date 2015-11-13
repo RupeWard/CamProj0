@@ -53,6 +53,7 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 		CreateButton( "Scale", OnScaleButtonPressed, winButtonsContainer );
 		CreateButton( "Size", OnSizeButtonPressed, winButtonsContainer );
 		CreateButton( "Move", OnMoveButtonPressed, winButtonsContainer );
+		CreateButton( "Save", OnSaveButtonPressed, winButtonsContainer );
 		CreateButton( "Close", OnCloseButtonPressed, winButtonsContainer );
 		CreateButton( "Done", OnDoneButtonPressed, winButtonsContainer );
 
@@ -95,6 +96,11 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 	abstract public void OnCloseButtonPressed( );
 
 //	abstract protected void DoDestroy( );
+
+	public void OnSaveButtonPressed()
+	{
+		winWin_.SaveSizeAndPosition( );
+	}
 
 	public void OnMoveButtonPressed()
 	{

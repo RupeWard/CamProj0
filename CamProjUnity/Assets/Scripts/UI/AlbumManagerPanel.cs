@@ -16,8 +16,10 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 	public UnityEngine.UI.Text selectedAlbumText;
 	//	public UnityEngine.UI.Text saveTextureButtonText;
 
-	private void Start()
+	protected override void Start()
 	{
+		base.Start( );
+
 		AlbumManager.Instance.allAlbumsLoadedAction += HandleAlbumsChanged;
 		foreach (AlbumButton i in albumButtons)
 		{

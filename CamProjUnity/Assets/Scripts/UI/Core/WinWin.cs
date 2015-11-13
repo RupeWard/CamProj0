@@ -20,7 +20,12 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 	{
 		rectTransform_ = GetComponent<RectTransform>( );
 		parentDims = new Vector2( Screen.width, Screen.height );
+	}
+
+	protected virtual void Start()
+	{
 		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
+		LoadSizeAndPosition( );
 	}
 
 	private void OnDestroy()
@@ -106,6 +111,59 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			startingDistFromCentre_ = (lastScreenPosition_ - centreOfWinInScreenCoords_).magnitude;
 			startingScale_ = scaleableRT.localScale;
 		}
+	}
+
+	private string PPKey
+	{
+		get
+		{
+			return "WW_" + gameObject.name+"_";
+		}
+	}
+
+	public void SaveSizeAndPosition()
+	{
+		PlayerPrefs.SetFloat( PPKey + "POSX", rectTransform_.anchoredPosition.x );
+		PlayerPrefs.SetFloat( PPKey + "POSY", rectTransform_.anchoredPosition.y );
+		PlayerPrefs.SetFloat( PPKey + "SIZE", rectTransform_.localScale.x );
+		PlayerPrefs.Save( );
+		Debug.Log( "Saved size & posn " );
+	}
+
+	public void LoadSizeAndPosition( )
+	{
+		float posx = PlayerPrefs.GetFloat( PPKey + "POSX", -1f );
+		float posy = PlayerPrefs.GetFloat( PPKey + "POSY", -1f );
+		float size = PlayerPrefs.GetFloat( PPKey + "SIZE", -1f );
+		if (posx != -1 && posy != -1 && size != -1)
+		{
+			Vector2 pos = new Vector2( posx, posy );
+            SetSizeAndPosition( pos, size );
+			Debug.Log( "Loaded size " + size + " posn " + pos );
+		}
+		else
+		{
+			Debug.LogWarning( "No stored size and pos for " + gameObject.name );
+		}
+	}
+
+
+	public void SetSizeAndPosition(Vector2 newPos, float size)
+	{
+		Vector3 newScale = new Vector3( size, size, 1 );
+		/*
+		if (scaleableRT != null)
+		{
+			Vector2 relativeScale = new Vector2( newScale.x / rectTransform_.localScale.x, newScale.y / rectTransform_.localScale.y );
+			Vector2 newScaleableRTScale = scaleableRT.localScale;
+			newScaleableRTScale.x /= relativeScale.x;
+			newScaleableRTScale.y /= relativeScale.y;
+			scaleableRT.localScale = newScaleableRTScale;
+		}
+		*/
+		rectTransform_.localScale = newScale;
+
+		rectTransform_.anchoredPosition = newPos;
 	}
 
 	public void HandlePointerDrag()

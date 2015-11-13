@@ -45,8 +45,10 @@ public class LogPanel : WinWin< LogPanel>
 
 	}
 
-	void Start ()
+	protected override void Start ()
     {
+		base.Start( );
+
 		//		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
 		LogManager.Instance.lineAddedAction += HandleLineAdded;
 		LogManager.Instance.linesDeletedAction += HandleLinesDeleted;

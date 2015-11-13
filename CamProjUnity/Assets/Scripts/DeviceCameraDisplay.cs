@@ -11,8 +11,10 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
     private WebCamTexture webCamTexture_ = null;
     private RectTransform myRectTransform_;
 
-	void Start ()
+	protected override void Start ()
     {
+		base.Start( );
+
         WebCamDevice[] devices = WebCamTexture.devices;
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         sb.Append("DCD Start: " + devices.Length + " devices");
