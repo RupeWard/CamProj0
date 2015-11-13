@@ -73,6 +73,29 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 		return a;
 	}
 
+	public bool RemoveAlbum(Album a)
+	{
+		bool removed = false;
+		if (albums_.Contains( a ))
+		{
+			ioInProgress_ = true;
+
+			DeleteAllTexturesInAlbum( a );
+			albums_.Remove( a );
+			if (a == currentAlbum_)
+			{
+				ResetCurrentAlbum( );
+			}
+			HandleNoAlbumsLeftToLoad( );
+			ioInProgress_ = false;
+		}
+		else
+		{
+			Debug.LogError( "Albums " + this.DebugDescribe( ) + "\ndoesn't contain " + a.DebugDescribe( ) );
+		}
+		return removed;
+	}
+
 	private bool ioInProgress_ = false;
 	public bool IOInProgress
 	{
@@ -130,6 +153,15 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 	}
 
 	public System.Action<Album> currentAlbumChangeActon;
+
+	private void ResetCurrentAlbum()
+	{
+		currentAlbum_ = null;
+		if (albums_!=null && albums_.Count >0)
+		{
+			currentAlbum_ = albums_[0];
+		}
+	}
 
 	private void LoadDefaultAlbumCallback()
 	{
@@ -193,6 +225,41 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 	private string TexturePath( Album a, string t)
 	{
 		return AlbumPath( a ) + "/" + t+ ".png";
+	}
+
+	public bool DeleteAllTexturesInAlbum(Album a)
+	{
+		bool result = false;
+
+		ioInProgress_ = true;
+		string albumPath = AlbumPath( a );
+		if (System.IO.Directory.Exists( albumPath ))
+		{
+			foreach (AlbumTexture at in a.AlbumTextures)
+			{
+				string texturePath = TexturePath( a, at );
+				if (System.IO.File.Exists( texturePath ))
+				{
+					System.IO.File.Delete( texturePath );
+					LogManager.Instance.AddLine( "Deleted " + texturePath );
+				}
+				else
+				{
+					Debug.LogError( "Failed to delete " + texturePath );
+				}
+			}
+			string thumbsPath = AlbumPath( a ) + "/Thumbs.db";
+			System.IO.File.Delete( thumbsPath );
+			System.IO.Directory.Delete( albumPath );
+			result = true;
+		}
+		else
+		{
+			Debug.LogWarning( "Can't delete nonexistent '" + albumPath+ "'" );
+			LogManager.Instance.AddLine( "Can't delete nonexistent '" + albumPath + "'" );
+		}
+
+		return result;
 	}
 
 	public bool DeleteAlbumTexture( Album a, AlbumTexture t, System.Action onCompleteAction )

@@ -40,9 +40,17 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 			album_.OnAlbumChanged -= HandleAlbumChanged;
 		}
 		album_ = a;
-		album_.OnAlbumChanged += HandleAlbumChanged;
+		if (album_ != null)
+		{
+			album_.OnAlbumChanged += HandleAlbumChanged;
+		}
 
 		HandleAlbumChanged( );
+	}
+
+	public bool IsAlbum(Album a)
+	{
+		return a == album_;
 	}
 
 	private void SetTitle()

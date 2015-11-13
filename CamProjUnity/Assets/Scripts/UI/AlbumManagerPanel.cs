@@ -158,12 +158,19 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 			album_.OnAlbumChanged += HandleAlbumChanged;
 		}*/
 	}
-
+	 
 	public void OnViewButtonPressed()
 	{
 		if (selectedButton_ != null && selectedButton_.Album != null)
 		{
-			SceneControllerTest.Instance.BringAlbumViewToFront( selectedButton_.Album );
+			if (SceneControllerTest.Instance.IsCurrentlyViewedAlbum( selectedButton_.Album ))
+			{
+				SceneControllerTest.Instance.ClearAlbumView( );
+			}
+			else
+			{
+				SceneControllerTest.Instance.BringAlbumViewToFront( selectedButton_.Album );
+			}
 		}
 		else
 		{
@@ -178,40 +185,70 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		}
 	}
 
-	public void OnDeleteButtonPressed()
+	public void OnDeleteAlbumButtonPressed()
 	{
-		/*
-		if (selectedButton_ != null)
+		if (AlbumManager.Instance.IOInProgress)
 		{
-			AlbumTexture atToRemove = selectedButton_.AlbumTexture;
-			if (atToRemove != null)
+			LogManager.Instance.AddLine( "Wait for previous IO to finish" );
+		}
+		else
+		{
+			if (selectedButton_ != null)
 			{
-				if (selectedButton_.AlbumTexture.IOState == AlbumTexture.EIOState.Modified)
+				Album aToRemove = selectedButton_.Album;
+				if (aToRemove != null)
 				{
-					Debug.LogWarning( "Can;t delete modified" );
+					if (SceneControllerTest.Instance.IsCurrentlyViewedAlbum(aToRemove))
+					{
+						LogManager.Instance.AddLine( "Can't deleted view album" );
+						Debug.Log( "Can't deleted currebtly view album" );
+					}
+					else
+					{
+						AlbumManager.Instance.IOInProgress = true;
+
+						ConfirmPanel.Data data = new ConfirmPanel.Data( );
+						data.title = "Confirm delete Album '" + aToRemove.AlbumName+ "'";
+						data.info = "Are you sure you want to delete \n" + aToRemove.DebugDescribe()+"?";
+						data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnDeleteAlbumConfirm );
+						data.noButtonDef = new ConfirmPanel.ButtonDef( "No", OnIOCancelled );
+
+						WinLayerManager.Instance.CreateConfirmPanel( data );
+					}
 				}
 				else
 				{
-					bool success = album_.Remove( atToRemove );
-					if (success)
-					{
-						if (selectedButton_.AlbumTexture.IOState == AlbumTexture.EIOState.Unsaved)
-						{
-							Debug.Log( "Not saved so not deleting" );
-						}
-						else
-						{
-							Debug.Log( "Deleting file "+selectedButton_.AlbumTexture.DebugDescribe() );
-							AlbumManager.Instance.DeleteAlbumTexture( album_, atToRemove, HandleAlbumChanged );
-						}
-					}
-
+					LogManager.Instance.AddLine( "No Album on selected" );
 				}
-				selectedButton_ = null;
-				HandleSelectedButtonChanged( );
+			}
+			else
+			{
+				LogManager.Instance.AddLine( "No button selected" );
 			}
 		}
-		*/
+	}
+
+	private void OnDeleteAlbumConfirm( )
+	{
+		if (selectedButton_ != null && selectedButton_.Album!= null)
+		{
+			Album aToRemove = selectedButton_.Album;
+
+			bool success = AlbumManager.Instance.RemoveAlbum( aToRemove );
+			if (success)
+			{
+				selectedButton_.Init( null );
+				selectedButton_ = null;
+				HandleSelectedButtonChanged( );
+				HandleAlbumsChanged( );
+			}
+		}
+		else
+		{
+			if (selectedButton_ == null) Debug.LogError( "Null SB" );
+			else if (selectedButton_.Album== null) Debug.LogError( "Null Album" );
+		}
+
 	}
 
 	public void OnNewAlbumClicked()

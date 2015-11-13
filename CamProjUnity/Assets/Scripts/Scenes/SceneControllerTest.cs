@@ -163,6 +163,30 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 			}
 		}
 	}
+	public void ClearAlbumView()
+	{
+		if (albumViewPanel_ != null)
+		{
+			albumViewPanel_.SetAlbum( null );
+		}
+		else
+		{
+			Debug.LogError( "Null album view panel" );
+		}
+	}
+
+	public bool IsCurrentlyViewedAlbum(Album a)
+	{
+		bool result = false;
+		if (albumViewPanel_ != null)
+		{
+			if (albumViewPanel_.IsAlbum(a))
+			{
+				result = true;
+			}
+		}
+		return result;
+	}
 
 	public void BringAlbumViewToFront( Album a )
 	{
