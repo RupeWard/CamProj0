@@ -52,7 +52,52 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 		GameObject go = Instantiate( prefab ) as GameObject;
 		WinLayerWin win = go.GetComponent<WinLayerWin>( );
 		AddToOverlaysLayer( win );
+		currentOverlay_ = win.gameObject;
 		return win;
+	}
+
+	public GameObject confirmPanelPrefab;
+	private GameObject currentOverlay_;
+
+	public void CreateConfirmPanel(ConfirmPanel.Data data)
+	{ 
+		if (currentOverlay_== null)
+		{
+			GameObject go = Instantiate( confirmPanelPrefab) as GameObject;
+			ConfirmPanel confirmPanel= go.GetComponent<ConfirmPanel>( );
+			if (confirmPanel == null)
+			{
+				Debug.LogError( "WLM: Failed to make confirm panel" );
+			}
+			else
+			{
+				if (confirmPanel.GetComponent<RectTransform>() ==null)
+				{
+					Debug.LogError( "NULL RT" );
+				}
+				SetOverlays( confirmPanel.GetComponent<RectTransform>( ) );
+				confirmPanel.Init( data );
+				currentOverlay_ = confirmPanel.gameObject;
+				if (DEBUG_LOCAL)
+                {
+					Debug.Log( "WLM: created confirm panel" );
+				}		
+			}
+		}
+		else
+		{
+			Debug.LogError( "Can't create confirm panel while another overay is present they all block" );
+		}
+	}
+
+	private void SetOverlays(RectTransform r)
+	{
+		winOverlaysLayer.SetOverlays( r );
+	}
+
+	public void CloseOverlays()
+	{
+		winOverlaysLayer.CloseOverlays( );
 	}
 
 	public void SetControls( RectTransform r )
@@ -64,6 +109,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 	{
 		winControlsLayer.CloseControls(  );
 	}
+	
 
 	public bool RemoveContentsFromLayer(WinLayerWin wlw)
 	{
@@ -240,6 +286,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 	public RectTransform overlaysLayerContainer;
 
 	public WinControlsLayer winControlsLayer;
+	public WinOverlaysLayer winOverlaysLayer;
 
 	#endregion inspector hooks
 
@@ -281,7 +328,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
         }
 		CreateTopLayer( );
 //			CreateControlsLayer( );
-		CreateOverlaysLayer( );
+//		CreateOverlaysLayer( );
     }
 
     #endregion MonoBehaviour
