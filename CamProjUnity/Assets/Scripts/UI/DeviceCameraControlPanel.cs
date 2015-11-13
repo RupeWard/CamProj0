@@ -4,6 +4,8 @@ using System;
 
 public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 {
+	static private readonly bool DEBUG_LOCAL = false;
+
 	#region inspector hooks
 
 	private ButtonSetButton playButton_;
@@ -75,7 +77,10 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 
 	override public void OnCloseButtonPressed( )
 	{
-		Debug.LogWarning( "DCP Close" );
+		if (DEBUG_LOCAL)
+		{
+			Debug.LogWarning( "DCP Close" );
+		}
 
 		SceneControllerTest.Instance.ToggleDeviceCameraPanel( );
 	}

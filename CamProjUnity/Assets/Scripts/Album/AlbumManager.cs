@@ -22,6 +22,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		{
 			if (albums_.Contains( value ))
 			{
+
 				currentAlbum_ = value;
 			}
 			else
@@ -57,6 +58,8 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 		StartCoroutine( loadAlbumsCR( ) );
 	}
 
+	public System.Action<Album> currentAlbumChangeActon;
+
 	private void LoadDefaultAlbumCallback()
 	{
 		allAlbumsLoadedAction -= LoadDefaultAlbumCallback;
@@ -66,6 +69,10 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 			currentAlbum_ = albums_[0];
 			Debug.Log( "Set album to first = " + currentAlbum_.DebugDescribe( ) );
 			LogManager.Instance.AddLine( "Set Default Album to first '" + currentAlbum_.AlbumName + "'" );
+			if (currentAlbumChangeActon != null)
+			{
+				currentAlbumChangeActon( currentAlbum_ );
+			}
 		}
 		else
 		{
@@ -131,11 +138,13 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 			if (System.IO.File.Exists( path ))
 			{
 				System.IO.File.Delete( path );
+				LogManager.Instance.AddLine( "Deleted " + path );
 				result = true;
 			}
 			else
 			{
 				Debug.LogWarning( "Can't delete nonexistent '" + path + "'" );
+				LogManager.Instance.AddLine( "Can't delete nonexistent '" + path + "'" );
 			}
 			if (onCompleteAction != null)
 			{
@@ -367,6 +376,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 						at.imageName = imageName;
 						at.texture = texture;
 						album.AddTexture( at );
+						at.HandleSaved( );
 						Debug.Log( "Added texture " + at.DebugDescribe( ) +" to album");
 					}
 				}
@@ -377,10 +387,12 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>
 			}
 			Debug.Log( "Loaded album " + album.DebugDescribe( ) );
 			LogManager.Instance.AddLine( "Loaded Album '" + album.AlbumName + "' (" + album.NumTextures + " ics)" );
+			/*
 			for (int i = 0; i < 400; i++)
 			{
 				LogManager.Instance.AddLine( "Loaded Album '" + album.AlbumName + "' (" + album.NumTextures + " ics)" );
 			}
+			*/
 		}
 
 		if (onCompleteAction != null)

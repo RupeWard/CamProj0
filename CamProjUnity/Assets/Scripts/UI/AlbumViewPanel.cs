@@ -23,7 +23,10 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		{
 			i.clickAction += HandleImageButtonClicked;
 		}
+		AlbumManager.Instance.currentAlbumChangeActon += SetAlbum;
+		
 	}
+
 
 	public void Init(Album a)
 	{
@@ -58,6 +61,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 	{
 		SetTitle( );
 		SetButtons( );
+		RemovePreviewedImage( );
 	}
 
 	private ImageButton selectedButton_ = null;
@@ -145,6 +149,10 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		{
 			album_.OnAlbumChanged -= HandleAlbumChanged;
 		}
+		if (selectedButton_ != null && selectedButton_.AlbumTexture != null)
+		{
+			RemovePreviewedImage( );
+		}
 	}
 
 	public void OnEnable( )
@@ -154,6 +162,18 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 			album_.OnAlbumChanged -= HandleAlbumChanged;
 			album_.OnAlbumChanged += HandleAlbumChanged;
 		}
+		if (selectedButton_ != null && selectedButton_.AlbumTexture != null)
+		{
+			rawImage.texture = selectedButton_.AlbumTexture.texture;
+			previewedImageText.text = selectedButton_.AlbumTexture.imageName;
+		}
+
+	}
+
+	private void RemovePreviewedImage()
+	{
+		rawImage.texture = null;
+		previewedImageText.text = "NONE";
 	}
 
 	public void OnDestroy()
@@ -162,7 +182,8 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		{
 			album_.OnAlbumChanged -= HandleAlbumChanged;
 		}
-    }
+		AlbumManager.Instance.currentAlbumChangeActon -= SetAlbum;
+	}
 
 	public void OnViewButtonPressed()
 	{
@@ -199,25 +220,6 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 					data.noButtonDef = new ConfirmPanel.ButtonDef( "No", null );
 
 					WinLayerManager.Instance.CreateConfirmPanel( data );
-
-					/*
-					bool success = album_.Remove( atToRemove );
-					if (success)
-					{
-						if (selectedButton_.AlbumTexture.IOState == AlbumTexture.EIOState.Unsaved)
-						{
-							Debug.Log( "Not saved so not deleting" );
-							LogManager.Instance.AddLine( "Not saved so not deleting " + selectedButton_.AlbumTexture.imageName );
-						}
-						else
-						{
-							Debug.Log( "Deleting file "+selectedButton_.AlbumTexture.DebugDescribe() );
-							LogManager.Instance.AddLine( "Deleting " + selectedButton_.AlbumTexture.imageName );
-							AlbumManager.Instance.DeleteAlbumTexture( album_, atToRemove, HandleAlbumChanged );
-						}
-					}
-					*/
-
 				}
 			}
 		}
@@ -228,19 +230,19 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		if (selectedButton_ != null && selectedButton_.AlbumTexture != null)
 		{
 			AlbumTexture atToRemove = selectedButton_.AlbumTexture;
-
+			
 			bool success = album_.Remove( atToRemove );
 			if (success)
 			{
-				if (selectedButton_.AlbumTexture.IOState == AlbumTexture.EIOState.Unsaved)
+				if (atToRemove.IOState == AlbumTexture.EIOState.Unsaved)
 				{
 					Debug.Log( "Not saved so not deleting" );
-					LogManager.Instance.AddLine( "Not saved so not deleting " + selectedButton_.AlbumTexture.imageName );
+					LogManager.Instance.AddLine( "Not saved so not deleting " + atToRemove.imageName );
 				}
 				else
 				{
-					Debug.Log( "Deleting file " + selectedButton_.AlbumTexture.DebugDescribe( ) );
-					LogManager.Instance.AddLine( "Deleting " + selectedButton_.AlbumTexture.imageName );
+					Debug.Log( "Deleting file " + atToRemove.DebugDescribe( ) );
+					LogManager.Instance.AddLine( "Deleting " + atToRemove.imageName );
 					AlbumManager.Instance.DeleteAlbumTexture( album_, atToRemove, HandleAlbumChanged );
 				}
 				selectedButton_.Init(null );
@@ -264,12 +266,15 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		{
 			if (selectedButton_ != null)
 			{
-				if (selectedButton_.AlbumTexture != null)
+				AlbumTexture atToSave= selectedButton_.AlbumTexture;
+				if (atToSave != null)
 				{
-					Debug.Log( "SaveTexture pressed " + album_.DebugDescribe( )+" "+selectedButton_.AlbumTexture.DebugDescribe() );
-					AlbumManager.Instance.SaveAlbumTexture( album_ , selectedButton_.AlbumTexture, HandleAlbumChanged);
-					LogManager.Instance.AddLine( "Saving " + selectedButton_.AlbumTexture.imageName );
-					HandleAlbumChanged( );
+					Debug.Log( "SaveTexture pressed " + album_.DebugDescribe( ) + " " + atToSave.DebugDescribe( ) );
+					ConfirmPanel.Data data = new ConfirmPanel.Data( );
+					data.title = "Confirm save '" + atToSave.imageName + "'";
+					data.info = "Are you sure you want to save '" + atToSave.imageName + "'?";
+					data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnSaveConfirmed );
+					data.noButtonDef = new ConfirmPanel.ButtonDef( "No", null );
 				}
 				else
 				{
@@ -289,6 +294,24 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 			LogManager.Instance.AddLine( "Nothing to save" );
 		}
 
+	}
+
+	private void OnSaveConfirmed()
+	{
+		if (selectedButton_ != null && selectedButton_.AlbumTexture != null)
+		{
+			AlbumTexture atToSave = selectedButton_.AlbumTexture;
+
+			AlbumManager.Instance.SaveAlbumTexture( album_, selectedButton_.AlbumTexture, null);
+			LogManager.Instance.AddLine( "Saving " + selectedButton_.AlbumTexture.imageName );
+			HandleAlbumChanged( );
+
+		}
+		else
+		{
+			if (selectedButton_ == null) Debug.LogError( "Null SB" );
+			else if (selectedButton_.AlbumTexture == null) Debug.LogError( "Null AT" );
+		}
 	}
 
 	public void OnSaveAlbumPressed()

@@ -3,6 +3,8 @@ using System.Collections;
 
 public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 {
+	static private readonly bool DEBUG_LOCAL = false;
+
 	#region Prefabs
 
 	public GameObject buttonsLayerPrefab;
@@ -232,8 +234,10 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 				}
 				else
 				{
-					Debug.LogWarning( "SCT created DCD" );
-
+					if (DEBUG_LOCAL)
+					{
+						Debug.LogWarning( "SCT created DCD" );
+					}
 					deviceCameraPanelWLW_ = wlw;
 					//					deviceCameraPanel_.Init( CurrentAlbum );
 				}
@@ -247,7 +251,10 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 				GameObject.Destroy( deviceCameraPanelWLW_.gameObject );
 				deviceCameraPanel_ = null;
 				deviceCameraPanelWLW_ = null;
-				Debug.LogWarning( "SCT closed DCD" );
+				if (DEBUG_LOCAL)
+				{
+					Debug.LogWarning( "SCT closed DCD" );
+				}
 			}
 			else
 			{

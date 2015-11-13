@@ -3,6 +3,7 @@ using System.Collections;
 
 abstract public class WinControlPanel < TControlleeType >: MonoBehaviour 
 {
+	static private readonly bool DEBUG_LOCAL = false;
 	#region inspector hooks
 
 	public UnityEngine.UI.Text titleText;
@@ -147,7 +148,11 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
         float winButtonsHeight = winButtonsContainer.NumButtons * buttonHeight;
 		float funcButtonsHeight = funcButtonsContainer.NumButtons * buttonHeight;
 
-		Debug.Log( "WCP: wbh = " + winButtonsHeight + ", fbh = " + funcButtonsHeight );
+		if (DEBUG_LOCAL)
+		{
+
+			Debug.Log( "WCP: wbh = " + winButtonsHeight + ", fbh = " + funcButtonsHeight );
+		}
 
 		winButtonsContainer.GetComponent<RectTransform>( ).SetHeight( winButtonsHeight + (winButtonsContainer.NumButtons+1 ) * winButtonsContainer.margin);
 		funcButtonsContainer.GetComponent<RectTransform>( ).SetHeight( funcButtonsHeight + (funcButtonsContainer.NumButtons+1) * funcButtonsContainer.margin );

@@ -11,7 +11,10 @@ public class WinControlsLayer : MonoBehaviour
 	{
 		if (currentControls_ == c)
 		{
-			Debug.LogWarning( "WCL: same controls " + c.gameObject.name );
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "WCL: same controls " + c.gameObject.name );
+			}
 		}
 		else
 		{
@@ -33,7 +36,10 @@ public class WinControlsLayer : MonoBehaviour
 
 	public void CloseControls()
 	{
-		Debug.LogWarning( "WCL close controls");
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log( "WCL close controls" );
+		}
 
 		GameObject.Destroy( currentControls_.gameObject );
 		currentControls_ = null;

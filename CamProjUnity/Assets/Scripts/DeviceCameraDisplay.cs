@@ -20,6 +20,10 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
         {
             sb.Append("\n "+i+" "+devices[i].name+" "+devices[i].isFrontFacing);
         }
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log( sb.ToString( ) );
+		}
         webCamTexture_ = new WebCamTexture();
         myRectTransform_ = GetComponent<RectTransform>();        
 	}

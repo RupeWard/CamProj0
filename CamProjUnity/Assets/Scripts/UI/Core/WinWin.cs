@@ -38,7 +38,10 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 	{
 		if (controlPanel_ != null)
 		{
-			Debug.LogWarning( "LOF CP " + gameObject.name );
+			if (DEBUG_LOCAL)
+			{
+				Debug.LogWarning( "LOF CP " + gameObject.name );
+			}
 			controlPanel_.OnDoneButtonPressed( );
 		}
 		if (isMoving_)

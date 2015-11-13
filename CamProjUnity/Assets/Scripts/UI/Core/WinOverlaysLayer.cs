@@ -11,7 +11,10 @@ public class WinOverlaysLayer : MonoBehaviour
 	{
 		if (currentOverlay_ == c)
 		{
-			Debug.LogWarning( "WOL: same overlay " + c.gameObject.name );
+			if (DEBUG_LOCAL)
+			{
+				Debug.LogWarning( "WOL: same overlay " + c.gameObject.name );
+			}
 		}
 		else
 		{
@@ -33,7 +36,10 @@ public class WinOverlaysLayer : MonoBehaviour
 
 	public void CloseOverlays( )
 	{
-		Debug.LogWarning( "WCL close controls");
+		if (DEBUG_LOCAL)
+		{
+			Debug.LogWarning( "WCL close controls" );
+		}
 
 		GameObject.Destroy( currentOverlay_.gameObject );
 		currentOverlay_ = null;
