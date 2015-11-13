@@ -364,8 +364,8 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			{
 				currentOverlay_ = (Instantiate<GameObject>( go ) as GameObject).GetComponent<RectTransform>( );
 				currentOverlay_.SetParent( overlaysContainer );
-				currentOverlay_.offsetMin = 20f * Vector2.one;
-				currentOverlay_.offsetMax = -20f * Vector2.one;
+				currentOverlay_.offsetMin = Vector2.zero;
+				currentOverlay_.offsetMax = Vector2.zero;
 				currentOverlay_.localScale = Vector3.one;
 				isMoving_ = true;
 			}
@@ -431,8 +431,8 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			{
 				currentOverlay_ = (Instantiate<GameObject>( go ) as GameObject).GetComponent<RectTransform>( );
 				currentOverlay_.SetParent( overlaysContainer );
-				currentOverlay_.offsetMin = 20f * Vector2.one;
-				currentOverlay_.offsetMax = -20f * Vector2.one;
+				currentOverlay_.offsetMin = Vector2.zero;
+				currentOverlay_.offsetMax = Vector2.zero;
 				currentOverlay_.localScale = Vector3.one;
 				WinScaleOverlay wsO = currentOverlay_.GetComponent<WinScaleOverlay>( );
 				wsO.Init( rectTransform_ );
@@ -485,8 +485,8 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			{
 				currentOverlay_ = (Instantiate<GameObject>( go ) as GameObject).GetComponent<RectTransform>( );
 				currentOverlay_.SetParent( overlaysContainer );
-				currentOverlay_.offsetMin = 20f * Vector2.one;
-				currentOverlay_.offsetMax = -20f * Vector2.one;
+				currentOverlay_.offsetMin = Vector2.zero;
+				currentOverlay_.offsetMax = Vector2.zero;
 				currentOverlay_.localScale = Vector3.one;
 				WinSizeOverlay wsO = currentOverlay_.GetComponent<WinSizeOverlay>( );
 				wsO.Init( rectTransform_ );
