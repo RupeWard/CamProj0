@@ -27,7 +27,7 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 
 	#region MonoBehaviour
 
-	public void Awake()
+	protected override void PostAwake()
 	{
 		Debug.Log( "Screen " + UIManager.Instance.ScreenSize + ", Canvas " + UIManager.Instance.ScreenCanvasSize ); ;
 

@@ -53,34 +53,69 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
 		{
 			rawImage.texture = clearTexture;
 		}
+		DestroyStoppedSnap( );
 	}
 
 	public void Snap()
 	{
-		if (!webCamTexture_.isPlaying)
+		if (webCamTexture_.isPlaying)
 		{
-			Debug.LogWarning( "Can't snap when not playing" );
-			LogManager.Instance.AddLine( "Can't snap when not playing" );
+			Texture2D snap = CaptureImage( );
+			if (snap == null)
+			{
+				LogManager.Instance.AddLine( "Can't snap when not playing" );
+			}
+			else
+			{
+				LogManager.Instance.AddLine( "Adding live image to Album" );
+				AlbumTexture at = new AlbumTexture( );
+				at.texture = snap;
+
+				at = AlbumManager.Instance.AddToCurrentAlbum( at );
+
+				//			byte[] bytes = snap.EncodeToPNG( );
+				//			File.WriteAllBytes( fn, bytes );
+			}
 		}
 		else
 		{
-			Texture2D snap = null;
-			
+			if (stoppedSnap_ != null)
 			{
-				snap = new Texture2D( webCamTexture_.width, webCamTexture_.height );
-				snap.SetPixels( webCamTexture_.GetPixels( ) );
-				snap.Apply( );
+				LogManager.Instance.AddLine( "Adding paused image to Album" );
+				AlbumTexture at = new AlbumTexture( );
+				at.texture = stoppedSnap_;
+				at = AlbumManager.Instance.AddToCurrentAlbum( at );
+				stoppedSnap_ = null;
 			}
-			
-			AlbumTexture at = new AlbumTexture( );
-			at.texture = snap;
-
-			at = AlbumManager.Instance.AddToCurrentAlbum( at );
-
-			//			byte[] bytes = snap.EncodeToPNG( );
-			//			File.WriteAllBytes( fn, bytes );
+			else
+			{
+				LogManager.Instance.AddLine( "No paused image to save" );
+			}
 		}
 	}
+
+	Texture2D stoppedSnap_;
+
+	Texture2D CaptureImage()
+	{
+		Texture2D result = null;
+		if (!webCamTexture_.isPlaying)
+		{
+			Debug.LogWarning( "Can't capture when not playing" );
+		}
+		else
+		{
+			{
+				result = new Texture2D( webCamTexture_.width, webCamTexture_.height );
+				result.SetPixels( webCamTexture_.GetPixels( ) );
+				result.Apply( );
+			}
+
+		}
+
+		return result;
+	}
+
 
 	int count = 0;
 
@@ -98,22 +133,34 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
             }
             LogManager.Instance.AddLine(msg);
         }
-        webCamTexture_.Play();
+		DestroyStoppedSnap( );
+		webCamTexture_.Play();
 
     }
 
     void PauseCamera()
     {
         string msg = "DCD: " + (count++) + " PAUSE\n\n";
-        webCamTexture_.Pause();
+		DestroyStoppedSnap( );
+		stoppedSnap_ = CaptureImage( );
+		webCamTexture_.Pause();
         if (DEBUG_LOCAL)
         {
             Debug.Log(msg);
         }
-        LogManager.Instance.AddLine(msg);
+		LogManager.Instance.AddLine(msg);
     }
 
-    public void HandlePlayPause()
+	private void DestroyStoppedSnap()
+	{
+		if (stoppedSnap_ != null)
+		{
+			DestroyObject( stoppedSnap_ );
+			stoppedSnap_ = null;
+		}
+	}
+
+	public void HandlePlayPause()
     {
         if (webCamTexture_.isPlaying)
         {
@@ -131,6 +178,7 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
         {
             webCamTexture_.Stop();
         }
+		DestroyStoppedSnap( );
     }
 
 }

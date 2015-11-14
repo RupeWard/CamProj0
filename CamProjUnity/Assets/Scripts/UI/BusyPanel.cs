@@ -5,8 +5,14 @@ public class BusyPanel : SingletonSceneLifetime<BusyPanel>
 {
 	public UnityEngine.UI.Text titleText;
 	public UnityEngine.UI.Text messageText;
+	public UnityEngine.UI.Text versionText;
 
 	private static string defaultTitle = "PLEASE WAIT";
+
+	protected override void PostAwake( )
+	{
+		versionText.text = Version.versionNumber.ToString( );
+	}
 
 	public void Open( string m )
 	{
