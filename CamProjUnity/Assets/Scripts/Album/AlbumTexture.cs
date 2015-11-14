@@ -24,6 +24,17 @@ public class AlbumTexture: IDebugDescribable
 
 	static System.Text.StringBuilder sb_ = new System.Text.StringBuilder( );
 
+	public AlbumTexture CloneNameless()
+	{
+		AlbumTexture newAt = new AlbumTexture( );
+
+		Texture2D newTexture = new Texture2D( texture.width, texture.height );
+		newTexture.SetPixels( texture.GetPixels( ) );
+		newTexture.Apply( );
+		newAt.texture = newTexture;
+		return newAt;
+	}
+
     public string TitleString
 	{
 		get

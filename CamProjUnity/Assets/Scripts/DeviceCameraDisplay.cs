@@ -68,7 +68,6 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
 
 			AlbumTexture at = new AlbumTexture( );
 			at.texture = snap;
-			at.imageName = "Snap";
 
 			AlbumManager.Instance.AddToCurrentAlbum( at );
 			

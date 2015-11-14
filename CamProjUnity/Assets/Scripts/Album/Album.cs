@@ -64,10 +64,12 @@ public class Album: IDebugDescribable
 		}
 	}
 
-	public void AddTexture( AlbumTexture tex)
+	public AlbumTexture AddTexture( AlbumTexture tex)
 	{
+		AlbumTexture result = null;
 		if (!locked)
 		{
+			tex.imageName = AlbumName;
 			if (imagenameExists(tex.imageName))
 			{
 				string nextImageName = findNextImagename( tex.imageName );
@@ -76,11 +78,13 @@ public class Album: IDebugDescribable
 			}
 			albumTextures_.Add( tex );
 			HandleAlbumChanged( );
+			result = tex;
 		}
 		else
 		{
 			Debug.LogWarning( "Album is locked, can't add" );
 		}
+		return result;
 	}
 
 	private bool imagenameExists(string s)

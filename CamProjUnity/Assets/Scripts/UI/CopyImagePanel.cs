@@ -218,8 +218,23 @@ public class CopyImagePanel : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log( "COPY " + albumTexture_.imageName + " from " + fromAlbum_.AlbumName + " to " + toAlbum_.AlbumName );
-			Close( );
+			
+			AlbumTexture newAt = albumTexture_.CloneNameless( );
+			newAt = toAlbum_.AddTexture( newAt );
+			if (newAt != null)
+			{
+				string msg = "COPIED " + albumTexture_.imageName + " from " + fromAlbum_.AlbumName + " to " + toAlbum_.AlbumName + " as " + newAt.imageName;
+				if (DEBUG_LOCAL)
+				{
+					Debug.Log( msg );
+				}
+				LogManager.Instance.AddLine( msg );
+				Close( );
+			}
+			else
+			{
+				Debug.LogError( "Failed to copy " + albumTexture_.imageName + " from " + fromAlbum_.AlbumName + " to " + toAlbum_.AlbumName );
+            }
 		}
 	}
 
