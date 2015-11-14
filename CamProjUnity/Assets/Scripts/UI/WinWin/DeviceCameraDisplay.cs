@@ -121,7 +121,7 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
 
     void PlayCamera()
     {
-        if (DEBUG_LOCAL)
+//        if (DEBUG_LOCAL)
         {
             string msg = "DCD: "+(count++)+" PLAY size = " + webCamTexture_.width + " * " + webCamTexture_.height
                 +"\nScreen = "+Screen.width+" x "+Screen.height

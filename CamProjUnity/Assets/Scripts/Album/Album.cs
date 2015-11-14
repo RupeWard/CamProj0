@@ -69,10 +69,8 @@ public class Album: IDebugDescribable
 		AlbumTexture result = null;
 		if (!locked)
 		{
-			tex.imageName = AlbumName;
-			if (imagenameExists(tex.imageName))
 			{
-				string nextImageName = findNextImagename( tex.imageName );
+				string nextImageName = findNextImagename( AlbumName );
 				Debug.Log( "Image name " + tex.imageName + " exists so using " + nextImageName);
 				tex.imageName = nextImageName;
 			}
