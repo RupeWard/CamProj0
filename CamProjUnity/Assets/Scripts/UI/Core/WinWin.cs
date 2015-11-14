@@ -202,6 +202,8 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			Vector2 diff = newScreenPosition - lastScreenPosition_;
 			if (diff.magnitude > 0.1f) //FIXME
 			{
+				Vector2 newPosition = rectTransform_.anchoredPosition;
+
 				float factor = currentDistFromCentre_ / startingDistFromCentre_;
 				Vector3 newScale = startingSize_ * factor;
 				Vector2 newSize = new Vector2( newScale.x * rectTransform_.GetWidth( ), newScale.y * rectTransform_.GetHeight( ) );
@@ -223,6 +225,54 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 						newSize.x,
 						newSize.y
                         );
+					if (newRect.xMin < -0.5f * parentDims.x)
+					{
+						newPosition.x += ( -0.5f * parentDims.x - newRect.xMin );
+					}
+					else if (newRect.xMax > 0.5f * parentDims.x)
+					{
+						newPosition.x -= (newRect.xMax - 0.5f * parentDims.x);
+					}
+
+					if (newRect.yMin < -0.5f * parentDims.y)
+					{
+						newPosition.y += (-0.5f * parentDims.y - newRect.yMin);
+					}
+					else if (newRect.yMax > 0.5f * parentDims.y)
+					{
+						newPosition.y -= (newRect.yMax - 0.5f * parentDims.y);
+					}
+
+					if (newPosition != rectTransform_.anchoredPosition)
+					{
+						Rect testRect = new Rect(
+							newPosition.x - 0.5f * newSize.x,
+							newPosition.y - 0.5f * newSize.y,
+							newSize.x,
+							newSize.y
+							);
+						if (testRect.xMin < -0.5f * parentDims.x
+							|| testRect.xMax > 0.5f * parentDims.x
+							|| testRect.yMin < -0.5f * parentDims.y
+							|| testRect.yMax > 0.5f * parentDims.y
+							)
+						{
+							newSizeOk = false;
+							if (DEBUG_SCALING)
+							{
+								Debug.Log( "Sizing stopped by edge" );
+							}
+						}
+						else
+						{
+							rectTransform_.anchoredPosition = newPosition;
+							if (DEBUG_SIZING)
+							{
+								Debug.Log( "Shifting because of edge" );
+							}
+						}
+					}
+					/*
 					if (newRect.xMin < -0.5f * parentDims.x
 						|| newRect.xMax > 0.5f * parentDims.x
 						|| newRect.yMin < -0.5f *parentDims.y
@@ -235,6 +285,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 							Debug.Log( "Sizing stopped by edge" );
 						}
 					}
+					*/
 				}
 				if (newSizeOk)
 				{
@@ -250,7 +301,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			if (diff.magnitude > 0.1f) //FIXME
 			{
 				Vector2 currentSize = new Vector2( rectTransform_.localScale.x * rectTransform_.GetWidth( ), rectTransform_.localScale.y * rectTransform_.GetHeight( ) );
-
+				
 				{
 					float signXMovement = diff.x / Mathf.Abs( diff.x );
 					float distFromXEdge = 0f;
