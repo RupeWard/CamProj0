@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class CopyImagePanel : MonoBehaviour
 {
-	//	private static readonly bool DEBUG_LOCAL = true;
+	private static readonly bool DEBUG_LOCAL = true;
 
 	private Album fromAlbum_;
 	private Album toAlbum_;
@@ -14,8 +14,9 @@ public class CopyImagePanel : MonoBehaviour
 	public AlbumButton[] albumButtons = new AlbumButton[0];
 
 	public UnityEngine.UI.Text questionText;
+	public UnityEngine.UI.RawImage rawImage;
 
-	void Start()
+	void Awake()
 	{	
 		foreach (AlbumButton i in albumButtons)
 		{
@@ -45,7 +46,8 @@ public class CopyImagePanel : MonoBehaviour
 		albumTexture_ = at;
 		SetTitle( );
 		SetQuestion( );
-//		fromAlbum_.OnAlbumChanged += HandleAlbumsChanged;
+		SetButtons( );
+		rawImage.texture = albumTexture_.texture;
 	}
 
 	private void SetTitle()
@@ -62,30 +64,26 @@ public class CopyImagePanel : MonoBehaviour
 
 	private void SetQuestion( )
 	{
-		if (albumTexture_ == null)
+		System.Text.StringBuilder sb= new System.Text.StringBuilder();
+		if (albumTexture_ != null)
 		{
-			questionText.text = "";
-		}
-		else
-		{
+			sb.Append( "Copy " ).Append( albumTexture_.imageName ).Append( " from " ).Append( fromAlbum_.AlbumName );
+			
 			if (toAlbum_ == null)
 			{
-				questionText.text = "Copy " + albumTexture_.imageName + " from " + fromAlbum_.AlbumName + " to where?";
+				sb.Append( " to where?");
 			}
 			else
 			{
-				questionText.text = "Copy " + albumTexture_.imageName +" from "+fromAlbum_.AlbumName+" to "+toAlbum_.AlbumName+ "?";
+				sb.Append(" to ").Append(toAlbum_.AlbumName).Append("?");
 			}
 		}
+		questionText.text = sb.ToString( );
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log( "CIP: SetQuestion to " + questionText.text );
+		}
 	}
-
-	/*
-	private void HandleAlbumsChanged()
-	{
-		Debug.Log( "AMP: HandleAlbumsChanged" );
-		SetTitle( );
-		SetButtons( );
-	}*/
 
 	private AlbumButton selectedButton_ = null;
 
@@ -97,16 +95,27 @@ public class CopyImagePanel : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log( "IB Clicked: "+b.Album.AlbumName );
+			Debug.Log( "IB Clicked: "+b.Album.DebugDescribe()+" "+b.State );
 			switch (b.State)
 			{
 				case AlbumButton.EState.Empty:
 					{
 						if (selectedButton_ != null)
 						{
+							if (DEBUG_LOCAL)
+							{
+								Debug.Log( "CIP: Deselecting " + selectedButton_.gameObject.name );
+							}
 							selectedButton_.DeSelect( );
 							selectedButton_ = null;
 							HandleSelectedButtonChanged( );
+						}
+						else
+						{
+							if (DEBUG_LOCAL)
+							{
+								Debug.Log( "CIP: Nothing to deseletc" );
+							}
 						}
 						break;
 					}
@@ -114,8 +123,16 @@ public class CopyImagePanel : MonoBehaviour
 					{
 						if (selectedButton_ != null)
 						{
+							if (DEBUG_LOCAL)
+							{
+								Debug.Log( "CIP: Deselecting " + selectedButton_.gameObject.name );
+							}
 							selectedButton_.DeSelect( );
 							selectedButton_ = null;
+						}
+						if (DEBUG_LOCAL)
+						{
+							Debug.Log( "CIP:  Selecting " + b.gameObject.name );
 						}
 						b.Select( );
 						selectedButton_ = b;
@@ -124,6 +141,10 @@ public class CopyImagePanel : MonoBehaviour
 					}
 				case AlbumButton.EState.Selected:
 					{
+						if (DEBUG_LOCAL)
+						{
+							Debug.Log( "CIP: Deselecting " + selectedButton_.gameObject.name );
+						}
 						selectedButton_.DeSelect( );
 						selectedButton_ = null;
 						HandleSelectedButtonChanged( );
@@ -137,18 +158,29 @@ public class CopyImagePanel : MonoBehaviour
 	{
 		if (selectedButton_ == null)
 		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "CIP: HandleSelectedButtonChanged( null)" );
+			}
 			toAlbum_ = null;
 		}
 		else
 		{
+			if (DEBUG_LOCAL)
+			{
+				Debug.Log( "CIP: HandleSelectedButtonChanged( )"+selectedButton_.gameObject.name );
+			}
 			toAlbum_ = selectedButton_.Album;
 		}
 		SetQuestion( );
-		SetButtons( );
 	}
 
 	private void SetButtons()
 	{
+		if (DEBUG_LOCAL)
+		{
+			Debug.Log( "CIP: SetButtons" );
+		}
 		int numDone = 0;
 
 		List<Album> albums = AlbumManager.Instance.Albums;
@@ -187,24 +219,23 @@ public class CopyImagePanel : MonoBehaviour
 		else
 		{
 			Debug.Log( "COPY " + albumTexture_.imageName + " from " + fromAlbum_.AlbumName + " to " + toAlbum_.AlbumName );
+			Close( );
 		}
 	}
 
 	public void OnCancelButtonPressed()
 	{
+		Close( );
+	}
+
+	public void Close()
+	{
 		this.gameObject.SetActive( false );
 	}
 
-
 	public void OnDisable( )
 	{
-
-		/*
-		if (album_ != null)
-		{
-			album_.OnAlbumChanged -= HandleAlbumChanged;
-		}
-		*/
+		rawImage.texture = null;
 	}
 
 	public void OnEnable( )

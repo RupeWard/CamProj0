@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class AlbumButton : MonoBehaviour
 {
+	static private readonly bool DEBUG_LOCAL = false;
+
 	public UnityEngine.UI.Text albumNameText;
 	private UnityEngine.UI.Image image_;
 
@@ -68,11 +70,18 @@ public class AlbumButton : MonoBehaviour
 		{
 			case EState.Empty:
 				{
-					Debug.LogWarning( "Select called when empty" );
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "AB: Select called when empty" + gameObject.name );
+					}
 					break;
 				}
 			case EState.Full:
 				{
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "AB: selecting " + gameObject.name );
+					}
 					state_ = EState.Selected;
 					HandleStateChange( );
 					result = true;
@@ -80,7 +89,10 @@ public class AlbumButton : MonoBehaviour
 				}
 			case EState.Selected:
 				{
-					Debug.LogWarning( "Select called when already selected" );
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "AB: Select called when already selected" + gameObject.name );
+					}
 					state_ = EState.Selected;
 					HandleStateChange( );
 					result = true;
@@ -97,13 +109,18 @@ public class AlbumButton : MonoBehaviour
 		{
 			case EState.Empty:
 				{
-					Debug.LogWarning( "DeSelect called when empty" );
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "DeSelect called when empty" );
+					}
 					break;
 				}
 			case EState.Full:
 				{
-					
-					Debug.LogWarning( "DeSelect called when already deselected" );
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "DeSelect called when already deselected" );
+					}
 					state_ = EState.Full;
 					HandleStateChange( );
 					result = true;
@@ -111,6 +128,10 @@ public class AlbumButton : MonoBehaviour
 				}
 			case EState.Selected:
 				{
+					if (DEBUG_LOCAL)
+					{
+						Debug.Log( "DeSelect called when selected" );
+					}
 					state_ = EState.Full;
 					HandleStateChange( );
 					result = true;

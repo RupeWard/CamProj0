@@ -142,7 +142,7 @@ public class Album: IDebugDescribable
 		sb.Append( "[Album: " ).Append( albumName_ ).Append( " " ).Append( albumTextures_.Count );
 		for (int i=0; i<albumTextures_.Count; i++)
 		{
-			sb.Append( " " ).Append( albumTextures_[i].imageName );
+			sb.Append( " " ).Append( albumTextures_[i].DebugDescribe() );
 		}
 		sb.Append( "]" );
 	}

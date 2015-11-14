@@ -25,10 +25,15 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		{
 			i.clickAction += HandleImageButtonClicked;
 		}
-		AlbumManager.Instance.currentAlbumChangeActon += SetAlbum;
 		
 	}
 
+	protected override void Start()
+	{
+		base.Start( );
+		AlbumManager.Instance.currentAlbumChangeActon += SetAlbum;
+		copyImagePanel.Close( );
+	}
 
 	public void Init(Album a)
 	{
