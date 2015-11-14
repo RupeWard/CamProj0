@@ -151,16 +151,6 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 	public void SetSizeAndPosition(Vector2 newPos, float size)
 	{
 		Vector3 newScale = new Vector3( size, size, 1 );
-		/*
-		if (scaleableRT != null)
-		{
-			Vector2 relativeScale = new Vector2( newScale.x / rectTransform_.localScale.x, newScale.y / rectTransform_.localScale.y );
-			Vector2 newScaleableRTScale = scaleableRT.localScale;
-			newScaleableRTScale.x /= relativeScale.x;
-			newScaleableRTScale.y /= relativeScale.y;
-			scaleableRT.localScale = newScaleableRTScale;
-		}
-		*/
 		rectTransform_.localScale = newScale;
 
 		rectTransform_.anchoredPosition = newPos;
@@ -205,7 +195,33 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 				Vector2 newPosition = rectTransform_.anchoredPosition;
 
 				float factor = currentDistFromCentre_ / startingDistFromCentre_;
-				Vector3 newScale = startingSize_ * factor;
+				Vector3 newScale = startingSize_;
+				switch( sizingMode)
+				{
+					case UIEnums.ESizingMode.Height:
+						{
+							newScale.y = newScale.y * factor;
+							break;
+						}
+					case UIEnums.ESizingMode.Width:
+						{
+							newScale.x = newScale.x * factor;
+							break;
+						}
+					case UIEnums.ESizingMode.Both:
+						{
+							newScale.y = newScale.y * factor;
+							newScale.x = newScale.x * factor;
+							break;
+						}
+					case UIEnums.ESizingMode.None:
+						{
+							Debug.LogError( "Shouldn't be None, assuming Both" );
+							newScale.y = newScale.y * factor;
+							newScale.x = newScale.x * factor;
+							break;
+						}
+				}
 				Vector2 newSize = new Vector2( newScale.x * rectTransform_.GetWidth( ), newScale.y * rectTransform_.GetHeight( ) );
 
 				bool newSizeOk = true;
@@ -545,6 +561,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 	private static readonly bool DEBUG_SIZING = true;
 
 	private bool isSizing_= false;
+	private UIEnums.ESizingMode sizingMode = UIEnums.ESizingMode.None;
 
 	private void StopSizing( )
 	{
@@ -557,10 +574,11 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			GameObject.Destroy( currentOverlay_.gameObject );
 			currentOverlay_ = null;
 		}
+		sizingMode = UIEnums.ESizingMode.None;
 		isSizing_ = false;
 	}
 
-	public void SizeWindow( )
+	public void SizeWindow( UIEnums.ESizingMode mode )
 	{
 		if (isSizing_)
 		{
@@ -576,6 +594,8 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			{
 				StopMoving( );
 			}
+			sizingMode = mode;
+
 			string prefabName = "Prefabs/UI/Overlays/WinSizeOverlay";
 			GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
 			if (go == null)

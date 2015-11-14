@@ -10,6 +10,7 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	public ButtonSet winButtonsContainer;
 	public ButtonSet funcButtonsContainer;
+	public ButtonSet overlayButtonsContainer;
 
 	public GameObject buttonSetButtonPrefab;
 
@@ -32,11 +33,45 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 	private void Awake()
 	{
 		rectTransform_ = GetComponent<RectTransform>( );
+		CloseOverlayButtons( );
 	}
 
 	virtual protected void AddWindowButtons()
 	{
 		Debug.Log( "AddWindowButtons not implemented in " +gameObject.name);
+	}
+
+	protected void OverlayButtonsDone( )
+	{
+		CloseOverlayButtons( true );
+    }
+
+	private void CloseOverlayButtons( )
+	{
+		CloseOverlayButtons( false);
+	}
+
+	private void CloseOverlayButtons(bool clear)
+	{
+		if (clear)
+		{
+			ClearOverlayButtons( );
+		}
+		overlayButtonsContainer.gameObject.SetActive( false );
+	}
+
+	protected void OpenOverlayButtons()
+	{
+		overlayButtonsContainer.gameObject.SetActive( true );
+	}
+
+	protected void ClearOverlayButtons( )
+	{
+		ButtonSetButton[] children = overlayButtonsContainer.transform.GetComponentsInChildren<ButtonSetButton>( );
+		foreach (ButtonSetButton b in children)
+		{
+			GameObject.Destroy( b.gameObject );
+		}		
 	}
 
 
@@ -49,13 +84,13 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 		gameObject.SetActive( true );
 
-		CreateButton( "Back", OnBackButtonPressed, winButtonsContainer );
-		CreateButton( "Scale", OnScaleButtonPressed, winButtonsContainer );
-		CreateButton( "Size", OnSizeButtonPressed, winButtonsContainer );
-		CreateButton( "Move", OnMoveButtonPressed, winButtonsContainer );
-		CreateButton( "Save", OnSaveButtonPressed, winButtonsContainer );
-		CreateButton( "Close", OnCloseButtonPressed, winButtonsContainer );
-		CreateButton( "Done", OnDoneButtonPressed, winButtonsContainer );
+		CreateWinButton( "Back", OnBackButtonPressed);
+		CreateWinButton( "Scale", OnScaleButtonPressed);
+		CreateWinButton( "Size", OnSizeButtonPressed);
+		CreateWinButton( "Move", OnMoveButtonPressed);
+		CreateWinButton( "Save", OnSaveButtonPressed);
+		CreateWinButton( "Close", OnCloseButtonPressed);
+		CreateWinButton( "Done", OnDoneButtonPressed);
 
 		controllee_ = wlw.GetComponent<TControlleeType>( );
 		if (controllee_ == null)
@@ -114,9 +149,46 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 	public void OnSizeButtonPressed( )
 	{
-		winWin_.SizeWindow( );
+		OpenSizeButtons( );
 	}
 
+	private void OpenSizeButtons()
+	{
+		ClearOverlayButtons( );
+		CreateOverlayButton( "Width", OnSizeWidthButtonPressed);
+		CreateOverlayButton( "Height", OnSizeHeightButtonPressed );
+		CreateOverlayButton( "Both", OnSizeBothButtonPressed );
+		CreateOverlayButton( "Cancel", OnSizeCancelButtonPressed );
+		OpenOverlayButtons( );
+	}
+
+	protected void OnDisable()
+	{
+		OverlayButtonsDone( );
+	}
+
+	public void OnSizeWidthButtonPressed()
+	{
+		OverlayButtonsDone( );
+		winWin_.SizeWindow( UIEnums.ESizingMode.Width);
+	}
+
+	public void OnSizeHeightButtonPressed( )
+	{
+		OverlayButtonsDone( );
+		winWin_.SizeWindow( UIEnums.ESizingMode.Height);
+	}
+
+	public void OnSizeBothButtonPressed( )
+	{
+		OverlayButtonsDone( );
+		winWin_.SizeWindow( UIEnums.ESizingMode.Both );
+	}
+
+	public void OnSizeCancelButtonPressed( )
+	{
+		OverlayButtonsDone( );
+	}
 
 	#endregion Button handlers
 
@@ -128,6 +200,11 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 	public ButtonSetButton CreateFuncButton( string buttonText, System.Action onClickAction )
 	{
 		return CreateButton( buttonText, onClickAction, funcButtonsContainer );
+	}
+
+	public ButtonSetButton CreateOverlayButton( string buttonText, System.Action onClickAction )
+	{
+		return CreateButton( buttonText, onClickAction, overlayButtonsContainer );
 	}
 
 	private ButtonSetButton CreateButton(string buttonText, System.Action onClickAction, ButtonSet buttonSet)
