@@ -40,6 +40,8 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 			blockingPanelRT.offsetMax = Vector2.zero;
 			blockingPanelRT.localScale = Vector3.one;
 			blockingPanel.SetActive( false );
+
+			ToggleLogPanel( );
 		}
 		else
 		{
