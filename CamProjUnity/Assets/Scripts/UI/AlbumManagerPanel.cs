@@ -33,7 +33,10 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 
 	protected void OnDestroy( )
 	{
-		AlbumManager.Instance.allAlbumsLoadedAction -= HandleAlbumsChanged;
+		if (AlbumManager.IsInitialised())
+		{
+			AlbumManager.Instance.allAlbumsLoadedAction -= HandleAlbumsChanged;
+		}
 	}
 
 	public void Init(Album a)

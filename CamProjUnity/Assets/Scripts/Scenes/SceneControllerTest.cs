@@ -42,6 +42,7 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 			blockingPanel.SetActive( false );
 
 			ToggleLogPanel( );
+			ToggleAlbumManager( );
 		}
 		else
 		{

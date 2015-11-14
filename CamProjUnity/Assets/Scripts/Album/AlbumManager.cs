@@ -193,19 +193,20 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 		}
 	}
 
-	public void AddToCurrentAlbum(AlbumTexture at)
+	public AlbumTexture AddToCurrentAlbum(AlbumTexture at)
 	{
 		if (DEBUG_LOCAL)
 		{
 			Debug.Log( "Added texture " + at.DebugDescribe( ) + " to " + CurrentAlbum.DebugDescribe( ) );
 		}
-		CurrentAlbum.AddTexture( at );
+		at = CurrentAlbum.AddTexture( at );
 		LogManager.Instance.AddLine( "Added '"+at.imageName+"' to '" + currentAlbum_.AlbumName + "'" );
 
 		if (DEBUG_LOCAL)
 		{
 			Debug.Log( "Album following add: " + CurrentAlbum.DebugDescribe( ) );
 		}
+		return at;
 	}
 
 
@@ -423,6 +424,8 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 			if (!System.IO.Directory.Exists( AlbumsPath ))
 			{
 				Debug.LogWarning( "No Albums folder = no albums" );
+				LogManager.Instance.AddLine( "No Albums folder" );
+				HandleNoAlbumsLeftToLoad( );
 			}
 			else
 			{
@@ -430,6 +433,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 				if (albumDirs.Length == 0)
 				{
 					Debug.LogWarning( "No Albums subfolders = no albums" );
+					LogManager.Instance.AddLine( "No Albums" );
 					HandleNoAlbumsLeftToLoad( );
 				}
 				else

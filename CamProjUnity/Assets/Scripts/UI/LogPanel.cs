@@ -40,8 +40,11 @@ public class LogPanel : WinWin< LogPanel>
 		{
 			Debug.LogError( "Destroying non-instance LogPanel" );
 		}
-		LogManager.Instance.lineAddedAction -= HandleLineAdded;
-		LogManager.Instance.linesDeletedAction -= HandleLinesDeleted;
+		if (LogManager.IsInitialised())
+		{
+			LogManager.Instance.lineAddedAction -= HandleLineAdded;
+			LogManager.Instance.linesDeletedAction -= HandleLinesDeleted;
+		}
 
 	}
 

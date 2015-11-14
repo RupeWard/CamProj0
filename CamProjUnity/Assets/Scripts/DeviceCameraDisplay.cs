@@ -27,7 +27,8 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
 			Debug.Log( sb.ToString( ) );
 		}
         webCamTexture_ = new WebCamTexture();
-        myRectTransform_ = GetComponent<RectTransform>();        
+        myRectTransform_ = GetComponent<RectTransform>();
+		PlayCamera( );       
 	}
 	
 	void Update ()
@@ -56,23 +57,28 @@ public class DeviceCameraDisplay : WinWin< DeviceCameraDisplay>
 
 	public void Snap()
 	{
-		if (!IsPlaying)
+		if (!webCamTexture_.isPlaying)
 		{
 			Debug.LogWarning( "Can't snap when not playing" );
+			LogManager.Instance.AddLine( "Can't snap when not playing" );
 		}
 		else
 		{
-			Texture2D snap = new Texture2D( webCamTexture_.width, webCamTexture_.height );
-			snap.SetPixels( webCamTexture_.GetPixels( ) );
-			snap.Apply( );
-
+			Texture2D snap = null;
+			
+			{
+				snap = new Texture2D( webCamTexture_.width, webCamTexture_.height );
+				snap.SetPixels( webCamTexture_.GetPixels( ) );
+				snap.Apply( );
+			}
+			
 			AlbumTexture at = new AlbumTexture( );
 			at.texture = snap;
 
-			AlbumManager.Instance.AddToCurrentAlbum( at );
-			
-//			byte[] bytes = snap.EncodeToPNG( );
-//			File.WriteAllBytes( fn, bytes );
+			at = AlbumManager.Instance.AddToCurrentAlbum( at );
+
+			//			byte[] bytes = snap.EncodeToPNG( );
+			//			File.WriteAllBytes( fn, bytes );
 		}
 	}
 
