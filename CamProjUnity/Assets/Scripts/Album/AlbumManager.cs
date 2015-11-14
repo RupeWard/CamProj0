@@ -75,6 +75,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 		if (albums_.Contains( a ))
 		{
 			ioInProgress_ = true;
+			BusyPanel.Instance.Open( "Deleting Album "+a.AlbumName );
 
 			DeleteAllTexturesInAlbum( a );
 			albums_.Remove( a );
@@ -275,6 +276,8 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 		bool result = false;
 		{
 			ioInProgress_ = true;
+			BusyPanel.Instance.Open( "Deleting Pic " + t.imageName+" from Album "+a.AlbumName);
+
 			string path = TexturePath( a, t );
 			if (System.IO.File.Exists( path ))
 			{
@@ -287,19 +290,26 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 				Debug.LogWarning( "Can't delete nonexistent '" + path + "'" );
 				LogManager.Instance.AddLine( "Can't delete nonexistent '" + path + "'" );
 			}
-			if (onCompleteAction != null)
-			{
-				onCompleteAction( );
-			}
 			ioInProgress_ = false;
+		}
+		if (onCompleteAction != null)
+		{
+			onCompleteAction( );
 		}
 		return result;
 	}
 
-    public void SaveAlbumTexture(Album a, AlbumTexture t, System.Action onCompleteAction )
+
+	public void SaveAlbumTexture( Album a, AlbumTexture t, System.Action onCompleteAction )
+	{
+		ioInProgress_ = true;
+		BusyPanel.Instance.Open( "Saving Pic "+t.imageName+" to Album " + a.AlbumName );
+		SaveAlbumTextureHelper( a, t, onCompleteAction );
+    }
+
+	public void SaveAlbumTextureHelper(Album a, AlbumTexture t, System.Action onCompleteAction )
 	{
 		{
-			ioInProgress_ = true;
 			string albumPath = AlbumPath( a );
 			if (!System.IO.Directory.Exists( AlbumsPath ))
 			{
@@ -331,6 +341,8 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 	{
 		{
 			ioInProgress_ = true;
+			BusyPanel.Instance.Open( "Saving Album " + a.AlbumName );
+
 			StartCoroutine( SaveAlbumCR( a, onCompleteAction ) );
 		}
 	}
@@ -376,7 +388,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 			}
 			if (doSave)
 			{
-				SaveAlbumTexture( a, at, null );
+				SaveAlbumTextureHelper( a, at, null );
 				yield return null;
 			}
 			a.locked = false;
@@ -402,6 +414,8 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 	{
 		{
 			ioInProgress_ = true;
+			BusyPanel.Instance.Open( "Loading Albums to Manager");
+
 			yield return new WaitForSeconds( 5f );
 			yield return null;
 			albums_ = new List<Album>( );
@@ -443,7 +457,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 		{
 			allAlbumsLoadedAction( );
 		}
-		
+		BusyPanel.Instance.Close( );
 	}
 
 	private void HandleAlbumLoaded(Album a)

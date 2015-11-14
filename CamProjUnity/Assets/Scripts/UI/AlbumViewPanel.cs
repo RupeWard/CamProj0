@@ -279,6 +279,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 				selectedButton_ = null;
 				HandleSelectedButtonChanged( );
 				HandleAlbumChanged( );
+				BusyPanel.Instance.Close( );
 			}
 
 		}
@@ -338,14 +339,22 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	}
 
+	private void OnTextureSaveFinished()
+	{
+		AlbumManager.Instance.IOInProgress = false;
+		BusyPanel.Instance.Close( );
+	}
+
 	private void OnSaveConfirmed()
 	{
 		if (selectedButton_ != null && selectedButton_.AlbumTexture != null)
 		{
+			Debug.Log( "OnSaveConfirmed: "+selectedButton_.AlbumTexture.imageName );
 			AlbumTexture atToSave = selectedButton_.AlbumTexture;
 
-			AlbumManager.Instance.SaveAlbumTexture( album_, selectedButton_.AlbumTexture, null);
+			AlbumManager.Instance.SaveAlbumTexture( album_, selectedButton_.AlbumTexture, OnTextureSaveFinished);
 			LogManager.Instance.AddLine( "Saving " + selectedButton_.AlbumTexture.imageName );
+			Debug.Log( "Saving " + selectedButton_.AlbumTexture.imageName );
 			HandleAlbumChanged( );
 
 		}
