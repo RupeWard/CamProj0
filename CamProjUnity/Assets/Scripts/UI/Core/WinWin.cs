@@ -238,14 +238,6 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 				}
 				if (newSizeOk)
 				{
-					if (scaleableRT != null)
-					{
-						Vector2 relativeScale = new Vector2(newScale.x / rectTransform_.localScale.x, newScale.y / rectTransform_.localScale.y);
-						Vector2 newScaleableRTScale = scaleableRT.localScale;
-						newScaleableRTScale.x /= relativeScale.x;
-						newScaleableRTScale.y /= relativeScale.y;
-						scaleableRT.localScale = newScaleableRTScale;
-					}
 					rectTransform_.localScale = newScale;
 				}
 				lastScreenPosition_ = newScreenPosition;
