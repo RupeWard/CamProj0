@@ -48,7 +48,10 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 			album_.OnAlbumChanged -= HandleAlbumsChanged;
 		}
 		album_ = a;
-		album_.OnAlbumChanged += HandleAlbumsChanged;
+		if (album_ != null)
+		{
+			album_.OnAlbumChanged += HandleAlbumsChanged;
+		}
 		HandleAlbumsChanged( );
 	}
 
@@ -307,12 +310,12 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		if (s.Length == 0)
 		{
 			Debug.LogError( "Empty album name" );
+			AlbumManager.Instance.IOInProgress = false;
 		}
 		else
 		{
 			AlbumManager.Instance.CreateNewCurrentAlbum( s );
 		}
-		AlbumManager.Instance.IOInProgress = false;
 	}
 
 	private void OnNewAlbumCancelled( )

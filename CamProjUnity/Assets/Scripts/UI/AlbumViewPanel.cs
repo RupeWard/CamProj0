@@ -16,6 +16,8 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 	public UnityEngine.UI.Text selectedImageText;
 	public UnityEngine.UI.Text saveTextureButtonText;
 
+	public CopyImagePanel copyImagePanel;
+
 	protected override void Awake()
 	{
 		base.Awake( );
@@ -398,6 +400,14 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 	public void OnManagerButtonPressed()
 	{
 		SceneControllerTest.Instance.BringAlbumManagerToFront( );
+	}
+
+	public void OnCopyButtonPressed()
+	{
+		if (album_ != null && selectedButton_ != null && selectedButton_.AlbumTexture != null)
+		{
+			copyImagePanel.Open( album_, selectedButton_.AlbumTexture );
+		}
 	}
 
 	public void OnIOCancelled()

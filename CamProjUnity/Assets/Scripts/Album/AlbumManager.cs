@@ -11,10 +11,6 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 	{
 		get
 		{
-			if (currentAlbum_ == null)
-			{
-				currentAlbum_ = new Album( "DefaultAlbum" );
-			}
 			return currentAlbum_;
 		}
 
@@ -161,6 +157,17 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 		{
 			currentAlbum_ = albums_[0];
 		}
+		else
+		{
+			CreateDefaultAlbum( );
+		}
+	}
+
+	private void CreateDefaultAlbum()
+	{
+		currentAlbum_ = new Album( "DefaultAlbum" );
+		albums_.Add( currentAlbum_ );
+		HandleNoAlbumsLeftToLoad( );
 	}
 
 	private void LoadDefaultAlbumCallback()
@@ -179,6 +186,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 		}
 		else
 		{
+			CreateDefaultAlbum( );
 			Debug.Log( "No Albums to choose default from" );
 			LogManager.Instance.AddLine( "No Albums to choose Default from" );
 		}
@@ -408,6 +416,7 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 				if (albumDirs.Length == 0)
 				{
 					Debug.LogWarning( "No Albums subfolders = no albums" );
+					HandleNoAlbumsLeftToLoad( );
 				}
 				else
 				{
@@ -428,6 +437,8 @@ public class AlbumManager : SingletonSceneLifetime<AlbumManager>, IDebugDescriba
 	private void HandleNoAlbumsLeftToLoad()
 	{
 		Debug.Log( "All Albums loaded" );
+		ioInProgress_ = false;
+		ResetCurrentAlbum( );
 		if (allAlbumsLoadedAction != null)
 		{
 			allAlbumsLoadedAction( );
