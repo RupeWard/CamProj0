@@ -19,11 +19,11 @@ public abstract class WinWin < TWinType> : MonoBehaviour
     protected virtual void Awake()
 	{
 		rectTransform_ = GetComponent<RectTransform>( );
-		parentDims = new Vector2( Screen.width, Screen.height );
 	}
 
 	protected virtual void Start()
 	{
+		parentDims = UIManager.Instance.ScreenCanvasSize;
 		winLayerWin.lossOfFocusAction += HandleLossOfFocus;
 		LoadSizeAndPosition( );
 	}
@@ -404,7 +404,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			{
 				StopSizing( );
 			}
-			string prefabName = "Prefabs/UI/WinMoveOverlay";
+			string prefabName = "Prefabs/UI/Overlays/WinMoveOverlay";
             GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
 			if (go == null)
 			{
@@ -471,7 +471,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			{
 				StopSizing( );
 			}
-			string prefabName = "Prefabs/UI/WinScaleOverlay";
+			string prefabName = "Prefabs/UI/Overlays/WinScaleOverlay";
 			GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
 			if (go == null)
 			{
@@ -525,7 +525,7 @@ public abstract class WinWin < TWinType> : MonoBehaviour
 			{
 				StopMoving( );
 			}
-			string prefabName = "Prefabs/UI/WinSizeOverlay";
+			string prefabName = "Prefabs/UI/Overlays/WinSizeOverlay";
 			GameObject go = Resources.Load<GameObject>( prefabName ) as GameObject;
 			if (go == null)
 			{

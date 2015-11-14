@@ -27,6 +27,12 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 
 	#region MonoBehaviour
 
+	public void Awake()
+	{
+		Debug.Log( "Screen " + UIManager.Instance.ScreenSize + ", Canvas " + UIManager.Instance.ScreenCanvasSize ); ;
+
+	}
+
 	public void Start()
     {
 		WinLayerManager.Instance.InstantiateToTopLayer( buttonsLayerPrefab );
