@@ -12,8 +12,11 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 	public GameObject albumManagerPanelPrefab;
 	public GameObject deviceCameraPanelPrefab;
 	public GameObject logPanelPrefab;
+	public GameObject busyPanelPrefab;
 
+	public RectTransform busyPanelContainer;
 
+	
 	#endregion Prefabs
 
 	#region Inspector hooks
@@ -27,6 +30,21 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 	public void Start()
     {
 		WinLayerManager.Instance.InstantiateToTopLayer( buttonsLayerPrefab );
+
+		GameObject blockingPanel = Instantiate( busyPanelPrefab ) as GameObject;
+		if (blockingPanel)
+		{
+			RectTransform blockingPanelRT = blockingPanel.GetComponent<RectTransform>( );
+			blockingPanelRT.SetParent( busyPanelContainer );
+			blockingPanelRT.offsetMin = Vector2.zero;
+			blockingPanelRT.offsetMax = Vector2.zero;
+			blockingPanelRT.localScale = Vector3.one;
+			blockingPanel.SetActive( false );
+		}
+		else
+		{
+			Debug.LogError( "No blocking panel" );
+		}
 	}
 
 	#endregion MonoBehaviour
