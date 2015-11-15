@@ -19,6 +19,11 @@ public class AlbumTexture: IDebugDescribable
 	{
 		ioState_ = EIOState.Saved;	
 	}
+	public void HandleModified( )
+	{
+		ioState_ = EIOState.Modified;
+	}
+
 	public Texture2D texture = null;
 	public string imageName = string.Empty;
 

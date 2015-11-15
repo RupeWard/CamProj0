@@ -186,13 +186,30 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 		}
 		else
 		{
-			Revert( );
-			Debug.LogWarning( "Revert" );
-			LogManager.Instance.AddLine( "Reverted image" );
+			ConfirmPanel.Data data = new ConfirmPanel.Data( );
+			data.title = "Confirm revert '" + albumTexture_.imageName + "'";
+			data.info = "Are you sure you want to lose your changes to '" + albumTexture_.imageName + "'?";
+			data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnRevertConfirm);
+			data.noButtonDef = new ConfirmPanel.ButtonDef( "No", OnRevertDecline );
+
+			WinLayerManager.Instance.CreateConfirmPanel( data );
+
 		}
 	}
 
-	public void OnSaveButtonPressed()
+	private void OnRevertConfirm()
+	{
+		Revert( );
+		Debug.LogWarning( "Revert" );
+		LogManager.Instance.AddLine( "Reverted image" );
+	}
+
+	private void OnRevertDecline()
+	{
+		Debug.LogWarning( "Revert decleined" );
+	}
+
+	public void OnSaveButtonPressed( )
 	{
 		if (!modified_)
 		{
@@ -200,11 +217,31 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 		}
 		else
 		{
-//			Revert( );
-			Debug.LogWarning( "Save" );
-//			LogManager.Instance.AddLine( "Reverted image" );
-		}
+			ConfirmPanel.Data data = new ConfirmPanel.Data( );
+			data.title = "Confirm save '" + albumTexture_.imageName + "'";
+			data.info = "Are you sure you want to save your changes to '" + albumTexture_.imageName + "'?";
+			data.yesButtonDef = new ConfirmPanel.ButtonDef( "Yes", OnSaveConfirm );
+			data.noButtonDef = new ConfirmPanel.ButtonDef( "No", OnSaveDecline );
 
+			WinLayerManager.Instance.CreateConfirmPanel( data );
+		}
+	}
+
+	private void OnSaveConfirm( )
+	{
+		Destroy( albumTexture_.texture );
+		albumTexture_.texture = new Texture2D( workingTexture_.width, workingTexture_.height );
+		albumTexture_.texture.SetPixels( workingTexture_.GetPixels( ) );
+		albumTexture_.texture.Apply( );
+		albumTexture_.HandleModified();
+		modified_ = false;
+		Debug.LogWarning( "Save" );
+		LogManager.Instance.AddLine( "Saved image "+albumTexture_.imageName );
+	}
+
+	private void OnSaveDecline( )
+	{
+		Debug.LogWarning( "Save decleined" );
 	}
 
 	/*
