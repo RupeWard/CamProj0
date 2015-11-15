@@ -28,6 +28,7 @@ public class ImageEditControlPanel : WinControlPanel <ImageEditPanel>
 			Debug.LogError( "NULL AVP" );
 		}
 		imageEditPanel_ = avp;
+		CreateScaleButton( );
 	}
 
 	#endregion SetUp

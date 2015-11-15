@@ -74,6 +74,11 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 		}		
 	}
 
+	protected void CreateScaleButton( )
+	{
+		Debug.Log( "Created ScaleButton for " + gameObject.name );
+		CreateWinButton( "Scale", OnScaleButtonPressed );
+	}
 
 	public void Init( WinLayerWin wlw, WinWin<TControlleeType> ww)
 	{
@@ -83,14 +88,6 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 		titleText.text = title();
 
 		gameObject.SetActive( true );
-
-		CreateWinButton( "Back", OnBackButtonPressed);
-		CreateWinButton( "Scale", OnScaleButtonPressed);
-		CreateWinButton( "Size", OnSizeButtonPressed);
-		CreateWinButton( "Move", OnMoveButtonPressed);
-		CreateWinButton( "Save", OnSaveButtonPressed);
-		CreateWinButton( "Close", OnCloseButtonPressed);
-		CreateWinButton( "Done", OnDoneButtonPressed);
 
 		controllee_ = wlw.GetComponent<TControlleeType>( );
 		if (controllee_ == null)
@@ -105,7 +102,12 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 		{
 			PostInit( controllee_ );
 		}
-
+		CreateWinButton( "Size", OnSizeButtonPressed );
+		CreateWinButton( "Save", OnSaveButtonPressed );
+		CreateWinButton( "Back", OnBackButtonPressed );
+		CreateWinButton( "Move", OnMoveButtonPressed );
+		CreateWinButton( "Close", OnCloseButtonPressed );
+		CreateWinButton( "Done", OnDoneButtonPressed );
 	}
 
 	public abstract void PostInit ( TControlleeType controllee);

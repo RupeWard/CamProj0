@@ -35,6 +35,8 @@ public class DeviceCameraControlPanel : WinControlPanel <DeviceCameraDisplay>
 		}
 		deviceCameraDisplay_ = dcd;
 
+		CreateScaleButton( );
+
 		playButton_ = CreateFuncButton( "Play", OnPlayButtonPressed );
 		snapButton_ = CreateFuncButton( "Snap", OnSnapButtonPressed );
 		clearButton_ = CreateFuncButton( "Clear", OnClearButtonPressed );

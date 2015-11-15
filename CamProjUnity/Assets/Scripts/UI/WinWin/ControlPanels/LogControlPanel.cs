@@ -28,6 +28,8 @@ public class LogControlPanel : WinControlPanel < LogPanel>
 			Debug.LogError( "NULL LP" );
 		}
 		logPanel_ = lp;
+
+		CreateScaleButton( );
 	}
 
 	#endregion SetUp
