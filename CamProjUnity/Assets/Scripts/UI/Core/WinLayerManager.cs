@@ -110,7 +110,17 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 		winControlsLayer.CloseControls(  );
 	}
 	
-
+	private void EnableTopLayer()
+	{
+		if (winLayerDefns_.Count > 0)
+		{
+			if (winLayerDefns_[winLayerDefns_.Count-1].Content != null)
+			{
+				winLayerDefns_[winLayerDefns_.Count - 1].Content.gameObject.SetActive( false ) ;
+				winLayerDefns_[winLayerDefns_.Count - 1].Content.gameObject.SetActive( true );
+			}
+		}
+	}
 	public bool RemoveContentsFromLayer(WinLayerWin wlw)
 	{
 		bool bRemoved = false;
@@ -213,6 +223,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 				Debug.Log( "WLM: layer " + layerNum + " is on top " );
 			}
 		}
+		EnableTopLayer( );
 		return bMoved;
 	}
 
@@ -266,6 +277,7 @@ public class WinLayerManager : SingletonSceneLifetime< WinLayerManager >, IDebug
 				Debug.Log( "WLM: layer " + layerNum + " is at back" );
 			}
 		}
+		EnableTopLayer( );
 		return bMoved;
 	}
 

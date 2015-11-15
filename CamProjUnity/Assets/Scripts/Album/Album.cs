@@ -15,6 +15,7 @@ public class Album: IDebugDescribable
 	public System.Action OnAlbumChanged;
 	private void HandleAlbumChanged()
 	{
+		Debug.LogWarning( "Album.HandleAbumnChanged: " + AlbumName );
 		if (OnAlbumChanged != null)
 		{
 			OnAlbumChanged( );

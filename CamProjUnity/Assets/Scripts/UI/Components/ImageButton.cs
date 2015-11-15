@@ -56,6 +56,10 @@ public class ImageButton : MonoBehaviour
 
 	private void HandleStateChange( )
 	{
+		if (image_ == null)
+		{
+			image_ = GetComponent<UnityEngine.UI.Image>( );
+		}
 		image_.color = stateColours[state_];
 	}
 

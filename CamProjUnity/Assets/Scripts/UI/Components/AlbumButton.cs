@@ -60,6 +60,11 @@ public class AlbumButton : MonoBehaviour
 
 	private void HandleStateChange( )
 	{
+		if (image_ == null)
+		{
+			image_ = GetComponent<UnityEngine.UI.Image>( );
+			Debug.LogWarning( "null image" );
+		}
 		image_.color = stateColours[state_];
 	}
 

@@ -96,6 +96,8 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 
 	private void HandleAlbumChanged()
 	{
+		Debug.LogWarning( "AlbumViewPanel.HandleAbumnChanged: "+((album_==null)?("null"):(album_.AlbumName)));
+
 		SetTitle( );
 		SetButtons( );
 		SetButtonStates( );
@@ -213,7 +215,25 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 			rawImage.texture = selectedButton_.AlbumTexture.texture;
 			previewedImageText.text = selectedButton_.AlbumTexture.imageName;
 		}
+		AlbumTexture at = null;
+		if (selectedButton_ != null && selectedButton_.AlbumTexture!=null)
+		{
+			at = selectedButton_.AlbumTexture;
+		}
 
+		SetButtons( );
+		if (at != null)
+		{
+			foreach (ImageButton ib in imageButtons)
+			{
+				if (ib != null && ib.AlbumTexture == at)
+				{
+					selectedButton_ = ib;
+					ib.Select( );
+					HandleSelectedButtonChanged( );
+				}
+			}
+		}
 	}
 
 	private void RemovePreviewedImage()
