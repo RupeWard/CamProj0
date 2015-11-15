@@ -51,9 +51,10 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 			workingTexture_ = new Texture2D( albumTexture_.texture.width, albumTexture_.texture.height );
 			workingTexture_.SetPixels( albumTexture_.texture.GetPixels());
 			workingTexture_.Apply( );
-			
+			modified_ = false;
 		}
 		SetPreviewedImage( );
+		SetTitle( );
 	}
 
 	public void SetAlbumTexture( AlbumTexture at )
@@ -89,7 +90,6 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 
 	private void HandleAlbumTextureChanged()
 	{
-		SetTitle( );
 		Revert( );
 	}
 
@@ -139,6 +139,72 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 		}
 		AlbumManager.Instance.currentAlbumChangeActon -= SetAlbum;
 		*/
+	}
+
+	public void OnGreyscaleButtonPressed()
+	{
+		if (workingTexture_ != null)
+		{
+			GameObject go = new GameObject( );
+			GreyScaleImageProcessor processor = go.AddComponent<GreyScaleImageProcessor>( );
+			processor.Init( workingTexture_, HandleProcessorSuccess, HandleProcessorFailed );
+			BusyPanel.Instance.Open( "Greyscale conversion in progress" );
+		}
+		else
+		{
+			Debug.LogWarning( "No working texture" );
+		}
+	}
+
+	public void HandleProcessorFailed( ImageProcessor_Base i)
+	{
+		Debug.LogError( i.gameObject + " failed" );
+		LogManager.Instance.AddLine( i.gameObject + " failed" );
+
+		BusyPanel.Instance.Close( );
+		GameObject.Destroy( i.gameObject );
+	}
+
+	public void HandleProcessorSuccess( ImageProcessor_Base i )
+	{
+		workingTexture_ = i.Texture;
+		modified_ = true;
+		SetTitle( );
+		SetPreviewedImage( );
+		Debug.Log( i.gameObject + " succeeded" );
+		LogManager.Instance.AddLine( i.gameObject + " succeeded" );
+
+		GameObject.Destroy( i.gameObject );
+		BusyPanel.Instance.Close( );
+	}
+
+	public void OnRevertButtonPressed()
+	{
+		if (!modified_)
+		{
+			Debug.LogWarning( "Can;t revert non-modified" );
+		}
+		else
+		{
+			Revert( );
+			Debug.LogWarning( "Revert" );
+			LogManager.Instance.AddLine( "Reverted image" );
+		}
+	}
+
+	public void OnSaveButtonPressed()
+	{
+		if (!modified_)
+		{
+			Debug.LogWarning( "Can;t save non-modified" );
+		}
+		else
+		{
+//			Revert( );
+//			Debug.LogWarning( "Revert" );
+//			LogManager.Instance.AddLine( "Reverted image" );
+		}
+
 	}
 
 	/*
