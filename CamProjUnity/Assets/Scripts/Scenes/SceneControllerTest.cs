@@ -13,6 +13,7 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 	public GameObject deviceCameraPanelPrefab;
 	public GameObject logPanelPrefab;
 	public GameObject busyPanelPrefab;
+	public GameObject imageEditPanelPrefab;
 
 	public RectTransform busyPanelContainer;
 
@@ -67,6 +68,7 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 
 	AlbumManagerPanel albumManagerPanel_ = null;
 	WinLayerWin albumManagerPanelWLW_ = null;
+
 
 	public void ToggleAlbumManager( )
 	{
@@ -150,6 +152,66 @@ public class SceneControllerTest : SingletonSceneLifetime< SceneControllerTest >
 	}
 
 	#endregion AlbumManager
+
+	#region ImageEdit
+
+	ImageEditPanel imageEditPanel_ = null;
+	WinLayerWin imageEditPanelWLW_ = null;
+
+	public void EditAlbumTexture( AlbumTexture at )
+	{
+		if (imageEditPanel_ == null)
+		{
+			WinLayerWin wlw = WinLayerManager.Instance.InstantiateToLayer( imageEditPanelPrefab );
+			if (wlw != null)
+			{
+				imageEditPanel_ = wlw.transform.GetComponentInChildren<ImageEditPanel>( );
+				if (imageEditPanel_ == null)
+				{
+					Debug.LogError( "Couldn't find IEP in instantiated prefab" );
+				}
+				else
+				{
+					imageEditPanelWLW_ = wlw;
+					imageEditPanel_.Init( at );
+				}
+			}
+		}
+		else
+		{
+			if (imageEditPanelWLW_ != null)
+			{
+				DestroyImageEditPanel( );
+			}
+			else
+			{
+				Debug.LogError( "No WLW FOR IEP" );
+			}
+		}
+	}
+
+	public void CloseImageEditPanel()
+	{
+		DestroyImageEditPanel( );
+	}
+
+	private void DestroyImageEditPanel( )
+	{
+		if (imageEditPanelWLW_ != null && imageEditPanel_ != null)
+		{
+			WinLayerManager.Instance.RemoveContentsFromLayer( imageEditPanelWLW_ );
+			GameObject.Destroy( imageEditPanelWLW_.gameObject );
+			imageEditPanel_ = null;
+			imageEditPanelWLW_ = null;
+		}
+		else
+		{
+			Debug.LogError( "ERROR" );
+		}
+	}
+
+	#endregion ImageEdit
+
 
 	#region AlbumView
 

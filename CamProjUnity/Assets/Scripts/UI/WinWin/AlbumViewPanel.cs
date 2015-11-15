@@ -220,6 +220,22 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		}
 	}
 
+	public void OnEditButtonPressed( )
+	{
+		if (selectedButton_ != null && selectedButton_.AlbumTexture != null && selectedButton_.AlbumTexture.texture != null)
+		{
+			if (rawImage.texture == null)
+			{
+				Debug.LogWarning( "View before edit" );
+				LogManager.Instance.AddLine( "View before edit" );
+			}
+			else
+			{
+				SceneControllerTest.Instance.EditAlbumTexture( selectedButton_.AlbumTexture );
+			}
+		}
+	}
+
 	public void OnDeleteButtonPressed()
 	{
 		if (AlbumManager.Instance.IOInProgress)

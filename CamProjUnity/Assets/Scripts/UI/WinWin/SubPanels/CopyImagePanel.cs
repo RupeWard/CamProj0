@@ -188,7 +188,7 @@ public class CopyImagePanel : MonoBehaviour
 		{
 			for (int i = 0; i < albums.Count && numDone < albumButtons.Length; i++)
 			{
-				if (albums[i] != fromAlbum_)
+//				if (albums[i] != fromAlbum_)
 				{
 					albumButtons[numDone].Init( albums[i] );
 					numDone++;
