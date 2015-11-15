@@ -8,6 +8,10 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 
 	private Album album_;
 
+	public UnityEngine.UI.Button viewButton;
+	public UnityEngine.UI.Button deleteButton;
+	public UnityEngine.UI.Button saveButton;
+
 	public UnityEngine.UI.Text titleText;
 	public AlbumButton[] albumButtons = new AlbumButton[0];
 //	public UnityEngine.UI.RawImage rawImage;
@@ -15,6 +19,13 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 //	public UnityEngine.UI.Text previewedImageText;
 	public UnityEngine.UI.Text selectedAlbumText;
 	//	public UnityEngine.UI.Text saveTextureButtonText;
+
+	private void SetButtonStates()
+	{
+        viewButton.interactable = (selectedButton_!=null && selectedButton_.Album != null);
+		deleteButton.interactable = (selectedButton_ != null && selectedButton_.Album != null); ;
+		saveButton.interactable = (selectedButton_ != null && selectedButton_.Album != null && selectedButton_.Album.HasUnsavedChanges()); ;
+	}
 
 	protected override void Start()
 	{
@@ -29,6 +40,7 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		newAlbumPanel.onNewAlbumConfirm += OnNewAlbumConfirmed;
 
 		newAlbumPanel.Close( );
+		SetButtonStates( );
 	}
 
 	protected void OnDestroy( )
@@ -68,6 +80,7 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		Debug.Log( "AMP: HandleAlbumsChanged" );
 		SetTitle( );
 		SetButtons( );
+		SetButtonStates( );
 	}
 
 	private AlbumButton selectedButton_ = null;
@@ -125,6 +138,7 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		{
 			selectedAlbumText.text = selectedButton_.Album.TitleString;
 		}
+		SetButtonStates( );
 	}
 
 	private void SetButtons()
@@ -144,6 +158,8 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		{
 			albumButtons[i].Init( null );
 		}
+		selectedButton_ = null;
+		SetButtonStates( );
 	}
 
 	public void OnDisable( )
@@ -318,6 +334,7 @@ public class AlbumManagerPanel : WinWin< AlbumManagerPanel >
 		else
 		{
 			AlbumManager.Instance.CreateNewCurrentAlbum( s );
+			SetButtonStates( );
 		}
 	}
 

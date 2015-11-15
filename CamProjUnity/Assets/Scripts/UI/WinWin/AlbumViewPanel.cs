@@ -16,6 +16,26 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 	public UnityEngine.UI.Text selectedImageText;
 	public UnityEngine.UI.Text saveTextureButtonText;
 
+	public UnityEngine.UI.Button saveAllButton;
+//	public UnityEngine.UI.Button managerButton;
+	public UnityEngine.UI.Button viewButton;
+	public UnityEngine.UI.Button deleteButton;
+	public UnityEngine.UI.Button saveButton;
+	public UnityEngine.UI.Button editButton;
+	public UnityEngine.UI.Button copyButton;
+
+	public void SetButtonStates( )
+	{
+		saveAllButton.interactable = (album_!= null && album_.HasUnsavedChanges());
+
+	//	public UnityEngine.UI.Button managerButton;
+		viewButton.interactable = (album_ != null && selectedButton_ != null && selectedButton_.AlbumTexture != null);
+		deleteButton.interactable = (album_ != null && selectedButton_ != null && selectedButton_.AlbumTexture != null);
+		saveButton.interactable = (album_ != null && selectedButton_ != null && selectedButton_.AlbumTexture != null && selectedButton_.AlbumTexture.IOState != AlbumTexture.EIOState.Saved);
+		editButton.interactable = (album_ != null && selectedButton_ != null && selectedButton_.AlbumTexture != null); ;
+		copyButton.interactable = (album_ != null && selectedButton_ != null && selectedButton_.AlbumTexture != null); ;
+	}
+
 	public CopyImagePanel copyImagePanel;
 
 	protected override void Awake()
@@ -33,11 +53,13 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		base.Start( );
 		AlbumManager.Instance.currentAlbumChangeActon += SetAlbum;
 		copyImagePanel.Close( );
+		SetButtonStates( );
 	}
 
 	public void Init(Album a)
 	{
 		SetAlbum( a );
+		SetButtonStates( );
 	}
 
 	public void SetAlbum( Album a )
@@ -76,6 +98,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 	{
 		SetTitle( );
 		SetButtons( );
+		SetButtonStates( );
 		RemovePreviewedImage( );
 	}
 
@@ -140,6 +163,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		{
 			selectedImageText.text = selectedButton_.AlbumTexture.TitleString;
 		}
+		SetButtonStates( );
 	}
 
 	private void SetButtons()
@@ -162,6 +186,7 @@ public class AlbumViewPanel : WinWin<AlbumViewPanel>
 		{
 			imageButtons[i].Init( null );
 		}
+		SetButtonStates( );
 	}
 
 	public void OnDisable( )

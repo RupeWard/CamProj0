@@ -13,12 +13,27 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 	public UnityEngine.UI.RawImage rawImage;
 
 	private bool modified_ = false;
+	private void SetModified(bool b)
+	{
+		modified_ = b;
+		SetButtons( );
+	}
 
-//	public CopyImagePanel copyImagePanel;
+	public UnityEngine.UI.Button saveutton;
+	public UnityEngine.UI.Button revertButton;
+
+	//	public CopyImagePanel copyImagePanel;
 
 	protected override void Awake()
 	{
 		base.Awake( );
+		SetModified( false );
+	}
+
+	private void SetButtons()
+	{
+		saveutton.interactable = modified_;
+		revertButton.interactable = modified_;
 	}
 
 	protected override void Start()
@@ -51,7 +66,7 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 			workingTexture_ = new Texture2D( albumTexture_.texture.width, albumTexture_.texture.height );
 			workingTexture_.SetPixels( albumTexture_.texture.GetPixels());
 			workingTexture_.Apply( );
-			modified_ = false;
+			SetModified(false);
 		}
 		SetPreviewedImage( );
 		SetTitle( );
@@ -168,7 +183,7 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 	public void HandleProcessorSuccess( ImageProcessor_Base i )
 	{
 		workingTexture_ = i.Texture;
-		modified_ = true;
+		SetModified( true);
 		SetTitle( );
 		SetPreviewedImage( );
 		Debug.Log( i.gameObject + " succeeded" );
@@ -234,7 +249,7 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 		albumTexture_.texture.SetPixels( workingTexture_.GetPixels( ) );
 		albumTexture_.texture.Apply( );
 		albumTexture_.HandleModified();
-		modified_ = false;
+		SetModified( false);
 		Debug.LogWarning( "Save" );
 		LogManager.Instance.AddLine( "Saved image "+albumTexture_.imageName );
 	}
