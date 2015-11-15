@@ -7,9 +7,12 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 //	private static readonly bool DEBUG_LOCAL = true;
 
 	private AlbumTexture albumTexture_;
+	private Texture2D  workingTexture_;
 
 	public UnityEngine.UI.Text titleText;
 	public UnityEngine.UI.RawImage rawImage;
+
+	private bool modified_ = false;
 
 //	public CopyImagePanel copyImagePanel;
 
@@ -28,6 +31,29 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 	public void Init(AlbumTexture  at)
 	{
 		SetAlbumTexture( at );
+	}
+
+	private void DestroyWorkingTexture()
+	{
+		if (workingTexture_ != null)
+		{
+			rawImage.texture = null;
+			Destroy( workingTexture_ );
+			workingTexture_ = null;
+		}
+	}
+
+	private void Revert()
+	{
+		DestroyWorkingTexture( );
+		if (albumTexture_ != null && albumTexture_.texture != null)
+		{
+			workingTexture_ = new Texture2D( albumTexture_.texture.width, albumTexture_.texture.height );
+			workingTexture_.SetPixels( albumTexture_.texture.GetPixels());
+			workingTexture_.Apply( );
+			
+		}
+		SetPreviewedImage( );
 	}
 
 	public void SetAlbumTexture( AlbumTexture at )
@@ -54,13 +80,17 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 		else
 		{
 			titleText.text = albumTexture_.imageName+ " (" + albumTexture_.texture.width+"x"+albumTexture_.texture.height + ")";
+			if (modified_)
+			{
+				titleText.text = "** " + titleText.text;
+            }
 		}
 	}
 
 	private void HandleAlbumTextureChanged()
 	{
 		SetTitle( );
-		SetPreviewedImage( );
+		Revert( );
 	}
 
 
@@ -72,7 +102,7 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 			album_.OnAlbumChanged -= HandleAlbumChanged;
 		}
 		*/
-		RemovePreviewedImage( );
+		DestroyWorkingTexture( );
 	}
 
 	public void OnEnable( )
@@ -88,22 +118,20 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 
 	private void SetPreviewedImage()
 	{
-		if (albumTexture_ != null && albumTexture_.texture != null)
+		if (workingTexture_ != null)
 		{
-			rawImage.texture = albumTexture_.texture;
+			rawImage.texture = workingTexture_;
 		}
 		else
 		{
 			rawImage.texture = null;
 		}
 	}
-	private void RemovePreviewedImage()
-	{
-		rawImage.texture = null;
-	}
-
+	
 	public void OnDestroy()
 	{
+		DestroyWorkingTexture( );
+
 		/*
 		if (album_ != null)
 		{
