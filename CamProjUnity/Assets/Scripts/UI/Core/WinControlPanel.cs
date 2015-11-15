@@ -241,6 +241,8 @@ abstract public class WinControlPanel < TControlleeType >: MonoBehaviour
 
 		winButtonsContainer.GetComponent<RectTransform>( ).SetHeight( winButtonsHeight + (winButtonsContainer.NumButtons+1 ) * winButtonsContainer.margin);
 		funcButtonsContainer.GetComponent<RectTransform>( ).SetHeight( funcButtonsHeight + (funcButtonsContainer.NumButtons+1) * funcButtonsContainer.margin );
+		funcButtonsContainer.GetComponent<RectTransform>( ).anchoredPosition = new Vector2( 50f, -1f * titleText.GetComponent<RectTransform>().GetHeight() );
+
 		return bsb;
 	}
 
