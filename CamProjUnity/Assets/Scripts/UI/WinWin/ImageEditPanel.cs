@@ -201,7 +201,7 @@ public class ImageEditPanel : WinWin<ImageEditPanel>
 		else
 		{
 //			Revert( );
-//			Debug.LogWarning( "Revert" );
+			Debug.LogWarning( "Save" );
 //			LogManager.Instance.AddLine( "Reverted image" );
 		}
 
